@@ -86,4 +86,9 @@ function Stock(props) {
     );
 }
 
+export const exportedForTesting = {
+    fetchCurrentData,
+    fetchHistoricalData
+}
+
 export default Stock;
