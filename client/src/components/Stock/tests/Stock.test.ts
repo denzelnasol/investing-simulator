@@ -1,7 +1,10 @@
+import { expect, test } from '@jest/globals';
 import { exportedForTesting } from "../Stock";
 
-const { fetchCurrentData, fetchHistoricalData } = exportedForTesting;
+const { fetchCurrentData, fetchPastData } = exportedForTesting;
 
-test('check for null when fetching current stock data', () => {
+
+test('Null checks', () => {
     expect(fetchCurrentData(null)).toBe(null);
+    expect(fetchPastData(null)).toBe(null);
 });

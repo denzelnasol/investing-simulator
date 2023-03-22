@@ -34,16 +34,16 @@ const App = () => {
   const [data, setData] = useState<Object>({ apiResponse: "" });
 
   // This is a sample useEffect which uses the client Stock API function to retrieve sample stock info.
-  useEffect(() => {
-    (async () => {
-      // const symbols = [Symbol.AAPL, Symbol.ABT, Symbol.AMZN];
-      const response = await getCurrentStockInfo(Object.keys(Symbol), { fields: ["displayName"]});
-      setData({ apiResponse: response });
-    })();
+  // useEffect(() => {
+  //   (async () => {
+  //     // const symbols = [Symbol.AAPL, Symbol.ABT, Symbol.AMZN];
+  //     const response = await getCurrentStockInfo(Object.keys(Symbol), { fields: ["displayName"]});
+  //     setData({ apiResponse: response });
+  //   })();
 
-  }, []);
+  // }, []);
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className='app'>

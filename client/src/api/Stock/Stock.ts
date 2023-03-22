@@ -23,7 +23,7 @@ async function getCurrentStockInfo(
   queryOptions: Object | null = null, 
   moduleOptions: Object | null = null)
 {
-  if (!symbol || symbol.length === 0) {
+  if (!symbol) {
     return null;
   }
 
@@ -32,7 +32,7 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios(`${EndPoint}/current`, { params });
+  const response = await axios.get(`${EndPoint}/current`, { params });
   return response.data;
 }
 
@@ -54,7 +54,7 @@ async function getCurrentStockInfo(
   queryOptions: Object | null = null, 
   moduleOptions: Object | null = null)
 {
-  if (symbol == null) {
+  if (!symbol) {
     return null;
   }
 
@@ -63,7 +63,7 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios(`${EndPoint}/historical`, { params });
+  const response = await axios.get(`${EndPoint}/historical`, { params });
   return response.data;
 }
 

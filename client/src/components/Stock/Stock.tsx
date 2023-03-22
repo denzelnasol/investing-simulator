@@ -14,7 +14,7 @@ function fetchCurrentData(symbol: string | null) {
     return getCurrentStockInfo(symbol);
 };
 
-function fetchHistoricalData(symbol: string | null) {
+function fetchPastData(symbol: string | null) {
     if (symbol == null) {
         return null;
     }
@@ -24,8 +24,6 @@ function fetchHistoricalData(symbol: string | null) {
     // need to wrap in Date constructor since setFullYear returns a timestamp (not a date)
     const yearAgo = new Date(new Date().setFullYear(today.getFullYear() - 1));
 
-    // console.log(today);
-    // console.log(yearAgo);
     const queryOptions = {
         period1: yearAgo,
         interval: "1mo"
@@ -51,9 +49,7 @@ function Stock(props) {
     useEffect(() => {
         (async () => {
             const curData = await fetchCurrentData(stockSymbol);
-            const pastData = await fetchHistoricalData(stockSymbol);
-            //console.log(curData);
-            console.log(pastData);
+            const pastData = await fetchPastData(stockSymbol);
             if (!curData || !pastData) {
                 setError(true);
                 return;
@@ -88,7 +84,7 @@ function Stock(props) {
 
 export const exportedForTesting = {
     fetchCurrentData,
-    fetchHistoricalData
+    fetchPastData
 }
 
 export default Stock;
