@@ -1,4 +1,4 @@
-import { getCurrentStockInfo } from 'api/Stock/Stock';
+import { getCurrentStockInfo, getHistoricalStockInfo } from 'api/Stock/Stock';
 import StockDetails from './StockDetails';
 import Error from 'components/Error/Error';
 
@@ -6,17 +6,37 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StockGraph from './StockGraph';
 
-function callStockAPI(symbol: string | null) {
-    if (symbol != null) {
-        return getCurrentStockInfo(symbol);
+function fetchCurrentData(symbol: string | null) {
+    if (symbol == null) {
+        return null;
     }
-    return null;
+
+    return getCurrentStockInfo(symbol);
 };
+
+function fetchHistoricalData(symbol: string | null) {
+    if (symbol == null) {
+        return null;
+    }
+
+    const today = new Date();
+
+    // need to wrap in Date constructor since setFullYear returns a timestamp (not a date)
+    const yearAgo = new Date(new Date().setFullYear(today.getFullYear() - 1));
+
+    // console.log(today);
+    // console.log(yearAgo);
+    const queryOptions = {
+        period1: yearAgo,
+        interval: "1mo"
+    };
+    return getHistoricalStockInfo(symbol, queryOptions);
+}
 
 function Stock(props) {
     // get stock symbol from query string in URL
     const [searchParams] = useSearchParams();
-    const symbol = searchParams.get("symbol");
+    const stockSymbol = searchParams.get("symbol");
 
     // state
     const [name, setName] = useState("");
@@ -30,19 +50,21 @@ function Stock(props) {
     // call stock api and update state
     useEffect(() => {
         (async () => {
-            const data = await callStockAPI(symbol);
-            console.log(data);
-            if (!data) {
+            const curData = await fetchCurrentData(stockSymbol);
+            const pastData = await fetchHistoricalData(stockSymbol);
+            //console.log(curData);
+            console.log(pastData);
+            if (!curData || !pastData) {
                 setError(true);
                 return;
             }
 
-            setName(data.longName);
-            setAsk(data.ask);
-            setMarketCap(data.marketCap);
-            setExchange(data.exchange);
-            setYearlyHigh(data.fiftyTwoWeekHigh);
-            setYearlyLow(data.fiftyTwoWeekLow);
+            setName(curData.longName);
+            setAsk(curData.ask);
+            setMarketCap(curData.marketCap);
+            setExchange(curData.exchange);
+            setYearlyHigh(curData.fiftyTwoWeekHigh);
+            setYearlyLow(curData.fiftyTwoWeekLow);
             setError(false);
         })();
     });
