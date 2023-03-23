@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors());
 
-app.use('/users', usersRouter);
-app.use('/stock', stockRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/stock', stockRouter);
 app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
