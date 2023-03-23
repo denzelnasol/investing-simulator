@@ -14,8 +14,6 @@ test('Null checks', () => {
 });
 
 test('Successful get current stock', async () => {
-    mockedSuccessfulGet.mockReturnValueOnce({data: 'success'});
-
     const res = await getCurrentStockInfo('aapl')
     expect(mockedSuccessfulGet).toHaveBeenCalledTimes(1);
 
@@ -23,8 +21,6 @@ test('Successful get current stock', async () => {
 });
 
 test('Successful get historical stock', async () => {
-    mockedSuccessfulGet.mockReturnValueOnce({data: 'success'});
-
     const res = await getHistoricalStockInfo('aapl')
     expect(mockedSuccessfulGet).toHaveBeenCalledTimes(1);
 

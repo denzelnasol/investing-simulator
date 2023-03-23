@@ -1,4 +1,4 @@
 export const Config = {
     "SiteURL" : "http://localhost",
-    "Port" : "8081"
+    "Port" : "8080"
 }

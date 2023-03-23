@@ -31,6 +31,29 @@ function fetchPastData(symbol: string | null) {
     return getHistoricalStockInfo(symbol, queryOptions);
 }
 
+function getPastDataPrices(data: any[]) {
+    const prices: number[] = []
+
+    data.forEach((val) => {
+        prices.push(val.open);
+    });
+    console.log(prices);
+
+    return prices;
+}
+
+function getPastDataDates(data: any[]) {
+    const dates: Date[] = []
+
+    data.forEach((val) => {
+        const date = new Date(val.date);
+        dates.push(date);
+    });
+    console.log(dates);
+
+    return dates;
+}
+
 function Stock(props) {
     // get stock symbol from query string in URL
     const [searchParams] = useSearchParams();
@@ -43,6 +66,8 @@ function Stock(props) {
     const [exchange, setExchange] = useState("");
     const [yearlyHigh, setYearlyHigh] = useState(0);
     const [yearlyLow, setYearlyLow] = useState(0);
+    const [pastPrices, setPastPrices] = useState<number[]>([]);
+    const [pastDates, setPastDates] = useState<Date[]>([]);
     const [error, setError] = useState(false);
     
     // call stock api and update state
@@ -50,6 +75,7 @@ function Stock(props) {
         (async () => {
             const curData = await fetchCurrentData(stockSymbol);
             const pastData = await fetchPastData(stockSymbol);
+            console.log(pastData);
             if (!curData || !pastData) {
                 setError(true);
                 return;
@@ -61,16 +87,23 @@ function Stock(props) {
             setExchange(curData.exchange);
             setYearlyHigh(curData.fiftyTwoWeekHigh);
             setYearlyLow(curData.fiftyTwoWeekLow);
+            
+            const prices = getPastDataPrices(pastData);
+            const dates = getPastDataDates(pastData);
+            setPastPrices(prices);
+            setPastDates(dates);
+
             setError(false);
         })();
-    });
+
+    }, []);
     
     return (
         // return error page if stock symbol is not found
         error ? <Error /> : 
         <div>
             <h1>{name}</h1>
-            <StockGraph />
+            <StockGraph prices={pastPrices} dates={pastDates}/>
             <StockDetails 
                 ask={ask} 
                 marketCap={marketCap} 
@@ -86,5 +119,4 @@ export const exportedForTesting = {
     fetchCurrentData,
     fetchPastData
 }
-
 export default Stock;
