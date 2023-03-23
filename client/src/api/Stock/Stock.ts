@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Symbol } from 'enums/Stock';
 import { Config } from 'Config';
 
-const {SiteURL, Port} = Config;
+const { SiteURL } = Config;
 const EndPoint = `${SiteURL}/stock`;
 
 /**
@@ -19,10 +19,9 @@ const EndPoint = `${SiteURL}/stock`;
  * @returns { object }
  */
 async function getCurrentStockInfo(
-  symbol: Symbol | Symbol[] | string | string[], 
-  queryOptions: Object | null = null, 
-  moduleOptions: Object | null = null)
-{
+  symbol: Symbol | Symbol[] | string | string[],
+  queryOptions: Object | null = null,
+  moduleOptions: Object | null = null) {
   if (!symbol || symbol.length === 0) {
     return null;
   }
@@ -49,11 +48,10 @@ async function getCurrentStockInfo(
  *
  * @returns { object }
  */
- async function getHistoricalStockInfo(
+async function getHistoricalStockInfo(
   symbol: Symbol | string,
-  queryOptions: Object | null = null, 
-  moduleOptions: Object | null = null)
-{
+  queryOptions: Object | null = null,
+  moduleOptions: Object | null = null) {
   if (symbol == null) {
     return null;
   }

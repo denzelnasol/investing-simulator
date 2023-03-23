@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Config } from 'Config';
 
-const { SiteURL, Port } = Config;
+const { SiteURL } = Config;
 
 export const loginUser = async (email: string, password: string): Promise<boolean> => {
     const data = {
