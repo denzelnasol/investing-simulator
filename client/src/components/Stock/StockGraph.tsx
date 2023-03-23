@@ -33,16 +33,11 @@ function transformData(variables: GraphVariables) {
 }
 
 function StockGraph(props: GraphVariables) {
-    const today = new Date();
-    const yearAgo = new Date(new Date().setFullYear(today.getFullYear() - 1));
-    const testDates = [yearAgo, today];
     
-    console.log(props.prices);
-
     const data = {
         datasets: [
             {
-                data: transformData({prices: props.prices, dates: props.dates}),
+                data: transformData(props),
                 borderColor: 'red'
             }
         ]

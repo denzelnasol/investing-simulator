@@ -31,29 +31,6 @@ function fetchPastData(symbol: string | null) {
     return getHistoricalStockInfo(symbol, queryOptions);
 }
 
-function getPastDataPrices(data: any[]) {
-    const prices: number[] = []
-
-    data.forEach((val) => {
-        prices.push(val.open);
-    });
-    console.log(prices);
-
-    return prices;
-}
-
-function getPastDataDates(data: any[]) {
-    const dates: Date[] = []
-
-    data.forEach((val) => {
-        const date = new Date(val.date);
-        dates.push(date);
-    });
-    console.log(dates);
-
-    return dates;
-}
-
 function Stock(props) {
     // get stock symbol from query string in URL
     const [searchParams] = useSearchParams();
@@ -87,11 +64,9 @@ function Stock(props) {
             setExchange(curData.exchange);
             setYearlyHigh(curData.fiftyTwoWeekHigh);
             setYearlyLow(curData.fiftyTwoWeekLow);
-            
-            const prices = getPastDataPrices(pastData);
-            const dates = getPastDataDates(pastData);
-            setPastPrices(prices);
-            setPastDates(dates);
+
+            setPastPrices(pastData.map(val => val.open));
+            setPastDates(pastData.map(val => new Date(val.date)));
 
             setError(false);
         })();
