@@ -3,7 +3,7 @@ import { Symbol } from 'enums/Stock';
 import { Config } from 'Config';
 
 const {SiteURL, Port} = Config;
-const EndPoint = `${SiteURL}:${Port}/stock`;
+const EndPoint = `${SiteURL}/stock`;
 
 /**
  * @memberof module:Stock

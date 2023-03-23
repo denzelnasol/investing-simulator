@@ -10,7 +10,7 @@ export const loginUser = async (email: string, password: string): Promise<boolea
         password: password
     };
 
-    const result: boolean = await axios.post(`${SiteURL}:${Port}/users/login`, data)
+    const result: boolean = await axios.post(`${SiteURL}/users/login`, data)
         .then(res => {
             if (res.data.success) {
                 Cookies.set('token', res.data.token, { expires: 7, path: '/' });
@@ -27,7 +27,7 @@ export const loginUser = async (email: string, password: string): Promise<boolea
 };
 
 export const verifyUser = async (token: any) => {
-    const result: boolean = await axios.get(`${SiteURL}:${Port}/users/verify`, {
+    const result: boolean = await axios.get(`${SiteURL}/users/verify`, {
         headers: { Authorization: token },
     })
         .then((res) => {
@@ -53,7 +53,7 @@ export const registerUser = async (firstName: string, lastName: string, password
         phoneNumber,
     };
 
-    const result = await axios.post(`${SiteURL}:${Port}/users/register`, data)
+    const result = await axios.post(`${SiteURL}/users/register`, data)
         .then(res => {
             if (res.data.success) {
                 return true;
