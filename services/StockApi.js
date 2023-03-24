@@ -5,7 +5,7 @@ async function getRTStockSummary(symbols) {
     const fields = [ "regularMarketChange" ];
     var apiResults = [];
     for (let s of symbols) {
-        let result = await yahooFinance.quoteCombine(s.toUpperCase(), { fields });
+        let result = await yahooFinance.quoteCombine(s.toUpperCase(), { fields: fields });
         if (result) {
             apiResults.push({ 
                 symbol: s, 
@@ -25,8 +25,8 @@ async function getRTStockSummary(symbols) {
 }
 
 // get full info on the symbol
-async function getRTStockDetails(symbol) {
-    return await yahooFinance.quote(symbol.toUpperCase());
+async function getRTStockDetails(symbol, fields = []) {
+    return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
 }
 
 module.exports = {

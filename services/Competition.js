@@ -27,6 +27,15 @@ async function getCompetitionParticipants(competitionId) {
     });
 }
 
+// get competition info
+async function getCompetitionInfo(competitionId) {
+    return await prisma.competition.findFirst({
+        where: {
+            competition_id: competitionId
+        },
+    });
+}
+
 async function createCompetition(balance, startDate, endDate, entryPoints = -1, numPlayers = -1) {
     // let startDate = new Date();
     // let endDate = new Date();
@@ -43,6 +52,7 @@ async function createCompetition(balance, startDate, endDate, entryPoints = -1, 
 }
 
 module.exports = {
+    getCompetitionInfo,
     getCompetitions,
     getPersonalCompetitions,
     getCompetitionParticipants,
