@@ -1,8 +1,15 @@
 const prisma = require("../src/db");
 
+
+async function getAllAvailableStocks() {
+  return await prisma.stock.findMany({
+    distinct: ['symbol']
+  });
+}
+
 // get the stock info owned by portfolio
 async function getStockInfo(portfolioId, stock) {
-  return await prisma.owns.findMany({
+  return await prisma.owns.findFirst({
     where: {
       fk_portfolio: portfolioId,
       fk_stock: stock
@@ -54,6 +61,7 @@ async function sellStock(portfolioId, stock, numShares, pricePerShare) {
 }
 
 module.exports = {
+  getAllAvailableStocks,
   getStockInfo,
   getStocks,
   buyStock,
