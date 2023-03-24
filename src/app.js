@@ -12,6 +12,7 @@ var cors = require('cors');
 var indexRouter = require('../routes/index');
 var usersRouter = require('../routes/users');
 var stockRouter = require('../routes/stock');
+var competitionRouter = require('../routes/competition');
 
 // constants
 const PORT = 8080;
@@ -31,6 +32,7 @@ app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/stock', stockRouter);
+app.use('./competition', competitionRouter);
 
 /** DB TEST **/
 // app.get('/test', async (req, res) => {
