@@ -1,16 +1,18 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { Config } from 'Config';
 
-const { SiteURL } = Config;
 
 export const loginUser = async (email: string, password: string): Promise<boolean> => {
     const data = {
         email: email,
         password: password
     };
+    
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_NODE_URL,
+    });
 
-    const result: boolean = await axios.post(`${SiteURL}/users/login`, data)
+    const result: boolean = await axiosInstance.post('/users/login', data)
         .then(res => {
             if (res.data.success) {
                 Cookies.set('token', res.data.token, { expires: 7, path: '/' });
@@ -27,7 +29,11 @@ export const loginUser = async (email: string, password: string): Promise<boolea
 };
 
 export const verifyUser = async (token: any) => {
-    const result: boolean = await axios.get(`${SiteURL}/users/verify`, {
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_NODE_URL,
+    });
+    
+    const result: boolean = await axiosInstance.get('/users/verify', {
         headers: { Authorization: token },
     })
         .then((res) => {
@@ -53,7 +59,7 @@ export const registerUser = async (firstName: string, lastName: string, password
         phoneNumber,
     };
 
-    const result = await axios.post(`${SiteURL}/users/register`, data)
+    const result = await axios.post('/users/register', data)
         .then(res => {
             if (res.data.success) {
                 return true;
