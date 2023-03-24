@@ -1,43 +1,62 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { Chart } from 'primereact/chart';
 
-interface GraphVariables {
-    prices: number[],
-    dates: Date[]
-};
+import { getHistoricalStockInfo } from 'api/Stock/Stock';
+import { StockInterval } from 'enums/Stock'
+import Error from 'components/Error/Error';
 
-interface DataPoint {
-    x: string,
-    y: number
-};
+function fetchPastData(stockSymbol: string, startingDate: Date, interval: StockInterval) {
+    console.log(startingDate);
+    const queryOptions = {
+        period1: startingDate,
+        interval: interval
+    };
+    return getHistoricalStockInfo(stockSymbol, queryOptions);
+}
 
-function getDateAsString(date: Date) {
+function parseDateString(dateString: string) {
+    const date = new Date(dateString);
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
 
     return `${year}/${month}`;
 }
 
-function transformData(variables: GraphVariables) {
-    const {prices, dates} = variables;
+interface DataPoint {
+    x: string,
+    y: number
+};
 
-    const dataPoints: DataPoint[] = [];
-    prices.forEach((price, index) => {
-        const dateString = getDateAsString(dates[index]);
+function StockGraph(props: {stockSymbol: string | null}) {
+    const [dataPoints, setDataPoints] = useState<DataPoint[]>([]);
+    const [error, setError] = useState(false);
 
-        dataPoints.push({x: dateString, y: price});
-    });
+    // call stock api and update state
+    useEffect(() => {
+        (async () => {
+            let pastData
+            try {
+                // need to wrap in Date constructor since setFullYear returns a timestamp (not a date)
+                const today = new Date();
+                const yearAgo = new Date(new Date().setFullYear(today.getFullYear() - 1));
 
-    return dataPoints;
-}
+                pastData = await fetchPastData(props.stockSymbol ?? "", yearAgo, StockInterval.Month);
+            } catch (err) {
+                setError(true);
+                return;
+            }
+            
+            const parsedPastData  = pastData.intervals.map(i => ({x: parseDateString(i.date), y: i.close}));
+            setDataPoints(parsedPastData);
+        })();
 
-function StockGraph(props: GraphVariables) {
+    }, []);
     
     const data = {
         datasets: [
             {
-                data: transformData(props),
+                data: dataPoints,
                 borderColor: 'red'
             }
         ]
@@ -51,6 +70,8 @@ function StockGraph(props: GraphVariables) {
     };
 
     return (
+        // return error page if stock symbol is not found
+        error ? <Error /> : 
         <div style={{border: 'solid'}}>
             <Chart
                 type="line"

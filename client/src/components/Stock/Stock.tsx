@@ -1,4 +1,4 @@
-import { getCurrentStockInfo, getHistoricalStockInfo } from 'api/Stock/Stock';
+import { getCurrentStockInfo } from 'api/Stock/Stock';
 import StockDetails from './StockDetails';
 import Error from 'components/Error/Error';
 
@@ -6,30 +6,9 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StockGraph from './StockGraph';
 
-function fetchCurrentData(symbol: string | null) {
-    if (symbol == null) {
-        return null;
-    }
-
+function fetchCurrentData(symbol: string) {
     return getCurrentStockInfo(symbol);
 };
-
-function fetchPastData(symbol: string | null) {
-    if (symbol == null) {
-        return null;
-    }
-
-    const today = new Date();
-
-    // need to wrap in Date constructor since setFullYear returns a timestamp (not a date)
-    const yearAgo = new Date(new Date().setFullYear(today.getFullYear() - 1));
-
-    const queryOptions = {
-        period1: yearAgo,
-        interval: "1mo"
-    };
-    return getHistoricalStockInfo(symbol, queryOptions);
-}
 
 function Stock(props) {
     // get stock symbol from query string in URL
@@ -43,17 +22,15 @@ function Stock(props) {
     const [exchange, setExchange] = useState("");
     const [yearlyHigh, setYearlyHigh] = useState(0);
     const [yearlyLow, setYearlyLow] = useState(0);
-    const [pastPrices, setPastPrices] = useState<number[]>([]);
-    const [pastDates, setPastDates] = useState<Date[]>([]);
     const [error, setError] = useState(false);
     
     // call stock api and update state
     useEffect(() => {
         (async () => {
-            const curData = await fetchCurrentData(stockSymbol);
-            const pastData = await fetchPastData(stockSymbol);
-            console.log(pastData);
-            if (!curData || !pastData) {
+            let curData;
+            try {
+                curData = await fetchCurrentData(stockSymbol ?? "");
+            } catch (err) {
                 setError(true);
                 return;
             }
@@ -64,10 +41,6 @@ function Stock(props) {
             setExchange(curData.exchange);
             setYearlyHigh(curData.fiftyTwoWeekHigh);
             setYearlyLow(curData.fiftyTwoWeekLow);
-
-            setPastPrices(pastData.map(val => val.open));
-            setPastDates(pastData.map(val => new Date(val.date)));
-
             setError(false);
         })();
 
@@ -78,7 +51,7 @@ function Stock(props) {
         error ? <Error /> : 
         <div>
             <h1>{name}</h1>
-            <StockGraph prices={pastPrices} dates={pastDates}/>
+            <StockGraph stockSymbol={stockSymbol} />
             <StockDetails 
                 ask={ask} 
                 marketCap={marketCap} 
@@ -91,7 +64,6 @@ function Stock(props) {
 }
 
 export const exportedForTesting = {
-    fetchCurrentData,
-    fetchPastData
+    fetchCurrentData
 }
 export default Stock;
