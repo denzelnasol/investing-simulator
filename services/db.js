@@ -85,7 +85,7 @@
 // var portfolio = require('./portfolio');
 // var stock = require('./stock');
 
-// stock.getStockInfo('aaefa7da-b728-4f24-a5b0-f3719d78742a', 'goog')
+// profile.getProfile('eg','144')
 // .then(data=>console.log(data)).catch(err=>console.log(err));
 
 

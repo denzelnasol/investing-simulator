@@ -6,8 +6,8 @@ var path = require('path');
 var logger = require('morgan');
 var cors = require('cors');
 
-const { getStockBySymbol } = require('../services/Stock');
-const { addProfile, findProfileByLogin } = require('../services/Profile');
+// const { getStockBySymbol } = require('../services/Stock');
+// const { addProfile, findProfileByLogin } = require('../services/Profile');
 
 var indexRouter = require('../routes/index');
 var usersRouter = require('../routes/users');

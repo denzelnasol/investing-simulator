@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 var router = express.Router();
 router.use(cookieParser());
 
-const Profile = require('../services/Profile');
+const profile = require('../services/profile');
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -15,8 +15,9 @@ router.get('/', (req, res, next) => {
 /* Login a user */
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
-  const profile = await Profile.findProfileByLogin(email, password);
-  if (!profile || profile === null) {
+  
+  const user = await profile.getProfile(email, password);
+  if (user === null) {
     res.send({ success: false });
     return;
   }
@@ -49,8 +50,8 @@ router.get('/verify', async (req, res, next) => {
 router.post('/register', async (req, res, next) => {
   const { firstName, lastName, password, email, phoneNumber } = req.body;
 
-  const profile = await Profile.addProfile(firstName, lastName, password, email, phoneNumber);
-  if (!profile || profile === null) {
+  const p = profile.createProfile(firstName, lastName, email, password, phoneNumber);
+  if (p === null) {
     res.send({ success: false });
     return;
   }
