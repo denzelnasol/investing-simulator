@@ -1,7 +1,7 @@
 const prisma = require("../src/db");
 
 // returns the balance history of portfolio
-exports.getHistory = async function(portfolioId) {
+async function getHistory(portfolioId) {
     const history = await prisma.history.findMany({
         where: {
           fk_portfolio: portfolioId
@@ -15,3 +15,6 @@ exports.getHistory = async function(portfolioId) {
     });
 }
 
+module.exports = {
+  getHistory
+};

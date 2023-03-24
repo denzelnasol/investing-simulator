@@ -1,5 +1,4 @@
 node_modules
 .DS_Store
 cloud-sql-proxy
-# prisma/.env
-prisma
+prisma/.env

@@ -1,7 +1,7 @@
 const prisma = require("../src/db");
 
 // get the stock info owned by portfolio
-exports.getStockInfo = async function(portfolioId, stock) {
+async function getStockInfo(portfolioId, stock) {
   return await prisma.owns.findMany({
     where: {
       fk_portfolio: portfolioId,
@@ -11,7 +11,7 @@ exports.getStockInfo = async function(portfolioId, stock) {
 }
 
 // returns all the stocks owned by portfolio
-exports.getStocks = async function(portfolioId) {
+async function getStocks(portfolioId) {
   return await prisma.owns.findMany({
     where: {
       fk_portfolio: portfolioId
@@ -19,7 +19,7 @@ exports.getStocks = async function(portfolioId) {
   });
 }
 
-exports.buyStock = async function(portfolioId, stock, numShares, pricePerShare) {
+async function buyStock(portfolioId, stock, numShares, pricePerShare) {
     // note: db has a transaction trigger so we just need to modify transaction
     // when purchasing: amount should be negative (refer to docs)
     // balance will be updated by triggers
@@ -36,8 +36,7 @@ exports.buyStock = async function(portfolioId, stock, numShares, pricePerShare) 
     });
 }
 
-
-exports.sellStock = async function sellStock(portfolioId, stock, numShares, pricePerShare) {
+async function sellStock(portfolioId, stock, numShares, pricePerShare) {
     // note: db has a transaction trigger so we just need to modify transaction
     // when selling: amount should be positive (refer to docs)
     // balance will be updated by triggers
@@ -54,3 +53,9 @@ exports.sellStock = async function sellStock(portfolioId, stock, numShares, pric
     });
 }
 
+module.exports = {
+  getStockInfo,
+  getStocks,
+  buyStock,
+  sellStock
+}

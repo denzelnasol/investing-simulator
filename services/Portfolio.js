@@ -1,7 +1,7 @@
 const prisma = require("../src/db");
 
 // returns all the data needed to be displayed on the portfolio dashboard
-exports.getPortfolio = async function(portfolioId) {
+async function getPortfolio(portfolioId) {
   return await prisma.portfolio.findUnique({
     where: {
       portfolio_id: portfolioId
@@ -9,7 +9,7 @@ exports.getPortfolio = async function(portfolioId) {
   });
 }
 
-exports.createMainPortfolio = async function(profileId, balance) {
+async function createMainPortfolio(profileId, balance) {
   return await prisma.portfolio.create({
     data: {
         portfolio_type: 'main',
@@ -19,7 +19,7 @@ exports.createMainPortfolio = async function(profileId, balance) {
   });
 }
 
-exports.createCompetitionPortfolio = async function(profileId, competitionId, balance) {
+async function createCompetitionPortfolio(profileId, competitionId, balance) {
   return await prisma.portfolio.create({
     data: {
         portfolio_type: 'competition',
@@ -29,4 +29,10 @@ exports.createCompetitionPortfolio = async function(profileId, competitionId, ba
     }
   }); 
 }
+
+module.exports = {
+  getPortfolio,
+  createMainPortfolio,
+  createCompetitionPortfolio
+};
 

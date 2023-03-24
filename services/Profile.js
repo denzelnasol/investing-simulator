@@ -3,7 +3,7 @@ const md5 = require('md5');
 
 // returns the profile associated with the email and password
 // returns empty list if no profile found => email or password incorrect
-exports.getProfile = async function(email, password) {
+async function getProfile(email, password) {
     return await prisma.profile.findFirst({
         where: {
             AND: {
@@ -14,7 +14,7 @@ exports.getProfile = async function(email, password) {
     });
 };
 
-exports.createProfile = async function(firstName, lastName, email, password, phoneNumber) {
+async function createProfile(firstName, lastName, email, password, phoneNumber) {
     return await prisma.profile.create({
         data: {
             first_name: firstName,
@@ -26,4 +26,7 @@ exports.createProfile = async function(firstName, lastName, email, password, pho
     });
 };
 
-
+module.exports = {
+    getProfile,
+    createProfile
+}

@@ -2,12 +2,11 @@ const prisma = require("../src/db");
 
 
 // returns a list of all competitions in db
-exports.getCompetitions = async function() {
+async function getCompetitions() {
     return await prisma.competition.findMany();
 }
 
-
-exports.getPersonalCompetitions = async function(profileId) {
+async function getPersonalCompetitions(profileId) {
     return await prisma.portfolio.findMany({
         where: {
             fk_profile: profileId,
@@ -20,7 +19,7 @@ exports.getPersonalCompetitions = async function(profileId) {
 }
 
 // returns the list of participants in a competition (not sorted)
-exports.getCompetitionParticipants = async function(competitionId) {
+async function getCompetitionParticipants(competitionId) {
     return await prisma.portfolio.findMany({
         where: {
             fk_competition: competitionId
@@ -28,7 +27,7 @@ exports.getCompetitionParticipants = async function(competitionId) {
     });
 }
 
-exports.createCompetition = async function(balance, startDate, endDate, entryPoints = -1, numPlayers = -1) {
+async function createCompetition(balance, startDate, endDate, entryPoints = -1, numPlayers = -1) {
     // let startDate = new Date();
     // let endDate = new Date();
     // endDate.setMonth(endDate.getMonth() + COMPETITION_DURATION_MONTHS);
@@ -42,3 +41,10 @@ exports.createCompetition = async function(balance, startDate, endDate, entryPoi
         }
     });
 }
+
+module.exports = {
+    getCompetitions,
+    getPersonalCompetitions,
+    getCompetitionParticipants,
+    createCompetition,
+};
