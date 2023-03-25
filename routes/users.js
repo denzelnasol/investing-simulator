@@ -32,7 +32,9 @@ router.post('/login', async (req, res, next) => {
   res.cookie('token', token, { httpOnly: true });
 
 
-  res.send({ success: true, token });
+  res.send({ success: true, token,
+    profileId: user.profile_id,
+  });
 
 });
 
