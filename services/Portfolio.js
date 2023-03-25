@@ -9,6 +9,17 @@ async function getPortfolio(portfolioId) {
   });
 }
 
+async function getMainPortfolio(profileId) {
+  return await prisma.portfolio.findFirst({
+    where: {
+      AND: {
+        fk_profile: profileId,
+        portfolio_type: 'main'
+      }
+    }
+  });
+}
+
 async function createMainPortfolio(profileId, balance) {
   return await prisma.portfolio.create({
     data: {
@@ -32,6 +43,7 @@ async function createCompetitionPortfolio(profileId, competitionId, balance) {
 
 module.exports = {
   getPortfolio,
+  getMainPortfolio,
   createMainPortfolio,
   createCompetitionPortfolio
 };
