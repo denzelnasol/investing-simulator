@@ -7,10 +7,10 @@ jest.mock('axios');
 const mockedSuccessfulGet = axios.get as jest.Mock;
 mockedSuccessfulGet.mockReturnValue({data: 'success'});
 
-test('Null checks', () => {
-    expect(getCurrentStockInfo("")).toBeNull;
+test('API throws error on invalid arg', async () => {
+    expect(getCurrentStockInfo("")).rejects.toThrowError();
 
-    expect(getHistoricalStockInfo("")).toBeNull;
+    expect(getHistoricalStockInfo("")).rejects.toThrowError();
 });
 
 test('Successful get current stock', async () => {

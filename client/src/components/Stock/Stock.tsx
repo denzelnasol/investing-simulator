@@ -31,6 +31,7 @@ function Stock(props) {
             try {
                 curData = await fetchCurrentData(stockSymbol ?? "");
             } catch (err) {
+                console.log(err);
                 setError(true);
                 return;
             }
@@ -51,7 +52,7 @@ function Stock(props) {
         error ? <Error /> : 
         <div>
             <h1>{name}</h1>
-            <StockGraph stockSymbol={stockSymbol} />
+            <StockGraph stockSymbol={stockSymbol ?? ""} />
             <StockDetails 
                 ask={ask} 
                 marketCap={marketCap} 

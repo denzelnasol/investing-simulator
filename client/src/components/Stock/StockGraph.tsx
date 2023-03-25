@@ -7,7 +7,6 @@ import { StockInterval } from 'enums/Stock'
 import Error from 'components/Error/Error';
 
 function fetchPastData(stockSymbol: string, startingDate: Date, interval: StockInterval) {
-    console.log(startingDate);
     const queryOptions = {
         period1: startingDate,
         interval: interval
@@ -28,7 +27,7 @@ interface DataPoint {
     y: number
 };
 
-function StockGraph(props: {stockSymbol: string | null}) {
+function StockGraph(props: {stockSymbol: string}) {
     const [dataPoints, setDataPoints] = useState<DataPoint[]>([]);
     const [error, setError] = useState(false);
 
@@ -43,6 +42,7 @@ function StockGraph(props: {stockSymbol: string | null}) {
 
                 pastData = await fetchPastData(props.stockSymbol ?? "", yearAgo, StockInterval.Month);
             } catch (err) {
+                console.log(err);
                 setError(true);
                 return;
             }

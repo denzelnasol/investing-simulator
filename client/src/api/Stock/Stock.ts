@@ -80,7 +80,7 @@ interface historicalStockInfo {
 
   return {
     intervals: response.data
-  }
+  };
 }
 
 export {
