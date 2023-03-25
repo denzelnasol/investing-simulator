@@ -6,17 +6,23 @@ var router = express.Router();
 router.use(cookieParser());
 
 const portfolioDbService = require('../services/Portfolio');
-const stockDbService = require('../services/Stock');
-const stockApiService = require('../services/StockApi');
-const historyDbService = require('../services/History');
 const competitionDbService = require('../services/Competition');
 
 // when the user searches for competitions show the list of competitions
 router.get('/all', async (req, res, next) => {
     try {
-        
+
         let competitions = await competitionDbService.getCompetitions();
-        res.json({ competitions: competitions });
+
+        res.json({ 
+            competitions: competitions.map(x => {
+                return {
+                    uuid: x.competition_id,
+                    competitionStart: x.start_time,
+                    competitionEnd: x.end_time,
+                };
+            }) 
+        });
 
     } catch (err) {
         res.status(404).json(err);
@@ -28,7 +34,7 @@ router.get('/personal', async (req, res, next) => {
     try {
         
         // get profile id from cookie
-        var profileId = req.body.portfolioId;
+        var profileId = req.body.profileId;
 
         let competitions = await competitionDbService.getPersonalCompetitions(profileId);
         res.json({ competitions: competitions });
@@ -94,7 +100,31 @@ router.get('/join/:competitionId', async (req, res, next) => {
         let result = await portfolioDbService
             .createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
 
-        res.status(200).json(result);
+        res.sendStatus(201);
+
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+
+// create competition
+router.post('/create', async (req, res, next) => {
+    try {
+        
+        // get profile id from cookie
+        var profileId = req.body.profileId;
+        var requirements = req.body.requirements;
+        const { balance, start, end, entry, maxPlayers } = requirements;
+
+        let comp = await competitionDbService.createCompetition(balance, start, end, entry, maxPlayers);
+
+        let result = await portfolioDbService
+            .createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
+
+        res.sendStatus(201).json({
+            competitionId: comp.competition_id
+        });
 
     } catch (err) {
         res.status(404).json(err);

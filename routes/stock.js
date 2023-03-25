@@ -83,7 +83,7 @@ router.post('/buy/:symbol', async (req, res, next) => {
     let pps = details.regularMarketPrice;
     let result = await stockDbService.buyStock(portfolioId, symbol, numShares, pps);
 
-    res.send(result);
+    res.sendStatus(201);
 
   } catch (err) {
     res.status(404).json(err);
@@ -104,7 +104,7 @@ router.post('/sell/:symbol', async (req, res, next) => {
     let pps = details.regularMarketPrice;
     let result = await stockDbService.sellStock(portfolioId, symbol, numShares, pps);
 
-    res.send(result);
+    res.sendStatus(201);
 
   } catch (err) {
     res.status(404).json(err);
