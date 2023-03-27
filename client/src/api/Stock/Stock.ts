@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { Symbol } from 'enums/Stock';
-import { Config } from 'Config';
 
-const {SiteURL, Port} = Config;
-const EndPoint = `${SiteURL}:${Port}/stock`;
+const axiosInstance = axios.create({
+  baseURL: `${process.env.REACT_APP_NODE_URL}/stock`,
+});
 
 /**
  * @memberof module:Stock
@@ -19,10 +19,9 @@ const EndPoint = `${SiteURL}:${Port}/stock`;
  * @returns { object }
  */
 async function getCurrentStockInfo(
-  symbol: Symbol | Symbol[] | string | string[], 
-  queryOptions: Object | null = null, 
-  moduleOptions: Object | null = null)
-{
+  symbol: Symbol | Symbol[] | string | string[],
+  queryOptions: Object | null = null,
+  moduleOptions: Object | null = null) {
   if (!symbol || symbol.length === 0) {
     return null;
   }
@@ -32,7 +31,7 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios(`${EndPoint}/current`, { params });
+  const response = await axiosInstance.get('/current', { params });
   return response.data;
 }
 
@@ -49,11 +48,10 @@ async function getCurrentStockInfo(
  *
  * @returns { object }
  */
- async function getHistoricalStockInfo(
+async function getHistoricalStockInfo(
   symbol: Symbol | string,
-  queryOptions: Object | null = null, 
-  moduleOptions: Object | null = null)
-{
+  queryOptions: Object | null = null,
+  moduleOptions: Object | null = null) {
   if (symbol == null) {
     return null;
   }
@@ -63,7 +61,7 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios(`${EndPoint}/historical`, { params });
+  const response = await axiosInstance.get('/historical', { params });
   return response.data;
 }
 
