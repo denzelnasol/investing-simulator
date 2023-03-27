@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { Symbol } from 'enums/Stock';
-import { Config } from 'Config';
 
-const {SiteURL, Port} = Config;
-const EndPoint = `${SiteURL}:${Port}/stock`;
+const axiosInstance = axios.create({
+  baseURL: `${process.env.REACT_APP_NODE_URL}/stock`,
+});
 
 /**
  * @memberof module:Stock
@@ -32,7 +32,7 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios.get(`${EndPoint}/current`, { params });
+  const response = await axiosInstance.get('/current', { params });
   return response.data;
 }
 
@@ -76,7 +76,7 @@ interface historicalStockInfo {
     queryOptions,
     moduleOptions,
   };
-  const response = await axios.get(`${EndPoint}/historical`, { params });
+  const response = await axiosInstance.get('/historical', { params });
 
   return {
     intervals: response.data

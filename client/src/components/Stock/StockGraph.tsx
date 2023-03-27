@@ -18,8 +18,9 @@ function parseDateString(dateString: string) {
     const date = new Date(dateString);
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
+    const day = date.getUTCDay();
 
-    return `${year}/${month}`;
+    return `${year}/${month}/${day}`;
 }
 
 interface DataPoint {
@@ -41,6 +42,7 @@ function StockGraph(props: {stockSymbol: string}) {
                 const yearAgo = new Date(new Date().setFullYear(today.getFullYear() - 1));
 
                 pastData = await fetchPastData(props.stockSymbol ?? "", yearAgo, StockInterval.Month);
+                console.log(pastData);
             } catch (err) {
                 console.log(err);
                 setError(true);
