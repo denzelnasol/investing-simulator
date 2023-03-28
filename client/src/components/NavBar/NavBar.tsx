@@ -15,7 +15,7 @@ const Navbar = () => {
     navigate('login');
   };
 
-  const items = [
+  const guestItems = [
     {
       label: 'Home',
       icon: 'pi pi-fw pi-home',
@@ -26,10 +26,17 @@ const Navbar = () => {
       icon: 'pi pi-fw pi-info-circle',
       url: '/about',
     },
+  ];
+  const userItems = [
     {
-      label: 'Contact',
-      icon: 'pi pi-fw pi-envelope',
-      url: '/contact',
+      label: 'Dashboard',
+      icon: 'pi pi-fw pi-home',
+      url: '/dashboard',
+    },
+    {
+      label: 'Competition',
+      icon: 'pi pi-fw pi-info-circle',
+      url: '/competition',
     },
   ];
 
@@ -56,11 +63,11 @@ const Navbar = () => {
   );
 
   const userMenu = (
-    <Menubar model={items} end={logoutButton} style={{ color: 'var(--primary-color) ' }} />
+    <Menubar model={userItems} end={logoutButton} style={{ color: 'var(--primary-color) ' }} />
   );
 
   const guestMenu = (
-    <Menubar model={items} end={loginButton} style={{ color: 'var(--primary-color)' }} />
+    <Menubar model={guestItems} end={loginButton} style={{ color: 'var(--primary-color)' }} />
   );
 
   return (
