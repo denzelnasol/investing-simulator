@@ -19,31 +19,14 @@ import CompeteOther from 'components/FillerPage/CompeteOthers';
 import PracticeInvest from 'components/FillerPage/practiceInvest'
 import RealTimeData from 'components/FillerPage/RealTimeData';
 import AboutUs from 'components/FillerPage/AboutUs';
-// Enums
-import { Symbol } from 'enums/Stock';
 
-// API
-import { getCurrentStockInfo } from 'api/Stock/Stock';
+import CompetitionList from 'components/Competition/CompetitionList'
 
 // Styles
 import './app.scss';
 
 
 const App = () => {
-
-  const [data, setData] = useState<Object>({ apiResponse: "" });
-
-  // This is a sample useEffect which uses the client Stock API function to retrieve sample stock info.
-  // useEffect(() => {
-  //   (async () => {
-  //     // const symbols = [Symbol.AAPL, Symbol.ABT, Symbol.AMZN];
-  //     const response = await getCurrentStockInfo(Object.keys(Symbol), { fields: ["displayName"]});
-  //     setData({ apiResponse: response });
-  //   })();
-
-  // }, []);
-
-  // console.log(data);
 
   return (
     <div className='app'>
@@ -59,6 +42,9 @@ const App = () => {
         <Route path='/practice-invest' element={<PracticeInvest/>}/>
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
+
+        <Route path='clist' element={<CompetitionList />}/>
+
       </Routes>
       <Footer/>
     </div>
