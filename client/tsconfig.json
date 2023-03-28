@@ -7,6 +7,7 @@
       "jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
       "types": [
         "react",
+        "jest",
         "node"
       ] /* Type declaration files to be included in compilation. */,
       "module": "esNext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
@@ -25,6 +26,7 @@
       ] /* List of folders to include type definitions from. */,
       "strictNullChecks": true /* Enable strict null checks. */,
       "allowJs": true /* Allow javascript files to be compiled. */,
+      "esModuleInterop": true
     },
     "include": [
       "src"

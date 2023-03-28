@@ -19,11 +19,12 @@ const axiosInstance = axios.create({
  * @returns { object }
  */
 async function getCurrentStockInfo(
-  symbol: Symbol | Symbol[] | string | string[],
-  queryOptions: Object | null = null,
-  moduleOptions: Object | null = null) {
-  if (!symbol || symbol.length === 0) {
-    return null;
+  symbol: Symbol | Symbol[] | string | string[], 
+  queryOptions: Object | null = null, 
+  moduleOptions: Object | null = null)
+{
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
   }
 
   const params = {
@@ -34,6 +35,21 @@ async function getCurrentStockInfo(
   const response = await axiosInstance.get('/current', { params });
   return response.data;
 }
+
+// interface to match return of yahoo finance API
+interface historicalStockInterval {
+  adjClose: number,
+  close: number,
+  date: string,
+  high: number,
+  low: number,
+  open: number,
+  volume: number
+};
+
+interface historicalStockInfo {
+  intervals: historicalStockInterval[]
+};
 
 /**
  * @memberof module:Stock
@@ -48,12 +64,11 @@ async function getCurrentStockInfo(
  *
  * @returns { object }
  */
-async function getHistoricalStockInfo(
-  symbol: Symbol | string,
-  queryOptions: Object | null = null,
-  moduleOptions: Object | null = null) {
-  if (symbol == null) {
-    return null;
+ async function getHistoricalStockInfo(symbol: Symbol | string, queryOptions: Object | null = null, moduleOptions: Object | null = null)
+  : Promise<historicalStockInfo>
+{
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
   }
 
   const params = {
@@ -62,7 +77,10 @@ async function getHistoricalStockInfo(
     moduleOptions,
   };
   const response = await axiosInstance.get('/historical', { params });
-  return response.data;
+
+  return {
+    intervals: response.data
+  };
 }
 
 export {
