@@ -1,3 +1,9 @@
+enum StockInterval {
+  Day = "1d",
+  Week = "1wk",
+  Month = "1mo"
+}
+
 enum Symbol {
   AAPL = 'AAPL',
   MSFT = 'MSFT',
@@ -101,7 +107,8 @@ enum Symbol {
 }
 
 export {
-  Symbol
+  Symbol,
+  StockInterval
 };
 
 // ALMOST every single symbole in the NASDAQ stock exchange
