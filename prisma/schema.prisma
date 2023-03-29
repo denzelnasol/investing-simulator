@@ -68,7 +68,7 @@ model owns {
 model transaction {
   transaction_id   String    @id @default(uuid())
   num_shares       Int
-  amount           Float
+  total_amount     Float
   transaction_time DateTime
   fk_portfolio     String
   portfolio        portfolio @relation(fields: [fk_portfolio], references: [portfolio_id])

@@ -6,12 +6,18 @@ name: profile
 | field         | type   | notes                                        | optional | default |
 |---------------|--------|----------------------------------------------|----------|---------|
 | profile_id    | string | auto-generated                               | yes      | auto    |
-| username      | string | username cannot be empty. max length = 50    | no       |         |
+| first_name    | string | username cannot be empty. max length = 50    | no       |         |
+| last_name     | string | username cannot be empty. max length = 50    | no       |         |
+| email         | string | username cannot be empty. max length = 50    | no       |         |
+| phone_number  | string | username cannot be empty. max length = 32    | no       |         |
 | password_hash | string | password cannot be empty. max length = 50    | no       |         |
 | points        | int    | The points that this account has accumulated | yes      | 0       |
 
 ## Portfolio table
 name: portfolio
+notes:
+- the investment_profit field is there for convenience so that we dont need to run the same
+ query multiple times by 1 user
 
 | field             | type   | notes                                     | optional | default |
 |-------------------|--------|-------------------------------------------|----------|---------|
@@ -68,7 +74,7 @@ notes:
 |------------------|--------|-------------------------------------|----------|---------|
 | transaction_id   | string | auto-generated                      | yes      | auto    |
 | num_shares       | int    | number of shares purchased/sold     | no       |         |
-| amount           | float  | total amount                        | no       |         |
+| total_amount     | float  | total amount                        | no       |         |
 | transaction_time | Date   | the time the transaction took place | no       |         |
 | fk_portfolio     | string | the portfolio id                    | no       |         |
 | fk_stock         | string | the stock symbol                    | no       |         |

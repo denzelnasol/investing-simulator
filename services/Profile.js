@@ -1,64 +1,32 @@
-const md5 = require("md5");
 const prisma = require("../src/db");
-const { addPortfolio } = require("../services/Portfolio");
+const md5 = require('md5');
 
-/**
- * 
- * model profile {
- * profile_id    String      @id @default(uuid())
- * username      String      @unique @db.VarChar(50)
- * password_hash String      @db.VarChar(50)
- * email         String      @db.VarChar(50)
- * phone_number  String      @db.VarChar(32)
- * points        Int?        @default(0)
- * portfolio     portfolio[]
- * }
- */
-async function addProfile(first_name, last_name, password_hash, email, phone_number) {
-
-  const data = {
-    first_name,
-    last_name,
-    password_hash,
-    email,
-    phone_number,
-  };
-
-  try {
-    const newProfile = await prisma.profile.create({
-      data
+// returns the profile associated with the email and password
+// returns empty list if no profile found => email or password incorrect
+async function getProfile(email, password) {
+    return await prisma.profile.findFirst({
+        where: {
+            AND: {
+                email: email,
+                password_hash: md5(password)
+            },
+        }
     });
+};
 
-    const profileId = newProfile.profile_id;
-
-    const portfolioKeyValueObj = {
-      portfolio_type: 'main',
-      base_balance: 10000,
-      fk_profile: profileId,
-    }
-
-    if (profileId) {
-      await addPortfolio(portfolioKeyValueObj);
-    }
-
-    return newProfile;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function findProfileByLogin(email, password) {
-  const portfolio = await prisma.profile.findFirst({
-    where: {
-      email: email,
-      password_hash: password,
-    }
-  });
-
-  return portfolio;
-}
+async function createProfile(firstName, lastName, email, password, phoneNumber) {
+    return await prisma.profile.create({
+        data: {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            phone_number: phoneNumber,
+            password_hash: md5(password)
+        }
+    });
+};
 
 module.exports = {
-  addProfile,
-  findProfileByLogin,
+    getProfile,
+    createProfile
 }
