@@ -13,7 +13,7 @@ function CompetitionList(props) {
     const [competitions, setCompetitions] = useState<any>([]);
 
     useEffect(() => {
-        (async () => {
+        async function fetchData() {
             // fetch portfolios (request returns competition ids as well)
             const token: string = Cookies.get('token');
             const portfolios = await getUserPortfolios(token);
@@ -24,15 +24,16 @@ function CompetitionList(props) {
                 console.log(p);
                 return (
                     <li key={p.fk_competition}>
-                        <Link to="/competition" style={{ textDecoration: 'none' }}>
+                        <Link to="/competition?id=123" style={{ textDecoration: 'none' }}>
                             <Button label={p.fk_competition} />
                         </Link>
                     </li>
                 )
             });
             setCompetitions(competitionLinks);
-        })();
+        }
 
+        fetchData();
     }, []);
 
     return (

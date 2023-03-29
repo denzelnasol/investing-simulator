@@ -16,7 +16,7 @@ function getTokenFromRequest(request) {
 }
 
 async function verifyToken(token) {
-  console.log(token);
+  //console.log(token);
 
   try {
     return await jwt.verify(token, process.env.JWT_KEY);
