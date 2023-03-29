@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { Symbol } from 'enums/Stock';
-import { Config } from 'Config';
 
-const {SiteURL, Port} = Config;
-const EndPoint = `${SiteURL}:${Port}/stock`;
+const axiosInstance = axios.create({
+  baseURL: `${process.env.REACT_APP_NODE_URL}/stock`,
+});
 
 /**
  * @memberof module:Stock
@@ -23,8 +23,8 @@ async function getCurrentStockInfo(
   queryOptions: Object | null = null, 
   moduleOptions: Object | null = null)
 {
-  if (!symbol || symbol.length === 0) {
-    return null;
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
   }
 
   const params = {
@@ -32,9 +32,24 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios(`${EndPoint}/current`, { params });
+  const response = await axiosInstance.get('/current', { params });
   return response.data;
 }
+
+// interface to match return of yahoo finance API
+interface historicalStockInterval {
+  adjClose: number,
+  close: number,
+  date: string,
+  high: number,
+  low: number,
+  open: number,
+  volume: number
+};
+
+interface historicalStockInfo {
+  intervals: historicalStockInterval[]
+};
 
 /**
  * @memberof module:Stock
@@ -49,13 +64,11 @@ async function getCurrentStockInfo(
  *
  * @returns { object }
  */
- async function getHistoricalStockInfo(
-  symbol: Symbol | string,
-  queryOptions: Object | null = null, 
-  moduleOptions: Object | null = null)
+ async function getHistoricalStockInfo(symbol: Symbol | string, queryOptions: Object | null = null, moduleOptions: Object | null = null)
+  : Promise<historicalStockInfo>
 {
-  if (symbol == null) {
-    return null;
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
   }
 
   const params = {
@@ -63,8 +76,11 @@ async function getCurrentStockInfo(
     queryOptions,
     moduleOptions,
   };
-  const response = await axios(`${EndPoint}/historical`, { params });
-  return response.data;
+  const response = await axiosInstance.get('/historical', { params });
+
+  return {
+    intervals: response.data
+  };
 }
 
 export {

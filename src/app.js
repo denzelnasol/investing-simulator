@@ -6,12 +6,12 @@ var path = require('path');
 var logger = require('morgan');
 var cors = require('cors');
 
-// const { getStockBySymbol } = require('../services/Stock');
-// const { addProfile, findProfileByLogin } = require('../services/Profile');
+// const { getStockBySymbol } = require('./services/Stock');
+// const { addProfile, findProfileByLogin } = require('./services/Profile');
 
-var indexRouter = require('../routes/index');
-var usersRouter = require('../routes/users');
-var stockRouter = require('../routes/stock');
+var indexRouter = require('./../routes/index');
+var usersRouter = require('./../routes/users');
+var stockRouter = require('./../routes/stock');
 
 // constants
 const PORT = 8080;
@@ -25,12 +25,14 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors());
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/stock', stockRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/stock', stockRouter);
+app.use('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+});
 
 /** DB TEST **/
 // app.get('/test', async (req, res) => {
