@@ -38,7 +38,7 @@ const verifyUser = async (token: any) => {
             console.error(err);
             return false;
         });
-
+    
     return result;
 }
 

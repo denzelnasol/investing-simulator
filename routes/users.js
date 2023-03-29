@@ -8,6 +8,13 @@ router.use(cookieParser());
 const ProfileService = require('../services/Profile');
 const PortfolioService = require('../services/Portfolio');
 
+// constants
+const UNAUTHORIZED_RESPONSE = { success: false, message: 'Unauthorized'};
+
+function getTokenFromRequest(request) {
+  return request.headers['authorization'];
+}
+
 /* GET users listing. */
 router.get('/', (req, res, next) => {
   res.send('respond with a resource');
@@ -25,20 +32,17 @@ router.post('/login', async (req, res, next) => {
   const token = jwt.sign({ email }, process.env.JWT_KEY);
   res.cookie('token', token, { httpOnly: false }); // MUST DISABLY HTTPONLY FOR COOKIE TO WORK
   res.send({ success: true, token });
-
 });
 
 /* Verify a user's credentials  */
 router.get('/verify', async (req, res, next) => {
-  const token = req.headers['authorization'];
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Unauthorized' });
-  }
-
+  const token = getTokenFromRequest(req);
+  
   jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
       console.error(err);
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
+      res.status(401).json(UNAUTHORIZED_RESPONSE);
+      return;
     }
 
     req.user = decoded;
@@ -61,8 +65,10 @@ router.post('/register', async (req, res, next) => {
 
 /* Get a specific user's portfolios */
 router.post('/portfolios', async (req, res, next) => {
+  const token = getTokenFromRequest(req);
   const { profileId } = req.body;
   console.log(profileId);
+
 
   const portfolios = await PortfolioService.getPortfoliosByProfile(profileId);
   if (!portfolios) {

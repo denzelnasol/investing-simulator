@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 import { Button } from 'primereact/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { getUserPortfolios } from 'api/Profile/User';
+import { getUserPortfolios, verifyUser } from 'api/Profile/User';
 
 
 const testCompetitions: CompeititonWrapper[] = [
@@ -32,9 +33,17 @@ interface CompeititonWrapper {
 
 function CompetitionList(props) {
     const [competitions, setCompetitions] = useState<any>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
+            // check if user is logged in
+            // const token = Cookies.get('token');
+            // const loggedIn = await verifyUser(token);
+            // if (!loggedIn) {
+            //     navigate('/login');
+            // }
+
             // fetch portfolios
             const profileId = '1fdce0aa-7638-422f-94bf-fb7265bcb48d'
             const portfolios = await getUserPortfolios(profileId);
