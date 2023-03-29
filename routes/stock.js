@@ -102,6 +102,33 @@ router.post('/buy-stock', async (req, res) => {
   }
 })
 
+router.post('/sell-stock', async (req, res) => {
+  const { symbol, asking, quantity, authToken } = req.body;
+
+  try {
+    const token = jwt.verify(authToken, process.env.JWT_KEY);
+    const email = token.email;
+
+    const profile = await getProfileByEmail(email);
+    const profileId = profile.profile_id;
+
+    const mainPortfolio = await getMainPortfolio(profileId);
+    const portfolioId = mainPortfolio.portfolio_id;
+
+    // Add the stock if it doesn't yet exist in the table
+    let stock = await getStockBySymbol(symbol);
+    if (!stock || stock == undefined) {
+      stock = await addStock(symbol, asking);
+    }
+    
+    await sellStock(portfolioId, stock.symbol, quantity, asking);
+    res.send({ success: true })
+  } catch (err) {
+    res.send({ success: false });
+  }
+})
+
+
 /** @todo Replace the param usage with body fields for post requests. */
 // when the user wants to buy a stock
 router.post('/sell/:symbol', async (req, res, next) => {

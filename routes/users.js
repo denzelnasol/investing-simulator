@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 var router = express.Router();
 router.use(cookieParser());
 
-const { createProfile, getProfile } = require('../services/Profile');
-const { createMainPortfolio, getPortfolio } = require('../services/Portfolio');
+const { getProfile, getProfileByEmail } = require('../services/Profile');
+const { createMainPortfolio, getPortfolio, getMainPortfolio } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');
 const { getRTStockSummary } = require('../services/StockApi');
 const { getHistory } = require('../services/History');
@@ -18,10 +18,23 @@ router.get('/', (req, res, next) => {
   res.send('respond with a resource');
 });
 
+router.get('/profile', async (req, res) => {
+  let authToken = req.headers['authorization'];
+  if (!authToken) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  authToken = jwt.verify(authToken, process.env.JWT_KEY);
+  const email = authToken.email;
+
+  const profile = await getProfileByEmail(email);
+  res.send(profile);
+})
+
 /* Login a user */
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
-  
+
   const user = await getProfile(email, password);
   if (user === null) {
     res.send({ success: false });
@@ -68,6 +81,49 @@ router.post('/register', async (req, res, next) => {
 
   res.send({ success: true });
 });
+
+router.get('/portfolio', async (req, res) => {
+  let authToken = req.headers['authorization'];
+  if (!authToken) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  authToken = jwt.verify(authToken, process.env.JWT_KEY);
+  const email = authToken.email;
+
+  const competitionName = req.params['competitionName'];
+  if (competitionName) {
+    // retrieve the portfolio associated with the competition
+    return;
+  }
+
+  // get the main portfolio
+  const profile = await getProfileByEmail(email);
+  const portfolio = await getMainPortfolio(profile.profile_id);
+  res.send(portfolio);
+})
+
+router.get('/owned-stocks', async (req, res) => {
+  let authToken = req.headers['authorization'];
+  if (!authToken) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  authToken = jwt.verify(authToken, process.env.JWT_KEY);
+  const email = authToken.email;
+
+  const competitionName = req.params['competitionName'];
+  if (competitionName) {
+    // retrieve the stocks for portfolio associated with the competition
+    return;
+  }
+
+  // retrieve the stocks for main portfolio
+  const profile = await getProfileByEmail(email);
+  const portfolio = await getMainPortfolio(profile.profile_id);
+  const stocks = await getStocks(portfolio.portfolio_id);
+  res.send(stocks);
+})
 
 // dashboard/competition portfolios and view other peoples portfolios
 router.get('/portfolio/:portfolioId', async (req, res, next) => {

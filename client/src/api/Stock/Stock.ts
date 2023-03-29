@@ -101,9 +101,28 @@ async function buyStock(symbol: Symbol | string, asking: number, quantity: numbe
   return response.data.success;
 }
 
+async function sellStock(symbol: Symbol | string, asking: number, quantity: number) {
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
+  }
+
+  const authToken = Cookies.get('token');
+  const data = {
+    symbol,
+    asking,
+    quantity,
+    authToken,
+  };
+
+  const response = await axiosInstance.post('/sell-stock', data);
+  return response.data.success;
+}
+
+
 
 export {
   getCurrentStockInfo,
   getHistoricalStockInfo,
   buyStock,
+  sellStock
 };

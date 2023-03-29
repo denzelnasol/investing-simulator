@@ -1,18 +1,18 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+const axiosInstance = axios.create({
+    baseURL: `${process.env.REACT_APP_NODE_URL}/users`,
+  });
 
-export const loginUser = async (email: string, password: string): Promise<boolean> => {
+
+const loginUser = async (email: string, password: string): Promise<boolean> => {
     const data = {
         email: email,
         password: password
     };
     
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_NODE_URL,
-    });
-
-    const result: boolean = await axiosInstance.post('/users/login', data)
+    const result: boolean = await axiosInstance.post('/login', data)
         .then(res => {
             if (res.data.success) {
                 Cookies.set('token', res.data.token, { expires: 7, path: '/' });
@@ -28,12 +28,8 @@ export const loginUser = async (email: string, password: string): Promise<boolea
     return result;
 };
 
-export const verifyUser = async (token: any) => {
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_NODE_URL,
-    });
-    
-    const result: boolean = await axiosInstance.get('/users/verify', {
+const verifyUser = async (token: any) => {
+    const result: boolean = await axiosInstance.get('/verify', {
         headers: { Authorization: token },
     })
         .then((res) => {
@@ -59,12 +55,7 @@ export const registerUser = async (firstName: string, lastName: string, password
         phoneNumber,
     };
 
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_NODE_URL,
-    });
-    
-
-    const result = await axiosInstance.post('/users/register', data)
+    const result = await axiosInstance.post('/register', data)
         .then(res => {
             if (res.data.success) {
                 return true;
@@ -78,4 +69,36 @@ export const registerUser = async (firstName: string, lastName: string, password
         });
 
     return result;
+}
+
+const getProfile = async (token: any) => {
+    const result: any = await axiosInstance.get('/profile', {
+        headers: { Authorization: token },
+    })
+    return result.data;
+}
+
+const getPortfolio = async (token: any, competitionName: string = null) => {
+    const result: any = await axiosInstance.get('/portfolio', {
+        headers: { Authorization: token },
+        params: { competitionName }
+    })
+    return result.data;
+}
+
+const getStocks = async (token: any, competitionName: string = null) => {
+    const result: any = await axiosInstance.get('/owned-stocks', {
+        headers: { Authorization: token },
+        params: { competitionName }
+    })  
+    return result.data;
+}
+
+
+export {
+    loginUser,
+    verifyUser,
+    getProfile,
+    getPortfolio,
+    getStocks
 }
