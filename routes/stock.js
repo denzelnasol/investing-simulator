@@ -2,7 +2,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const { getProfileByEmail } = require('../services/Profile');
-const { getStockBySymbol, addStock, buyStock } = require('../services/Stock');
+const { getStockBySymbol, addStock, buyStock, getStockInfo, getAllAvailableStocks, sellStock } = require('../services/Stock');
+const { getRTStockDetails, getRTStockSummary } = require('../services/StockApi');
 const { getMainPortfolio } = require('../services/Portfolio');
 const yahooFinance = require('yahoo-finance2').default;
 const router = express.Router();
@@ -28,25 +29,99 @@ router.get('/historical', async (req, res, next) => {
   res.send(result);
 });
 
+// when user clicks on stock it should show stock info page
+router.get('/:symbol', async (req, res, next) => {
+  try {
+
+
+    // get portfolioId from cookie.token
+    var portfolioId = req.body.portfolioId;
+
+    let symbol = req.params.symbol;
+
+    let pfData = await getStockInfo(portfolioId, symbol);
+    let details = await getRTStockDetails(symbol);
+
+    res.send({
+      numShares: pfData.num_shares,
+      amountInvested: pfData.amount_invested,
+      details: details,
+    });
+
+
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
+// when the user searches for stocks show a list of all available stocks
+router.get('/all', async (req, res, next) => {
+  try {
+
+
+    let stocks = await getAllAvailableStocks();
+    let stData = await getRTStockSummary(stocks.map(x => x.symbol));
+
+    res.send({ stocks: stData });
+
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
 router.post('/buy-stock', async (req, res) => {
   const { symbol, asking, quantity, authToken } = req.body;
 
-  const token = jwt.verify(authToken, process.env.JWT_KEY);
-  const email = token.email;
+  try {
+    const token = jwt.verify(authToken, process.env.JWT_KEY);
+    const email = token.email;
 
-  const profile = await getProfileByEmail(email);
-  const profileId = profile.profile_id;
+    const profile = await getProfileByEmail(email);
+    const profileId = profile.profile_id;
 
-  const mainPortfolio = await getMainPortfolio(profileId);
-  const portfolioId = mainPortfolio.portfolio_id;
+    const mainPortfolio = await getMainPortfolio(profileId);
+    const portfolioId = mainPortfolio.portfolio_id;
 
-  let stock = await getStockBySymbol(symbol);
-  if (!stock || stock == undefined) {
-    stock = await addStock(symbol, asking);
+    // Add the stock if it doesn't yet exist in the table
+    let stock = await getStockBySymbol(symbol);
+    if (!stock || stock == undefined) {
+      stock = await addStock(symbol, asking);
+    }
+
+    /** 
+     * The client has already made an api request for a stock list.
+     * We can pass in the asking price from the particular stocking, and skip this.
+     */
+    // let details = await getRTStockDetails(symbol, [ 'regularMarketPrice' ]);
+    // let pps = details.regularMarketPrice;
+
+    await buyStock(portfolioId, stock.symbol, quantity, asking);
+    res.send({ success: true })
+  } catch (err) {
+    res.send({ success: false });
   }
-
-  await buyStock(portfolioId, stock.symbol, quantity, asking);
-  res.send({ success: true })
 })
+
+/** @todo Replace the param usage with body fields for post requests. */
+// when the user wants to buy a stock
+router.post('/sell/:symbol', async (req, res, next) => {
+  try {
+
+    // get portfolioId from cookie.token
+    var portfolioId = req.body.portfolioId;
+
+    let symbol = req.params.symbol;
+    let numShares = req.body.numShares;
+
+    let details = await getRTStockDetails(['regularMarketPrice']);
+    let pps = details.regularMarketPrice;
+    let result = await sellStock(portfolioId, symbol, numShares, pps);
+
+    res.sendStatus(201);
+
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
 
 module.exports = router;

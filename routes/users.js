@@ -6,7 +6,12 @@ var router = express.Router();
 router.use(cookieParser());
 
 const { createProfile, getProfile } = require('../services/Profile');
-const { createMainPortfolio } = require('../services/Portfolio');
+const { createMainPortfolio, getPortfolio } = require('../services/Portfolio');
+const { getStocks } = require('../services/Stock');
+const { getRTStockSummary } = require('../services/StockApi');
+const { getHistory } = require('../services/History');
+
+const PORTFOLIO_STARTING_BALANCE = 10000;
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -51,15 +56,36 @@ router.get('/verify', async (req, res, next) => {
 router.post('/register', async (req, res, next) => {
   const { firstName, lastName, password, email, phoneNumber } = req.body;
 
-  const p = await createProfile(firstName, lastName, email, password, phoneNumber);
-  if (p === null) {
+  let newProfile;
+  let newPortfolio;
+  try {
+    newProfile = await profile.createProfile(firstName, lastName, email, password, phoneNumber);
+    newPortfolio = await createMainPortfolio(newProfile.profile_id, PORTFOLIO_STARTING_BALANCE);
+  } catch (err) {
     res.send({ success: false });
     return;
   }
 
-  await createMainPortfolio(p.profile_id, 10000);
-
   res.send({ success: true });
+});
+
+// dashboard/competition portfolios and view other peoples portfolios
+router.get('/portfolio/:portfolioId', async (req, res, next) => {
+  try {
+    let portfolioId = req.params.portfolioId;
+    let pf = await getPortfolio(portfolioId);
+    let st = await getStocks(pf.portfolio_id);
+    let stData = await getRTStockSummary(st.map(s => s.fk_stock));
+    let histData = await getHistory(pf.portfolio_id);
+  
+    res.json({
+      balance: pf.base_balance,
+      stocks: stData,
+      history: histData,
+    });
+  } catch (err) {
+    res.status(404).json(err);
+  }
 });
 
 module.exports = router;
