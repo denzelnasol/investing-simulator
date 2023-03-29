@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 var router = express.Router();
 router.use(cookieParser());
 
-const Profile = require('../services/Profile');
+const ProfileService = require('../services/Profile');
+const PortfolioService = require('../services/Portfolio');
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -15,8 +16,8 @@ router.get('/', (req, res, next) => {
 /* Login a user */
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
-  const profile = await Profile.findProfileByLogin(email, password);
-  if (!profile || profile === null) {
+  const profile = await ProfileService.findProfileByLogin(email, password);
+  if (!profile) {
     res.send({ success: false });
     return;
   }
@@ -49,13 +50,28 @@ router.get('/verify', async (req, res, next) => {
 router.post('/register', async (req, res, next) => {
   const { firstName, lastName, password, email, phoneNumber } = req.body;
 
-  const profile = await Profile.addProfile(firstName, lastName, password, email, phoneNumber);
-  if (!profile || profile === null) {
+  const profile = await ProfileService.addProfile(firstName, lastName, password, email, phoneNumber);
+  if (!profile) {
     res.send({ success: false });
     return;
   }
 
   res.send({ success: true });
+});
+
+/* Get a specific user's portfolios */
+router.post('/portfolios', async (req, res, next) => {
+  const { profileId } = req.body;
+  console.log(profileId);
+
+  const portfolios = await PortfolioService.getPortfoliosByProfile(profileId);
+  if (!portfolios) {
+    res.send({ success: false })
+    return;
+  }
+
+  console.log(portfolios);
+  res.send({ success: true, portfolios: portfolios});
 });
 
 module.exports = router;

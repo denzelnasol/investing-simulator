@@ -34,7 +34,15 @@ function CompetitionList(props) {
     const [competitions, setCompetitions] = useState<any>([]);
 
     useEffect(() => {
-        // fetch portfolios here
+        (async () => {
+            // fetch portfolios
+            const profileId = '1fdce0aa-7638-422f-94bf-fb7265bcb48d'
+            const portfolios = await getUserPortfolios(profileId);
+            console.log(portfolios);
+
+            // fetch competitions with portfolio ids
+        })();
+    
 
         const fetchedComps = testCompetitions.map((c: CompeititonWrapper) => {
             return (
@@ -52,11 +60,6 @@ function CompetitionList(props) {
     return (
         <div>
             <h1>Your Ongoing Competitions</h1>
-            <Link to="/competition" style={{ textDecoration: 'none' }}>
-                <Button
-                    label='my competition'
-                />
-            </Link>
             <ul style={{listStyleType: 'none'}}>
                 {competitions}
             </ul>

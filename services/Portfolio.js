@@ -7,6 +7,16 @@ async function getPortfolioById(id) {
     },
   });
   return portfolio;
+} 
+
+async function getPortfoliosByProfile(profileId) {
+  const portfolios = await prisma.portfolio.findMany({
+    where: {
+      fk_profile: profileId,
+    },
+  });
+
+  return portfolios;
 }
 
 async function addPortfolio(keyValueObj) {
@@ -37,6 +47,7 @@ async function getPortfolioBalanceHistory(portfolioId) {
 
 module.exports = {
   getPortfolioById,
+  getPortfoliosByProfile,
   addPortfolio,
   getPortfolioBalanceHistory,
 }

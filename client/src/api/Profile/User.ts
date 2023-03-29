@@ -63,8 +63,21 @@ const registerUser = async (firstName: string, lastName: string, password: strin
     return result;
 }
 
-const getUserPortfolios = async (token) => {
-    //const result = await axiosInstance.get('/users/portfolios');
+const getUserPortfolios = async (id) => {
+    const data = {
+        profileId: id
+    };
+
+    const result = await axiosInstance.post('/users/portfolios', data)
+        .then(res => {
+            return res.data.portfolios;
+        })
+        .catch(err => {
+            console.log(err);
+            return null;
+        });
+    
+    return result;
 }
 
 export {
