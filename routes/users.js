@@ -29,12 +29,8 @@ router.post('/login', async (req, res, next) => {
   }
 
   const token = jwt.sign({ email }, process.env.JWT_KEY);
-  res.cookie('token', token, { httpOnly: true });
-
-
-  res.send({ success: true, token,
-    profileId: user.profile_id,
-  });
+  res.cookie('token', token, { httpOnly: false }); // MUST DISABLY HTTPONLY FOR COOKIE TO WORK
+  res.send({ success: true, token });
 
 });
 

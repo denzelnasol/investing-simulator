@@ -6,17 +6,14 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StockGraph from './StockGraph';
 
-function callStockAPI(symbol: string | null) {
-    if (symbol != null) {
-        return getCurrentStockInfo(symbol);
-    }
-    return null;
+function fetchCurrentData(symbol: string) {
+    return getCurrentStockInfo(symbol);
 };
 
 function Stock(props) {
     // get stock symbol from query string in URL
     const [searchParams] = useSearchParams();
-    const symbol = searchParams.get("symbol");
+    const stockSymbol = searchParams.get("symbol");
 
     // state
     const [name, setName] = useState("");
@@ -30,29 +27,32 @@ function Stock(props) {
     // call stock api and update state
     useEffect(() => {
         (async () => {
-            const data = await callStockAPI(symbol);
-            console.log(data);
-            if (!data) {
+            let curData;
+            try {
+                curData = await fetchCurrentData(stockSymbol ?? "");
+            } catch (err) {
+                console.log(err);
                 setError(true);
                 return;
             }
 
-            setName(data.longName);
-            setAsk(data.ask);
-            setMarketCap(data.marketCap);
-            setExchange(data.exchange);
-            setYearlyHigh(data.fiftyTwoWeekHigh);
-            setYearlyLow(data.fiftyTwoWeekLow);
+            setName(curData.longName);
+            setAsk(curData.ask);
+            setMarketCap(curData.marketCap);
+            setExchange(curData.exchange);
+            setYearlyHigh(curData.fiftyTwoWeekHigh);
+            setYearlyLow(curData.fiftyTwoWeekLow);
             setError(false);
         })();
-    });
+
+    }, []);
     
     return (
         // return error page if stock symbol is not found
         error ? <Error /> : 
         <div>
             <h1>{name}</h1>
-            <StockGraph />
+            <StockGraph stockSymbol={stockSymbol ?? ""} />
             <StockDetails 
                 ask={ask} 
                 marketCap={marketCap} 
@@ -64,4 +64,7 @@ function Stock(props) {
     );
 }
 
+export const exportedForTesting = {
+    fetchCurrentData
+}
 export default Stock;
