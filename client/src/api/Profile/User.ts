@@ -28,6 +28,7 @@ const loginUser = async (email: string, password: string): Promise<boolean> => {
 };
 
 const verifyUser = async (token: any) => {
+    console.log(token);
     const result: boolean = await axiosInstance.get('/users/verify', {
         headers: { Authorization: token },
     })
@@ -63,12 +64,14 @@ const registerUser = async (firstName: string, lastName: string, password: strin
     return result;
 }
 
-const getUserPortfolios = async (id) => {
+const getUserPortfolios = async (token) => {
     const data = {
-        profileId: id
+        profileId: '1fdce0aa-7638-422f-94bf-fb7265bcb48d'
     };
 
-    const result = await axiosInstance.post('/users/portfolios', data)
+    const result = await axiosInstance.post('/users/portfolios', data, {
+         headers: {Authorization: token}
+    })
         .then(res => {
             return res.data.portfolios;
         })
