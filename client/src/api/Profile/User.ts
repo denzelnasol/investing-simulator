@@ -59,7 +59,12 @@ export const registerUser = async (firstName: string, lastName: string, password
         phoneNumber,
     };
 
-    const result = await axios.post('/users/register', data)
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_NODE_URL,
+    });
+    
+
+    const result = await axiosInstance.post('/users/register', data)
         .then(res => {
             if (res.data.success) {
                 return true;
