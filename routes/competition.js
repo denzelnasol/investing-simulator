@@ -9,28 +9,28 @@ const portfolioDbService = require('../services/Portfolio');
 const competitionDbService = require('../services/Competition');
 
 // when the user searches for competitions show the list of competitions
-router.get('/all', async (req, res, next) => {
-    try {
+// router.get('/all', async (req, res, next) => {
+//     try {
 
-        let competitions = await competitionDbService.getCompetitions();
+//         let competitions = await competitionDbService.getCompetitions();
 
-        res.json({ 
-            competitions: competitions.map(x => {
-                return {
-                    uuid: x.competition_id,
-                    competitionStart: x.start_time,
-                    competitionEnd: x.end_time,
-                };
-            }) 
-        });
+//         res.json({ 
+//             competitions: competitions.map(x => {
+//                 return {
+//                     uuid: x.competition_id,
+//                     competitionStart: x.start_time,
+//                     competitionEnd: x.end_time,
+//                 };
+//             }) 
+//         });
 
-    } catch (err) {
-        res.status(404).json(err);
-    }
-});
+//     } catch (err) {
+//         res.status(404).json(err);
+//     }
+// });
 
 // when the user clicks on Competition in navbar show the list of personal competitions
-router.get('/personal', async (req, res, next) => {
+router.get('/competitions', async (req, res, next) => {
     try {
         
         // get profile id from cookie

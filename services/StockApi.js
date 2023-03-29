@@ -29,8 +29,6 @@ async function getRTStockDetails(symbol, fields = []) {
     return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
 }
 
-getRTStockSummary(['aapl']).then(data=>console.log(data));
-
 module.exports = {
     getRTStockSummary,
     getRTStockDetails,
