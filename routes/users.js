@@ -5,7 +5,27 @@ const jwt = require('jsonwebtoken');
 var router = express.Router();
 router.use(cookieParser());
 
-const Profile = require('../services/Profile');
+const ProfileService = require('../services/Profile');
+const PortfolioService = require('../services/Portfolio');
+
+// constants
+const UNAUTHORIZED_RESPONSE = { success: false, message: 'Unauthorized'};
+
+function getTokenFromRequest(request) {
+  return request.headers['authorization'];
+}
+
+function verifyToken(token) {
+  const res = jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return null;
+    }
+    return decoded;
+  });
+
+  return res;
+}
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -15,47 +35,67 @@ router.get('/', (req, res, next) => {
 /* Login a user */
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
-  const profile = await Profile.findProfileByLogin(email, password);
-  if (!profile || profile === null) {
-    res.send({ success: false });
-    return;
-  }
+  // const profile = await ProfileService.findProfileByLogin(email, password);
+  // if (!profile) {
+  //   res.send({ success: false });
+  //   return;
+  // }
 
+  console.log(process.env.JWT_KEY);
   const token = jwt.sign({ email }, process.env.JWT_KEY);
   res.cookie('token', token, { httpOnly: false }); // MUST DISABLY HTTPONLY FOR COOKIE TO WORK
   res.send({ success: true, token });
-
 });
 
 /* Verify a user's credentials  */
 router.get('/verify', async (req, res, next) => {
-  const token = req.headers['authorization'];
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  const token = getTokenFromRequest(req);
+
+  const decodedToken = verifyToken(token);
+  if (decodedToken === null) {
+    res.status(401).json(UNAUTHORIZED_RESPONSE);
+    return;
   }
 
-  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-    if (err) {
-      console.error(err);
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    req.user = decoded;
-    res.send({ success: true });
-  });
+  req.user = decodedToken;
+  res.send({ success: true });
 });
 
 /* Register a user */
 router.post('/register', async (req, res, next) => {
   const { firstName, lastName, password, email, phoneNumber } = req.body;
 
-  const profile = await Profile.addProfile(firstName, lastName, password, email, phoneNumber);
-  if (!profile || profile === null) {
+  const profile = await ProfileService.addProfile(firstName, lastName, password, email, phoneNumber);
+  if (!profile) {
     res.send({ success: false });
     return;
   }
 
   res.send({ success: true });
+});
+
+/* Get a specific user's portfolios */
+router.post('/portfolios', async (req, res, next) => {
+  const token = getTokenFromRequest(req);
+
+  const decodedToken = verifyToken(token);
+  if (decodedToken === null) {
+    res.status(401).json(UNAUTHORIZED_RESPONSE);
+    return;
+  }
+
+  const { profileId } = req.body;
+  console.log(profileId);
+
+
+  const portfolios = await PortfolioService.getPortfoliosByProfile(profileId);
+  if (!portfolios) {
+    res.send({ success: false })
+    return;
+  }
+
+  console.log(portfolios);
+  res.send({ success: true, portfolios: portfolios});
 });
 
 module.exports = router;
