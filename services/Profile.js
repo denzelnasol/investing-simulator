@@ -24,7 +24,7 @@ async function addProfile(first_name, last_name, password_hash, email, phone_num
     phone_number,
   };
 
-  try {
+  try { 
     const newProfile = await prisma.profile.create({
       data
     });

@@ -15,6 +15,18 @@ function getTokenFromRequest(request) {
   return request.headers['authorization'];
 }
 
+function verifyToken(token) {
+  const res = jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return null;
+    }
+    return decoded;
+  });
+
+  return res;
+}
+
 /* GET users listing. */
 router.get('/', (req, res, next) => {
   res.send('respond with a resource');
@@ -23,12 +35,13 @@ router.get('/', (req, res, next) => {
 /* Login a user */
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
-  const profile = await ProfileService.findProfileByLogin(email, password);
-  if (!profile) {
-    res.send({ success: false });
-    return;
-  }
+  // const profile = await ProfileService.findProfileByLogin(email, password);
+  // if (!profile) {
+  //   res.send({ success: false });
+  //   return;
+  // }
 
+  console.log(process.env.JWT_KEY);
   const token = jwt.sign({ email }, process.env.JWT_KEY);
   res.cookie('token', token, { httpOnly: false }); // MUST DISABLY HTTPONLY FOR COOKIE TO WORK
   res.send({ success: true, token });
@@ -37,17 +50,15 @@ router.post('/login', async (req, res, next) => {
 /* Verify a user's credentials  */
 router.get('/verify', async (req, res, next) => {
   const token = getTokenFromRequest(req);
-  
-  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-    if (err) {
-      console.error(err);
-      res.status(401).json(UNAUTHORIZED_RESPONSE);
-      return;
-    }
 
-    req.user = decoded;
-    res.send({ success: true });
-  });
+  const decodedToken = verifyToken(token);
+  if (decodedToken === null) {
+    res.status(401).json(UNAUTHORIZED_RESPONSE);
+    return;
+  }
+
+  req.user = decodedToken;
+  res.send({ success: true });
 });
 
 /* Register a user */
@@ -66,6 +77,13 @@ router.post('/register', async (req, res, next) => {
 /* Get a specific user's portfolios */
 router.post('/portfolios', async (req, res, next) => {
   const token = getTokenFromRequest(req);
+
+  const decodedToken = verifyToken(token);
+  if (decodedToken === null) {
+    res.status(401).json(UNAUTHORIZED_RESPONSE);
+    return;
+  }
+
   const { profileId } = req.body;
   console.log(profileId);
 

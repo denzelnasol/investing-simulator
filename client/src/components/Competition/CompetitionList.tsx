@@ -38,11 +38,12 @@ function CompetitionList(props) {
     useEffect(() => {
         (async () => {
             // check if user is logged in
-            // const token = Cookies.get('token');
-            // const loggedIn = await verifyUser(token);
-            // if (!loggedIn) {
-            //     navigate('/login');
-            // }
+            const token: string = Cookies.get('token');
+            const loggedIn: boolean = await verifyUser(token);
+            if (!loggedIn) {
+                navigate('/login');
+                return;
+            }
 
             // fetch portfolios
             const profileId = '1fdce0aa-7638-422f-94bf-fb7265bcb48d'
