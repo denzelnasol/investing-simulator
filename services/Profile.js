@@ -1,4 +1,3 @@
-const md5 = require("md5");
 const prisma = require("../src/db");
 const { addPortfolio } = require("../services/Portfolio");
 
@@ -48,17 +47,28 @@ async function addProfile(first_name, last_name, password_hash, email, phone_num
 }
 
 async function findProfileByLogin(email, password) {
-  const portfolio = await prisma.profile.findFirst({
+  const profile = await prisma.profile.findFirst({
     where: {
       email: email,
       password_hash: password,
     }
   });
 
-  return portfolio;
+  return profile;
+}
+
+async function findProfileByEmail(email) {
+  const profile = await prisma.profile.findFirst({
+    where: {
+      email: email
+    }
+  });
+
+  return profile;
 }
 
 module.exports = {
   addProfile,
   findProfileByLogin,
+  findProfileByEmail,
 }

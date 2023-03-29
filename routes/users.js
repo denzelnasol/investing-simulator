@@ -16,7 +16,7 @@ function getTokenFromRequest(request) {
 }
 
 async function verifyToken(token) {
-  //console.log(token);
+  console.log(token);
 
   try {
     return await jwt.verify(token, process.env.JWT_KEY);
@@ -77,17 +77,16 @@ router.post('/register', async (req, res, next) => {
   res.send({ success: true });
 });
 
-/* Get a specific user's portfolios */
-router.post('/portfolios', requireAuth, async (req, res, next) => {
-  const { profileId } = req.body;
-  const userEmail = req.user.email;
+/* Get a specific user's portfolios and associated competition names */
+router.get('/portfolios', requireAuth, async (req, res, next) => {
+  const { userEmail } = req.user;
 
-  const portfolios = await PortfolioService.getPortfoliosByProfile(profileId);
+  const profile = await ProfileService.findProfileByEmail(userEmail);
+  const portfolios = await PortfolioService.getPortfoliosByProfile(profile.profile_id);
   if (!portfolios) {
     res.send({ success: false })
     return;
   }
-  //console.log(portfolios);
 
   res.send({ success: true, portfolios: portfolios});
 });

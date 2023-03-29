@@ -65,11 +65,7 @@ const registerUser = async (firstName: string, lastName: string, password: strin
 }
 
 const getUserPortfolios = async (token) => {
-    const data = {
-        profileId: '1fdce0aa-7638-422f-94bf-fb7265bcb48d'
-    };
-
-    const result = await axiosInstance.post('/users/portfolios', data, {
+    const result = await axiosInstance.get('/users/portfolios', {
          headers: {Authorization: token}
     })
         .then(res => {

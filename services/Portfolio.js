@@ -14,6 +14,13 @@ async function getPortfoliosByProfile(profileId) {
     where: {
       fk_profile: profileId,
     },
+    include: {
+      competition: {
+        select: {
+          competition_id: true,
+        }
+      }
+    }
   });
 
   return portfolios;
@@ -43,7 +50,6 @@ async function getPortfolioBalanceHistory(portfolioId) {
 
   return portfolio.history;
 }
-
 
 module.exports = {
   getPortfolioById,
