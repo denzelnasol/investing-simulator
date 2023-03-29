@@ -1,16 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
+// API
+import { buyStock } from "api/Stock/Stock";
 
 // Components
+import Button from 'components/PrimeReact/Button/Button';
 import { Dialog } from 'primereact/dialog';
 import { InputNumber } from 'primereact/inputnumber';
-import Button from 'components/PrimeReact/Button/Button';
 import { useNavigate } from 'react-router-dom';
+import { Toast } from 'primereact/toast';
 
 // Styles
 import './style.scss';
 
 const StockTradeDialog = ({ ...props }) => {
   const navigate = useNavigate();
+
+  // ** useRef ** //
+  const toast = useRef(null);
 
   // ** useStates ** //
   const [quantity, setQuantity] = useState<number>(0);
@@ -21,17 +28,21 @@ const StockTradeDialog = ({ ...props }) => {
   }
 
   /** @todo: execute stock trade for portfolio here */
-  const buyStock = (rowData) => {
-    // navigate(`/buy/${rowData.id}`);
-    // buy stock here
+  const executeTrade = async () => {
+    const symbol = props.stock && props.stock.symbol;
+    const asking = props.stock && props.stock.ask;
+    const res = await buyStock(symbol, asking, quantity);
+    if (res) {
+      toast.current.show({severity:'success', summary: 'Order Successfully Executed', detail:`${quantity} shares of ${props.stock.symbol} purchased`, life: 3000});
+    }
+    onHide();
   };
-
 
   // ** Components ** //
   const renderFooter = () => {
     return (
       <div className="flex justify-content-center">
-        <Button className="w-full" label="Buy" onClick={buyStock} disabled={quantity <= 0}/>
+        <Button className="w-full" label="Buy" onClick={executeTrade} disabled={quantity <= 0}/>
       </div>
     );
   }
@@ -88,7 +99,6 @@ const StockTradeDialog = ({ ...props }) => {
         <div className="field col-12">
           {quantityField}
         </div>
-
       </div>
 
     </Dialog>
@@ -96,6 +106,7 @@ const StockTradeDialog = ({ ...props }) => {
 
   return (
     <div className="stock-trade-dialog">
+      <Toast ref={toast} />
       {tradeDialog}
     </div>
   );

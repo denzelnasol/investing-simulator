@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 var router = express.Router();
 router.use(cookieParser());
 
-const profile = require('../services/profile');
+const { createProfile, getProfile } = require('../services/Profile');
+const { createMainPortfolio } = require('../services/Portfolio');
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -16,7 +17,7 @@ router.get('/', (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
   
-  const user = await profile.getProfile(email, password);
+  const user = await getProfile(email, password);
   if (user === null) {
     res.send({ success: false });
     return;
@@ -50,11 +51,13 @@ router.get('/verify', async (req, res, next) => {
 router.post('/register', async (req, res, next) => {
   const { firstName, lastName, password, email, phoneNumber } = req.body;
 
-  const p = profile.createProfile(firstName, lastName, email, password, phoneNumber);
+  const p = await createProfile(firstName, lastName, email, password, phoneNumber);
   if (p === null) {
     res.send({ success: false });
     return;
   }
+
+  await createMainPortfolio(p.profile_id, 10000);
 
   res.send({ success: true });
 });
