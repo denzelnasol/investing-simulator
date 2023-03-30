@@ -9,6 +9,7 @@ var cors = require('cors');
 // const { getStockBySymbol } = require('./services/Stock');
 // const { addProfile, findProfileByLogin } = require('./services/Profile');
 
+var competitionRouter = require('../routes/competition');
 var indexRouter = require('./../routes/index');
 var usersRouter = require('./../routes/users');
 var stockRouter = require('./../routes/stock');
@@ -28,25 +29,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors());
 
+app.use('./competition', competitionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/stock', stockRouter);
 app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
-
-/** DB TEST **/
-// app.get('/test', async (req, res) => {
-//   const data = {
-//     username: "Denzel",
-//     password_hash: "123456",
-//     email: "denzelnasol@gmail.com",
-//     phone_number: "604-401-7843"
-//   };
-//   // await findProfileByLogin("DenzelNasol@gmail.com", "123456")
-//   await addProfile(data);
-//   // const data = await getStockBySymbol('testStock');
-//   res.json(data);
-// })
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -53,17 +53,27 @@ const Navbar = () => {
     </Link>
   );
 
-  const logoutButton = (
-    <Button
-      label='Logout'
-      icon='pi pi-sign-out'
-      className='p-button-secondary p-ml-auto'
-      onClick={signOutUser}
-    />
+  const loggedInLeftNavBar = (
+    <div className="flex">
+
+      <Button
+        label="Trade"
+        icon='pi pi-money-bill'
+        className='p-button-secondary p-ml-auto mr-2'
+        onClick={() => navigate('/stock-table')}
+      />
+
+      <Button
+        label='Logout'
+        icon='pi pi-sign-out'
+        className='p-button-secondary p-ml-auto'
+        onClick={signOutUser}
+      />
+    </div>
   );
 
   const userMenu = (
-    <Menubar model={userItems} end={logoutButton} style={{ color: 'var(--primary-color) ' }} />
+    <Menubar model={userItems} end={loggedInLeftNavBar} style={{ color: 'var(--primary-color) ' }} />
   );
 
   const guestMenu = (
