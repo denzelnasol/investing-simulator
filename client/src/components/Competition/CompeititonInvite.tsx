@@ -29,8 +29,8 @@ function CompetitionInvite(props) {
             <Button label="Invite" className="p-button-success" icon="pi pi-plus" iconPos="right" onClick={showDialog}/>
             <Dialog header="Invite a Friend to the Competition" visible={visible} modal onHide={hideDialog} footer={footer}>
                 <div className="p-field">
-                    <label htmlFor="email">Email Address</label>
-                    <InputText id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <label htmlFor="email">Email Address</label> <br/>
+                    <InputText id="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
             </Dialog>
         </div>

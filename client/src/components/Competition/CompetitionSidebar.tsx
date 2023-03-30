@@ -21,6 +21,9 @@ function CompetitionSidebar(props) {
       </p> <br/>
       <p>How this works</p> <br/>
       <p>Invite up to 3 other players to join your competition through the "invite" button.</p>
+      <p>Now you can choose the start date, end date and player size for the competition through the configure button</p>
+      <p>Once all players joined, you can begin the competition by clicking 'Start Competition'</p> <br/>
+      <p>Good luck! May the best trader win!</p>
 
     </Sidebar>
   );

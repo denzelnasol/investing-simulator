@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
@@ -13,12 +13,21 @@ import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
 
 function Competition({ ...props }) {
+    const [config, setConfig] = useState({
+        startdate: '',
+        enddate: '',
+        playersize: 0,
+      });
+    
+      const handleConfigSave = (newConfig) => {
+        setConfig(newConfig);
+      };
 
     const leftToolbarContents = (
         <>
-            <div className="mr-5 font-bold text-gray-700">Start Date: </div>
-            <div className="mr-5 font-bold text-gray-700">End Date: </div>
-            <div className="font-bold text-gray-700">Player Size: </div>
+            <div className="mr-5 font-bold text-gray-700">Start Date: {config.startdate}</div>
+            <div className="mr-5 font-bold text-gray-700">End Date: {config.enddate}</div>
+            <div className="font-bold text-gray-700">Player Size: {config.playersize}</div>
         </>
     );
     
@@ -27,7 +36,7 @@ function Competition({ ...props }) {
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
             <CompetitionInvite />
             <div className='mr-2'></div>
-            <CompetitionConfiguration/>
+            <CompetitionConfiguration onSave={handleConfigSave}/>
         </>
     );
 

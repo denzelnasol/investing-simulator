@@ -21,10 +21,8 @@ function CompetitionConfiguration(props) {
   const hideDialog = () => {
     setVisible(false);
   };
-
   const saveConfiguration = () => {
-    // Save configuration and close dialog
-    console.log(configuration);
+    props.onSave(configuration);
     hideDialog();
   };
 
