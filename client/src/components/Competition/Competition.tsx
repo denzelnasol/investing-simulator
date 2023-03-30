@@ -4,6 +4,7 @@ import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompeititonInvite';
+import CompetitionConfiguration from './CompetitionConfig';
 
 import Card from 'components/PrimeReact/Card/Card';
 import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
@@ -25,6 +26,7 @@ function Competition({ ...props }) {
         <>
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
             <CompetitionInvite />
+            <CompetitionConfiguration/>
         </>
     );
 
