@@ -14,6 +14,16 @@ async function getProfile(email, password) {
     });
 };
 
+async function getProfileByEmail(email) {
+    return await prisma.profile.findFirst({
+        where: {
+            AND: {
+                email: email,
+            },
+        }
+    });
+};
+
 async function createProfile(firstName, lastName, email, password, phoneNumber) {
     return await prisma.profile.create({
         data: {
@@ -28,5 +38,6 @@ async function createProfile(firstName, lastName, email, password, phoneNumber) 
 
 module.exports = {
     getProfile,
+    getProfileByEmail,
     createProfile
 }
