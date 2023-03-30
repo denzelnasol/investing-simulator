@@ -24,7 +24,6 @@ router.get('/', (req, res, next) => {
 
 router.get('/profile', requireAuth, async (req, res) => {
 	const email = req.user.userEmail;
-	const email = authToken.email;
 	const profile = await getProfileByEmail(email);
 	res.send(profile);
 })
@@ -70,7 +69,7 @@ router.post('/register', async (req, res, next) => {
 router.get('/all-portfolios', requireAuth, async (req, res, next) => {
 	const { userEmail } = req.user;
 
-	const profile = await ProfileService.findProfileByEmail(userEmail);
+	const profile = await ProfileService.getProfileByEmail(userEmail);
 	const portfolios = await PortfolioService.getPortfoliosByProfile(profile.profile_id);
 	if (!portfolios) {
 		res.send({ success: false })

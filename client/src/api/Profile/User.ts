@@ -80,7 +80,7 @@ const getPortfolio = async (token: any, competitionName: string = null) => {
 }
 
 const getAllPortfolios = async (token) => {
-    const result = await axiosInstance.get('/users/all-portfolios', {
+    const result = await axiosInstance.get('/all-portfolios', {
          headers: {Authorization: token}
     })
         .then(res => {

@@ -21,7 +21,7 @@ async function requireAuth(req, res, next) {
     const decodedToken = await verifyToken(token);
 
     if (decodedToken === null) {
-        res.status(401).json(UNAUTHORIZED_RESPONSE);
+        res.status(401).json({ success: false, message: 'unauthorized' });
     } else {
         //console.log("decoded: " + decodedToken);
         req.user = decodedToken;

@@ -8,7 +8,8 @@ async function getProfile(email, password) {
         where: {
             AND: {
                 email: email,
-                password_hash: md5(password)
+                //password_hash: md5(password) // some passwords in database are not hashed
+                password_hash: password
             },
         }
     });
