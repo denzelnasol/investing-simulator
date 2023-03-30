@@ -32,8 +32,8 @@ router.get('/profile', requireAuth, async (req, res) => {
 router.post('/login', async (req, res, next) => {
 	const { email, password } = req.body;
 
-	//const user = await getProfile(email, password);
-	const user = await ProfileService.getProfileUnhashed;
+	const user = await getProfile(email, password);
+	//const user = await ProfileService.getProfileUnhashed;
 	if (user === null) {
 		res.send({ success: false });
 		return;

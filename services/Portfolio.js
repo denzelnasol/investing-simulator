@@ -62,6 +62,7 @@ async function createCompetitionPortfolio(profileId, competitionId, balance) {
 module.exports = {
   getPortfolio,
   getMainPortfolio,
+  getPortfoliosByProfile,
   createMainPortfolio,
   createCompetitionPortfolio
 };
