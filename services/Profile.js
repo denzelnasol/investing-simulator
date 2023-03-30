@@ -14,20 +14,6 @@ async function getProfile(email, password) {
     });
 };
 
-// to be used only for development purposes
-// (some passwords in db are unhashed so if you want to log in
-//  with those profiles, use this function)
-async function getProfileUnhashed(email, password) {
-    return await prisma.profile.findFirst({
-        where: {
-            AND: {
-                email: email,
-                password_hash: password
-            },
-        }
-    });
-}
-
 async function getProfileByEmail(email) {
     return await prisma.profile.findFirst({
         where: {
@@ -53,6 +39,5 @@ async function createProfile(firstName, lastName, email, password, phoneNumber) 
 module.exports = {
     getProfile,
     getProfileByEmail,
-    getProfileUnhashed,
     createProfile
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from 'primereact/card';
 
+
 const FillerCard = (props) => {
     const image = props.image
     const title = props.title;
