@@ -2,9 +2,6 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
-var router = express.Router();
-router.use(cookieParser());
-
 const ProfileService = require('../services/Profile');
 const PortfolioService = require('../services/Portfolio');
 
@@ -17,13 +14,16 @@ const { requireAuth } = require('../services/Auth');
 
 const PORTFOLIO_STARTING_BALANCE = 10000;
 
+var router = express.Router();
+router.use(cookieParser());
+
 /* GET users listing. */
 router.get('/', (req, res, next) => {
 	res.send('respond with a resource');
 });
 
 router.get('/profile', requireAuth, async (req, res) => {
-	const email = req.user.userEmail;
+	const email = req.user.email;
 	const profile = await getProfileByEmail(email);
 	res.send(profile);
 })
@@ -56,7 +56,7 @@ router.post('/register', async (req, res, next) => {
 	let newProfile;
 	let newPortfolio;
 	try {
-		newProfile = await profile.createProfile(firstName, lastName, email, password, phoneNumber);
+		newProfile = await ProfileService.createProfile(firstName, lastName, email, password, phoneNumber);
 		newPortfolio = await createMainPortfolio(newProfile.profile_id, PORTFOLIO_STARTING_BALANCE);
 	} catch (err) {
 		res.send({ success: false });
@@ -68,9 +68,9 @@ router.post('/register', async (req, res, next) => {
 
 /* Get a specific user's portfolios and associated competition names */
 router.get('/all-portfolios', requireAuth, async (req, res, next) => {
-	const { userEmail } = req.user;
+	const { email } = req.user;
 
-	const profile = await ProfileService.getProfileByEmail(userEmail);
+	const profile = await ProfileService.getProfileByEmail(email);
 	const portfolios = await PortfolioService.getPortfoliosByProfile(profile.profile_id);
 	if (!portfolios) {
 		res.send({ success: false })
@@ -81,7 +81,7 @@ router.get('/all-portfolios', requireAuth, async (req, res, next) => {
 })
 
 router.get('/portfolio', requireAuth, async (req, res) => {
-	const email = req.user.userEmail;
+	const email = req.user.email;
 	const competitionName = req.params['competitionName'];
 	if (competitionName) {
 		// retrieve the portfolio associated with the competition
@@ -95,7 +95,7 @@ router.get('/portfolio', requireAuth, async (req, res) => {
 })
 
 router.get('/owned-stocks', requireAuth, async (req, res) => {
-	const email = req.user.userEmail;
+	const email = req.user.email;
 	const competitionName = req.params['competitionName'];
 	if (competitionName) {
 		// retrieve the stocks for portfolio associated with the competition
