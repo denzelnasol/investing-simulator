@@ -2,7 +2,6 @@ import React from "react";
 import practiceInvestingImage from 'assets/practiceInvesting.jpg';
 import FillerCard from "./FillerCard";
 import { PrimeIcons } from "primereact/api";
-
 const PracticeInvest = () => {
     return (
         <div style={{ padding: '2em' }}>

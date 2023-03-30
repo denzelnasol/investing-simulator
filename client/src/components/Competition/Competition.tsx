@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React from 'react';
 
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
@@ -11,21 +10,8 @@ import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
 
 import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
-import { testCompetitionApiCall } from 'api/Competition/Competition';
 
 function Competition({ ...props }) {
-    // get competition id from query string in URL
-    const [searchParams] = useSearchParams();
-    const id = searchParams.get("id");
-
-    // fetch information about competition
-    useEffect(() => {
-        async function fetchData() {
-            testCompetitionApiCall();
-        }
-
-        fetchData();
-    });
 
     const leftToolbarContents = (
         <>

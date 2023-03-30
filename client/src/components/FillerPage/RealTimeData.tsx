@@ -2,7 +2,6 @@ import React from "react";
 import dataImage from 'assets/data.jpg'
 import FillerCard from "./FillerCard";
 import { PrimeIcons } from "primereact/api";
-
 const RealTimeData = () => {
 
     return (
