@@ -26,6 +26,7 @@ function Competition({ ...props }) {
         <>
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
             <CompetitionInvite />
+            <div className='mr-2'></div>
             <CompetitionConfiguration/>
         </>
     );
