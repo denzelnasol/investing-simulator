@@ -4,6 +4,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 
+
 function CompetitionConfiguration(props) {
   const [visible, setVisible] = useState(false);
   const [configuration, setConfiguration] = useState({
@@ -51,15 +52,15 @@ function CompetitionConfiguration(props) {
 
       <Dialog header="Configuration" visible={visible} modal onHide={hideDialog} footer={footer}>
       <div className="p-field">
-          <label htmlFor="startdate">Start Date</label>
+          <label htmlFor="startdate">Start Date</label> <br/>
           <Calendar id="startdate" value={configuration.startdate ? new Date(configuration.startdate) : null} onChange={handleStartDateChange}minDate={new Date()}/>
         </div>
         <div className="p-field">
-          <label htmlFor="enddate">End Date</label>
+          <label htmlFor="enddate">End Date</label> <br/>
           <Calendar id="enddate" value={configuration.enddate ? new Date(configuration.enddate) : null}onChange={handleEndDateChange} minDate={minEndDate}/>
         </div>
         <div className="p-field">
-          <label htmlFor="playersize">Player Size</label>
+          <label htmlFor="playersize">Player Size</label> <br/>
           <InputText id="playersize" type="number" value={configuration.playersize.toString()} onChange={(e) => setConfiguration({ ...configuration, playersize: parseInt(e.target.value) })} />
         </div>
       </Dialog>
