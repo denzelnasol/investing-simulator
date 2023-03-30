@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors());
 
+app.use('./competition', competitionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/stock', stockRouter);
 app.use('/api/competitions', competitionRouter);

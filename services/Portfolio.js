@@ -1,10 +1,11 @@
 const prisma = require("../src/db");
 
-async function getPortfolioById(id) {
-  const portfolio = await prisma.portfolio.findUnique({
+// returns all the data needed to be displayed on the portfolio dashboard
+async function getPortfolio(portfolioId) {
+  return await prisma.portfolio.findUnique({
     where: {
-      id,
-    },
+      portfolio_id: portfolioId
+    }
   });
   return portfolio;
 } 
@@ -26,34 +27,42 @@ async function getPortfoliosByProfile(profileId) {
   return portfolios;
 }
 
-async function addPortfolio(keyValueObj) {
-  const newPortfolio = await prisma.portfolio.create({
-    data: keyValueObj,
+async function getMainPortfolio(profileId) {
+  return await prisma.portfolio.findFirst({
+    where: {
+      AND: {
+        fk_profile: profileId,
+        portfolio_type: 'main'
+      }
+    }
   });
-
-  return newPortfolio;
 }
 
-async function getPortfolioBalanceHistory(portfolioId) {
-  const portfolio = await prisma.portfolio.findUnique({
-    where: {
-      id: portfolioId,
-    },
-    include: {
-      history: {
-        orderBy: {
-          snapshot_time: 'asc'
-        }
-      },
-    },
+async function createMainPortfolio(profileId, balance) {
+  return await prisma.portfolio.create({
+    data: {
+        portfolio_type: 'main',
+        base_balance: balance,
+        fk_profile: profileId
+    }
   });
+}
 
-  return portfolio.history;
+async function createCompetitionPortfolio(profileId, competitionId, balance) {
+  return await prisma.portfolio.create({
+    data: {
+        portfolio_type: 'competition',
+        base_balance: balance,
+        fk_profile: profileId,
+        fk_competition: competitionId,
+    }
+  }); 
 }
 
 module.exports = {
-  getPortfolioById,
-  getPortfoliosByProfile,
-  addPortfolio,
-  getPortfolioBalanceHistory,
-}
+  getPortfolio,
+  getMainPortfolio,
+  createMainPortfolio,
+  createCompetitionPortfolio
+};
+
