@@ -79,6 +79,22 @@ const getPortfolio = async (token: any, competitionName: string = null) => {
     return result.data;
 }
 
+const getAllPortfolios = async (token) => {
+    const result = await axiosInstance.get('/users/all-portfolios', {
+         headers: {Authorization: token}
+    })
+        .then(res => {
+            return res.data.portfolios;
+        })
+        .catch(err => {
+            console.log(err);
+            return null;
+        });
+    
+    return result;
+}
+
+
 const getStocks = async (token: any, competitionName: string = null) => {
     const result: any = await axiosInstance.get('/owned-stocks', {
         headers: { Authorization: token },
@@ -91,7 +107,9 @@ const getStocks = async (token: any, competitionName: string = null) => {
 export {
     loginUser,
     verifyUser,
+    registerUser,
     getProfile,
     getPortfolio,
+    getAllPortfolios,
     getStocks
 }

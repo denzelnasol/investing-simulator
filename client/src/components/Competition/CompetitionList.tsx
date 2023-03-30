@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
-import { getUserPortfolios } from 'api/Profile/User';
+import { getAllPortfolios } from 'api/Profile/User';
 
 interface fetchedPortfolio {
     fk_competition: string,
@@ -16,7 +16,7 @@ function CompetitionList(props) {
         async function fetchData() {
             // fetch portfolios (request returns competition ids as well)
             const token: string = Cookies.get('token');
-            const portfolios = await getUserPortfolios(token);
+            const portfolios = await getAllPortfolios(token);
             console.log(portfolios);
 
             // update list of competitions on UI
