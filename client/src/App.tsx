@@ -22,6 +22,8 @@ import AboutUs from 'components/FillerPage/AboutUs';
 import CompetitionList from 'components/Competition/CompetitionList'
 import StockTable from 'components/StockTable/StockTable';
 
+import Private from 'components/Private/Private';
+
 // Styles
 import './app.scss';
 
@@ -45,6 +47,7 @@ const App = () => {
         <Route path ='/about' element={<AboutUs/>}/>
 
         <Route path='clist' element={<CompetitionList />}/>
+        <Route path='private-test' element={<Private componentToRender={<Welcome />} />} />
 
       </Routes>
       <Footer/>
