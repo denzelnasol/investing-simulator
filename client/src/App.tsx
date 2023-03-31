@@ -48,8 +48,7 @@ const App = () => {
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
 
-        <Route path='clist' element={<CompetitionList />}/>
-        {/* <Route path='private-test' element={<Private componentToRender={<Welcome />} />} /> */}
+        <Route path='clist' element={<Private componentToRender={CompetitionList} />}/>
 
       </Routes>
       <Footer/>

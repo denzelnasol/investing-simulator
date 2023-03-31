@@ -28,7 +28,6 @@ const Login = () => {
       setPassword('');
       setIsInvalid(true);
     } else {
-      console.log("here");
       navigate('/dashboard');
     }
 
