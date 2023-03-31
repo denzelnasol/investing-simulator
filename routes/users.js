@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 const ProfileService = require('../services/Profile');
 const PortfolioService = require('../services/Portfolio');
 
-const { getProfile, getProfileByEmail } = require('../services/Profile');
-const { createMainPortfolio, getPortfolio, getMainPortfolio } = require('../services/Portfolio');
+const { getProfile, getProfileByEmail, createProfile } = require('../services/Profile');
+const { createMainPortfolio, getPortfolio, getMainPortfolio, getPortfoliosByProfile } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');
 const { getRTStockSummary } = require('../services/StockApi');
 const { getHistory } = require('../services/History');
@@ -56,7 +56,7 @@ router.post('/register', async (req, res, next) => {
 	let newProfile;
 	let newPortfolio;
 	try {
-		newProfile = await ProfileService.createProfile(firstName, lastName, email, password, phoneNumber);
+		newProfile = await createProfile(firstName, lastName, email, password, phoneNumber);
 		newPortfolio = await createMainPortfolio(newProfile.profile_id, PORTFOLIO_STARTING_BALANCE);
 	} catch (err) {
 		res.send({ success: false });
@@ -70,8 +70,8 @@ router.post('/register', async (req, res, next) => {
 router.get('/all-portfolios', requireAuth, async (req, res, next) => {
 	const { email } = req.user;
 
-	const profile = await ProfileService.getProfileByEmail(email);
-	const portfolios = await PortfolioService.getPortfoliosByProfile(profile.profile_id);
+	const profile = await getProfileByEmail(email);
+	const portfolios = await getPortfoliosByProfile(profile.profile_id);
 	if (!portfolios) {
 		res.send({ success: false })
 		return;
@@ -106,6 +106,7 @@ router.get('/owned-stocks', requireAuth, async (req, res) => {
 	const profile = await getProfileByEmail(email);
 	const portfolio = await getMainPortfolio(profile.profile_id);
 	const stocks = await getStocks(portfolio.portfolio_id);
+
 	res.send(stocks);
 })
 
