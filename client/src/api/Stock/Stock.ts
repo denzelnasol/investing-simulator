@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Symbol } from 'enums/Stock';
 
 const axiosInstance = axios.create({
-  baseURL: `${process.env.REACT_APP_NODE_URL}/stock`,
+  baseURL: `http://34.168.141.137/api/stock`,
 });
 
 /**

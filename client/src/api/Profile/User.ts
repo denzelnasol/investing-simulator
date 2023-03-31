@@ -9,7 +9,7 @@ export const loginUser = async (email: string, password: string): Promise<boolea
     };
     
     const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_NODE_URL,
+        baseURL: 'http://34.168.141.137/api',
     });
 
     const result: boolean = await axiosInstance.post('/users/login', data)
@@ -30,7 +30,7 @@ export const loginUser = async (email: string, password: string): Promise<boolea
 
 export const verifyUser = async (token: any) => {
     const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_NODE_URL,
+        baseURL: 'http://34.168.141.137/api',
     });
     
     const result: boolean = await axiosInstance.get('/users/verify', {
@@ -60,7 +60,7 @@ export const registerUser = async (firstName: string, lastName: string, password
     };
 
     const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_NODE_URL,
+        baseURL: 'http://34.168.141.137/api',
     });
     
 
