@@ -29,7 +29,8 @@ async function getProfileUnhashed(email, password) {
 }
 
 async function getProfileByEmail(email) {
-    return await prisma.profile.findFirst({
+	console.log(email, "HERE");   
+ return await prisma.profile.findFirst({
         where: {
             AND: {
                 email: email,

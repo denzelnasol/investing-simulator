@@ -25,10 +25,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../build')));
 app.use(cors());
 
-// app.use('./competition', competitionRouter);
+app.use('./competition', competitionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/stock', stockRouter);
-// app.use('/api/competitions', competitionRouter);
+app.use('/api/competitions', competitionRouter);
 app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
