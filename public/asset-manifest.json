@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "./static/css/main.73dacc0d.css",
+    "main.js": "./static/js/main.145eb01f.js",
+    "static/js/708.a192337b.chunk.js": "./static/js/708.a192337b.chunk.js",
+    "static/media/compete.jpg": "./static/media/compete.63f3dda3eab35f8fcd02.jpg",
+    "static/media/data.jpg": "./static/media/data.6f59864e7c7639a279a0.jpg",
+    "static/media/bg-register.jpg": "./static/media/bg-register.677c2181a21836103b25.jpg",
+    "static/media/practiceInvesting.jpg": "./static/media/practiceInvesting.0213e8742e0e14a7c6ab.jpg",
+    "static/media/invest.jpg": "./static/media/invest.7f7498e2dafd0489dd46.jpg",
+    "static/media/primeicons.svg": "./static/media/primeicons.e1441b135b3ca9ad643c.svg",
+    "static/media/SavingVInvesting.jpg": "./static/media/SavingVInvesting.cf37861ab759e176724b.jpg",
+    "static/media/primeicons.eot": "./static/media/primeicons.d44157bdfa026dc877af.eot",
+    "static/media/primeicons.woff": "./static/media/primeicons.10d3152104f2208ac82a.woff",
+    "static/media/primeicons.ttf": "./static/media/primeicons.ea5358601d0a3fd6670b.ttf",
+    "static/media/primeicons.woff2": "./static/media/primeicons.78172950b335ccdb94e2.woff2",
+    "index.html": "./index.html",
+    "main.73dacc0d.css.map": "./static/css/main.73dacc0d.css.map",
+    "main.145eb01f.js.map": "./static/js/main.145eb01f.js.map",
+    "708.a192337b.chunk.js.map": "./static/js/708.a192337b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.73dacc0d.css",
+    "static/js/main.145eb01f.js"
+  ]
+}
