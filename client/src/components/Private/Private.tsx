@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Cookies from 'js-cookie';
 import { verifyUser } from 'api/Profile/User';
 
-import Login from 'components/Login/Login';
-
 interface PrivateProps {
-    componentToRender: React.ReactNode
+    componentToRender: React.ComponentType<any>
 }
 
 /**
@@ -16,24 +15,27 @@ interface PrivateProps {
  * @returns Component that either renders passed in component, or login page
  */
 function Private(props: PrivateProps) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const ComponentToRender = props.componentToRender;
+    const navigate = useNavigate();
+    const [token, setToken] = useState()
     
     // check user token on back-end
     useEffect(() => {
         async function authenticateUser() { 
-            const token = Cookies.get('token');
-            setIsAuthenticated(await verifyUser(token));
+            const cookieVal = await Cookies.get('token');
+            setToken(cookieVal);
+
+            const isAuthenticated = await verifyUser(cookieVal);
+            if (!isAuthenticated) {
+                navigate('/login');
+            }
         }
 
         authenticateUser();
     }, []);
-
-    console.log(isAuthenticated);
     
     return (
-        isAuthenticated 
-            ? <div>{props.componentToRender}</div>
-            : <Login />
+        <ComponentToRender token={token}/>
     );
 }
 

@@ -40,14 +40,16 @@ const App = () => {
         <Route path='/competition' element={<Competition />} />
         <Route path='/stock' element={<Stock />} />
         <Route path='/stock-table' element={<StockTable />} />
-        <Route path='/dashboard' element={<Dashboard />} />
+
+        <Route path='/dashboard' element={<Private componentToRender={Dashboard} />} />
+
         <Route path='/real-time-data' element={<RealTimeData/>}/>
         <Route path='/practice-invest' element={<PracticeInvest/>}/>
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
 
         <Route path='clist' element={<CompetitionList />}/>
-        <Route path='private-test' element={<Private componentToRender={<Welcome />} />} />
+        {/* <Route path='private-test' element={<Private componentToRender={<Welcome />} />} /> */}
 
       </Routes>
       <Footer/>
