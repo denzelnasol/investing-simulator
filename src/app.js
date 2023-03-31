@@ -22,7 +22,7 @@ app.set('view engine', null);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../build')));
 app.use(cors());
 
 app.use('./competition', competitionRouter);
@@ -30,7 +30,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/stock', stockRouter);
 app.use('/api/competitions', competitionRouter);
 app.use('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
 
 // catch 404 and forward to error handler

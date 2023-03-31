@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { Symbol } from 'enums/Stock';
 
 const axiosInstance = axios.create({
-  baseURL: `http://34.168.141.137/api/stock`,
+  baseURL: `${process.env.REACT_APP_NODE_URL}/stock`,
 });
 
 /**
