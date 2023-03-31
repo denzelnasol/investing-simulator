@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Cookies from 'js-cookie';
 
 // Components
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
@@ -13,6 +14,7 @@ import StockTradeDialog from "components/StockTradeDialog/StockTradeDialog";
 import { getCurrentStockInfo } from "api/Stock/Stock";
 
 import './style.scss';
+import { getPortfolio } from "api/Profile/User";
 
 const StockTable = ({ ...props }) => {
 
@@ -22,6 +24,7 @@ const StockTable = ({ ...props }) => {
   const [stockFilters, setStockFilters] = useState(null);
   const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+  const [balance, setBalance] = useState<number>(0);
 
   // ** useEffects ** //
   useEffect(() => {
@@ -31,6 +34,13 @@ const StockTable = ({ ...props }) => {
       setData(stockData);
     };
 
+    async function getUserPortfolio() {
+      const authToken = Cookies.get('token');
+      const portfolio = await getPortfolio(authToken);
+      setBalance(portfolio.base_balance);
+    }
+
+    getUserPortfolio();
     fetchData();
     initializeFilters();
   }, []);
@@ -115,6 +125,7 @@ const StockTable = ({ ...props }) => {
         stock={selectedStock}
         displayTradeDialog={isTradeSelected}
         hideTradeDialog={() => setIsTradeSelected(false)}
+        balance={balance}
       />
       <DataTable
         value={data}

@@ -6,13 +6,10 @@ var path = require('path');
 var logger = require('morgan');
 var cors = require('cors');
 
-// const { getStockBySymbol } = require('./services/Stock');
-// const { addProfile, findProfileByLogin } = require('./services/Profile');
-
-var competitionRouter = require('../routes/competition');
-var indexRouter = require('./../routes/index');
-var usersRouter = require('./../routes/users');
-var stockRouter = require('./../routes/stock');
+const indexRouter = require('./../routes/index');
+const usersRouter = require('./../routes/users');
+const stockRouter = require('./../routes/stock');
+const competitionRouter = require('./../routes/competition');
 
 // constants
 const PORT = 8080;
@@ -20,8 +17,7 @@ const PORT = 8080;
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'ejs');
+app.set('view engine', null);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -32,24 +28,25 @@ app.use(cors());
 app.use('./competition', competitionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/stock', stockRouter);
+app.use('/api/competitions', competitionRouter);
 app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('Error');
 });
 
 app.listen(PORT, () => {

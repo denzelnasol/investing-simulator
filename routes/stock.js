@@ -1,9 +1,13 @@
 const express = require('express');
-const router = express.Router();
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const { getProfileByEmail } = require('../services/Profile');
+const { getStockBySymbol, addStock, buyStock, getStockInfo, getAllAvailableStocks, sellStock } = require('../services/Stock');
+const { getRTStockDetails, getRTStockSummary } = require('../services/StockApi');
+const { getMainPortfolio } = require('../services/Portfolio');
 const yahooFinance = require('yahoo-finance2').default;
-
-const stockDbService = require('../services/Stock');
-const stockApiService = require('../services/StockApi');
+const router = express.Router();
+router.use(cookieParser());
 
 /* GET current stock listing. */
 router.get('/current', async (req, res, next) => {
@@ -25,7 +29,6 @@ router.get('/historical', async (req, res, next) => {
   res.send(result);
 });
 
-
 // when user clicks on stock it should show stock info page
 router.get('/:symbol', async (req, res, next) => {
   try {
@@ -36,8 +39,8 @@ router.get('/:symbol', async (req, res, next) => {
 
     let symbol = req.params.symbol;
 
-    let pfData = await stockDbService.getStockInfo(portfolioId, symbol);
-    let details = await stockApiService.getRTStockDetails(symbol);
+    let pfData = await getStockInfo(portfolioId, symbol);
+    let details = await getRTStockDetails(symbol);
 
     res.send({
       numShares: pfData.num_shares,
@@ -56,8 +59,8 @@ router.get('/all', async (req, res, next) => {
   try {
 
 
-    let stocks = await stockDbService.getAllAvailableStocks();
-    let stData = await stockApiService.getRTStockSummary(stocks.map(x => x.symbol));
+    let stocks = await getAllAvailableStocks();
+    let stData = await getRTStockSummary(stocks.map(x => x.symbol));
 
     res.send({ stocks: stData });
 
@@ -66,30 +69,67 @@ router.get('/all', async (req, res, next) => {
   }
 });
 
-// when the user wants to buy a stock
-router.post('/buy/:symbol', async (req, res, next) => {
+router.post('/buy-stock', async (req, res) => {
+  const { symbol, asking, quantity, authToken } = req.body;
+
   try {
+    const token = jwt.verify(authToken, process.env.JWT_KEY);
+    const email = token.email;
 
+    const profile = await getProfileByEmail(email);
+    const profileId = profile.profile_id;
 
-    // get portfolioId from cookie.token
-    var portfolioId = req.body.portfolioId;
+    const mainPortfolio = await getMainPortfolio(profileId);
+    const portfolioId = mainPortfolio.portfolio_id;
 
-    let symbol = req.params.symbol;
-    let numShares = req.body.numShares;
+    // Add the stock if it doesn't yet exist in the table
+    let stock = await getStockBySymbol(symbol);
+    if (!stock || stock == undefined) {
+      stock = await addStock(symbol, asking);
+    }
 
-    // allow negative balances?
+    /** 
+     * The client has already made an api request for a stock list.
+     * We can pass in the asking price from the particular stocking, and skip this.
+     */
+    // let details = await getRTStockDetails(symbol, [ 'regularMarketPrice' ]);
+    // let pps = details.regularMarketPrice;
 
-    let details = await stockApiService.getRTStockDetails([ 'regularMarketPrice' ]);
-    let pps = details.regularMarketPrice;
-    let result = await stockDbService.buyStock(portfolioId, symbol, numShares, pps);
-
-    res.sendStatus(201);
-
+    await buyStock(portfolioId, stock.symbol, quantity, asking);
+    res.send({ success: true })
   } catch (err) {
-    res.status(404).json(err);
+    res.send({ success: false });
   }
-});
+})
 
+router.post('/sell-stock', async (req, res) => {
+  const { symbol, asking, quantity, authToken } = req.body;
+
+  try {
+    const token = jwt.verify(authToken, process.env.JWT_KEY);
+    const email = token.email;
+
+    const profile = await getProfileByEmail(email);
+    const profileId = profile.profile_id;
+
+    const mainPortfolio = await getMainPortfolio(profileId);
+    const portfolioId = mainPortfolio.portfolio_id;
+
+    // Add the stock if it doesn't yet exist in the table
+    let stock = await getStockBySymbol(symbol);
+    if (!stock || stock == undefined) {
+      stock = await addStock(symbol, asking);
+    }
+    
+    await sellStock(portfolioId, stock.symbol, quantity, asking);
+    res.send({ success: true })
+  } catch (err) {
+    res.send({ success: false });
+  }
+})
+
+
+/** @todo Replace the param usage with body fields for post requests. */
 // when the user wants to buy a stock
 router.post('/sell/:symbol', async (req, res, next) => {
   try {
@@ -100,9 +140,9 @@ router.post('/sell/:symbol', async (req, res, next) => {
     let symbol = req.params.symbol;
     let numShares = req.body.numShares;
 
-    let details = await stockApiService.getRTStockDetails([ 'regularMarketPrice' ]);
+    let details = await getRTStockDetails(['regularMarketPrice']);
     let pps = details.regularMarketPrice;
-    let result = await stockDbService.sellStock(portfolioId, symbol, numShares, pps);
+    let result = await sellStock(portfolioId, symbol, numShares, pps);
 
     res.sendStatus(201);
 

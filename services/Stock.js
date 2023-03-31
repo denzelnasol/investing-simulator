@@ -1,5 +1,21 @@
 const prisma = require("../src/db");
 
+async function getStockBySymbol(symbol) {
+  return await prisma.stock.findFirst({
+    where: {
+      symbol: symbol
+    }
+  });
+}
+
+async function addStock(symbol, asking) {
+  return await prisma.stock.create({
+    data: {
+        symbol,
+        price_per_share: asking,
+    }
+});
+}
 
 async function getAllAvailableStocks() {
   return await prisma.stock.findMany({
@@ -61,6 +77,8 @@ async function sellStock(portfolioId, stock, numShares, pricePerShare) {
 }
 
 module.exports = {
+  getStockBySymbol,
+  addStock,
   getAllAvailableStocks,
   getStockInfo,
   getStocks,

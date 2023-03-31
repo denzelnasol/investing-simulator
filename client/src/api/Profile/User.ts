@@ -1,18 +1,18 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+const axiosInstance = axios.create({
+    baseURL: `${process.env.REACT_APP_NODE_URL}/users`,
+  });
 
-export const loginUser = async (email: string, password: string): Promise<boolean> => {
+
+const loginUser = async (email: string, password: string): Promise<boolean> => {
     const data = {
         email: email,
         password: password
     };
     
-    const axiosInstance = axios.create({
-        baseURL: 'http://34.168.141.137/api',
-    });
-
-    const result: boolean = await axiosInstance.post('/users/login', data)
+    const result: boolean = await axiosInstance.post('/login', data)
         .then(res => {
             if (res.data.success) {
                 Cookies.set('token', res.data.token, { expires: 7, path: '/' });
@@ -28,29 +28,22 @@ export const loginUser = async (email: string, password: string): Promise<boolea
     return result;
 };
 
-export const verifyUser = async (token: any) => {
-    const axiosInstance = axios.create({
-        baseURL: 'http://34.168.141.137/api',
-    });
-    
-    const result: boolean = await axiosInstance.get('/users/verify', {
+const verifyUser = async (token: any) => {
+    const result: boolean = await axiosInstance.get('/verify', {
         headers: { Authorization: token },
     })
-        .then((res) => {
-            if (res.data.success) {
-                return true;
-            }
-            return false;
+        .then(res => {
+            return res.data.success;
         })
-        .catch((err) => {
+        .catch(err => {
             console.error(err);
             return false;
         });
-
+    
     return result;
 }
 
-export const registerUser = async (firstName: string, lastName: string, password: string, email: string, phoneNumber: string) => {
+const registerUser = async (firstName: string, lastName: string, password: string, email: string, phoneNumber: string) => {
     const data = {
         firstName,
         lastName,
@@ -59,18 +52,9 @@ export const registerUser = async (firstName: string, lastName: string, password
         phoneNumber,
     };
 
-    const axiosInstance = axios.create({
-        baseURL: 'http://34.168.141.137/api',
-    });
-    
-
-    const result = await axiosInstance.post('/users/register', data)
+    const result = await axiosInstance.post('/register', data)
         .then(res => {
-            if (res.data.success) {
-                return true;
-            } else {
-                return false;
-            }
+            return res.data.success;
         })
         .catch(err => {
             console.error(err);
@@ -78,4 +62,54 @@ export const registerUser = async (firstName: string, lastName: string, password
         });
 
     return result;
+}
+
+const getProfile = async (token: any) => {
+    const result: any = await axiosInstance.get('/profile', {
+        headers: { Authorization: token },
+    })
+    return result.data;
+}
+
+const getPortfolio = async (token: any, competitionName: string = null) => {
+    const result: any = await axiosInstance.get('/portfolio', {
+        headers: { Authorization: token },
+        params: { competitionName }
+    })
+    return result.data;
+}
+
+const getAllPortfolios = async (token) => {
+    const result = await axiosInstance.get('/all-portfolios', {
+         headers: {Authorization: token}
+    })
+        .then(res => {
+            return res.data.portfolios;
+        })
+        .catch(err => {
+            console.log(err);
+            return null;
+        });
+    
+    return result;
+}
+
+
+const getStocks = async (token: any, competitionName: string = null) => {
+    const result: any = await axiosInstance.get('/owned-stocks', {
+        headers: { Authorization: token },
+        params: { competitionName }
+    })  
+    return result.data;
+}
+
+
+export {
+    loginUser,
+    verifyUser,
+    registerUser,
+    getProfile,
+    getPortfolio,
+    getAllPortfolios,
+    getStocks
 }

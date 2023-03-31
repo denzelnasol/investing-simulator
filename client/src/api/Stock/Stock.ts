@@ -1,4 +1,6 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+
 import { Symbol } from 'enums/Stock';
 
 const axiosInstance = axios.create({
@@ -64,9 +66,8 @@ interface historicalStockInfo {
  *
  * @returns { object }
  */
- async function getHistoricalStockInfo(symbol: Symbol | string, queryOptions: Object | null = null, moduleOptions: Object | null = null)
-  : Promise<historicalStockInfo>
-{
+async function getHistoricalStockInfo(symbol: Symbol | string, queryOptions: Object | null = null, moduleOptions: Object | null = null)
+  : Promise<historicalStockInfo> {
   if (!symbol) {
     throw new Error("invalid stock symbol");
   }
@@ -83,7 +84,45 @@ interface historicalStockInfo {
   };
 }
 
+async function buyStock(symbol: Symbol | string, asking: number, quantity: number) {
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
+  }
+
+  const authToken = Cookies.get('token');
+  const data = {
+    symbol,
+    asking,
+    quantity,
+    authToken,
+  };
+
+  const response = await axiosInstance.post('/buy-stock', data);
+  return response.data.success;
+}
+
+async function sellStock(symbol: Symbol | string, asking: number, quantity: number) {
+  if (!symbol) {
+    throw new Error("invalid stock symbol");
+  }
+
+  const authToken = Cookies.get('token');
+  const data = {
+    symbol,
+    asking,
+    quantity,
+    authToken,
+  };
+
+  const response = await axiosInstance.post('/sell-stock', data);
+  return response.data.success;
+}
+
+
+
 export {
   getCurrentStockInfo,
-  getHistoricalStockInfo
+  getHistoricalStockInfo,
+  buyStock,
+  sellStock
 };
