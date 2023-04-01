@@ -1,4 +1,5 @@
 const prisma = require("../src/db");
+const { getRTStockDetails } = require("./StockApi");
 
 async function getStockBySymbol(symbol) {
   return await prisma.stock.findFirst({
@@ -46,6 +47,11 @@ async function buyStock(portfolioId, stock, numShares, pricePerShare) {
     // note: db has a transaction trigger so we just need to modify transaction
     // when purchasing: amount should be negative (refer to docs)
     // balance will be updated by triggers
+
+    if (pricePerShare === 0) {
+      getRTStockDetails(stock);
+    }
+
     const totalAmountCredited = -numShares * pricePerShare;
     const transactionTime = new Date();
     return await prisma.transaction.create({

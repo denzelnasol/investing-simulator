@@ -9,6 +9,7 @@ import { getCurrentStockInfo } from 'api/Stock/Stock';
 import { Chart } from 'primereact/chart';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Skeleton } from 'primereact/skeleton';
 import Button from 'components/PrimeReact/Button/Button';
 import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
 
@@ -34,6 +35,7 @@ const Dashboard = () => {
   const [profitLossValue, setProfitLossValue] = useState<number>(0);
   const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ** Graph Data ** //
   const [chartData, setChartData] = useState({
@@ -122,7 +124,7 @@ const Dashboard = () => {
           .map((h: any) => h.balance);
         chart.labels.push(formatDate(new Date()));
         chart.datasets[0].data.push(history.currentBalance);
-
+        setIsLoading(false);
         return chart;
       });
     }
@@ -157,21 +159,29 @@ const Dashboard = () => {
   const welcomeText = (
     <div className="flex flex-column m-4">
 
-      <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
-        {`Hello ${profile && profile.first_name}, you have a current balance of ${formatter.format(portfolio && portfolio.base_balance)}`}
-      </div>
+      {isLoading
+        ? <Skeleton className='flex mb-3' width='6rem' />
+        : <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
+          {`Hello ${profile && profile.first_name}, you have a current balance of ${formatter.format(portfolio && portfolio.base_balance)}`}
+        </div>}
 
-      <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
-        {`Current Profit/Loss: ${formatter.format(profitLossValue)}`}
-      </div>
+      {isLoading
+        ? <Skeleton className='flex' width='6rem' />
+        :
+        <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
+          {`Current Profit/Loss: ${formatter.format(profitLossValue)}`}
+        </div>
+      }
     </div>
   );
 
   const historyGraph = (
-    <Chart className="" type="line" data={chartData} options={options} />
-  );
+    isLoading ? <Skeleton height='20rem' /> : <Chart className="" type="line" data={chartData} options={options} />
+  )
 
   const stocksOwnedTable = (
+
+    isLoading ? <Skeleton height='18rem' /> :
     <DataTable
       value={stocks}
       selectionMode="single"
