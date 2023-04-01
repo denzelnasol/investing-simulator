@@ -34,9 +34,9 @@ const Navbar = () => {
       url: '/dashboard',
     },
     {
-      label: 'Competition',
+      label: 'Competitions',
       icon: 'pi pi-fw pi-info-circle',
-      url: '/competition',
+      url: '/competition-list',
     },
   ];
 
