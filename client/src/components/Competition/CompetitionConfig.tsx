@@ -8,9 +8,11 @@ import { Calendar } from 'primereact/calendar';
 function CompetitionConfiguration(props) {
   const [visible, setVisible] = useState(false);
   const [configuration, setConfiguration] = useState({
-    startdate: null as string | null,
-    enddate: null as string | null,
-    playersize: 0,
+    start_time: null as string | null,
+    end_time: null as string | null,
+    max_num_players: 0,
+    start_balance : 0,
+    entry_points: 0,
   });
   const [minEndDate, setMinEndDate] = useState(new Date());
 
@@ -37,11 +39,11 @@ function CompetitionConfiguration(props) {
     const nextDay = new Date(startDate);
     nextDay.setDate(startDate.getDate() + 1);
     setMinEndDate(nextDay);
-    setConfiguration({...configuration, startdate: startDate?.toString() ?? null});
+    setConfiguration({...configuration, start_time: startDate?.toString() ?? null});
   };
 
   const handleEndDateChange = (e) => {
-    setConfiguration({...configuration, enddate: e.value?.toString() ?? null});
+    setConfiguration({...configuration, end_time: e.value?.toString() ?? null});
   };
 
   return (
@@ -51,15 +53,15 @@ function CompetitionConfiguration(props) {
       <Dialog header="Configuration" visible={visible} modal onHide={hideDialog} footer={footer}>
       <div className="p-field">
           <label htmlFor="startdate">Start Date</label> <br/>
-          <Calendar id="startdate" value={configuration.startdate ? new Date(configuration.startdate) : null} onChange={handleStartDateChange}minDate={new Date()}/>
+          <Calendar id="startdate" value={configuration.start_time ? new Date(configuration.start_time) : null} onChange={handleStartDateChange}minDate={new Date()}/>
         </div>
         <div className="p-field">
           <label htmlFor="enddate">End Date</label> <br/>
-          <Calendar id="enddate" value={configuration.enddate ? new Date(configuration.enddate) : null}onChange={handleEndDateChange} minDate={minEndDate}/>
+          <Calendar id="enddate" value={configuration.end_time ? new Date(configuration.end_time) : null}onChange={handleEndDateChange} minDate={minEndDate}/>
         </div>
         <div className="p-field">
           <label htmlFor="playersize">Player Size</label> <br/>
-          <InputText id="playersize" type="number" value={configuration.playersize.toString()} onChange={(e) => setConfiguration({ ...configuration, playersize: parseInt(e.target.value) })} />
+          <InputText id="playersize" type="number" value={configuration.max_num_players.toString()} onChange={(e) => setConfiguration({ ...configuration, max_num_players: parseInt(e.target.value) })} />
         </div>
       </Dialog>
     </div>

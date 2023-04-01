@@ -30,6 +30,9 @@ const competitionDbService = require('../services/Competition');
 // });
 
 // when the user clicks on Competition in navbar show the list of personal competitions
+router.get('/', (req, res, next) => {
+    res.send('respond with a resource');
+  });
 router.get('/competitions', async (req, res, next) => {
     try {
         
