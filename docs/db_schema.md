@@ -40,7 +40,8 @@ name: competition
 | start_balance   | float  | the starting balance of everyone    | no       |         |
 | start_time      | Date   | the starting datetime               | no       |         |
 | end_time        | Date   | the ending datetime                 | no       |         |
-| name            | string | competition name                    | no       |         |
+| name            | string | the name of the competition         | no       |         |
+
 ## Stock table
 name: stock  
 notes:

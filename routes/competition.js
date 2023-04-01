@@ -30,10 +30,7 @@ const competitionDbService = require('../services/Competition');
 // });
 
 // when the user clicks on Competition in navbar show the list of personal competitions
-router.get('/', (req, res, next) => {
-    res.send('respond with a resource');
-  });
-router.get('/competitions', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
         
         // get profile id from cookie
@@ -43,6 +40,7 @@ router.get('/competitions', async (req, res, next) => {
         res.json({ competitions: competitions });
 
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
@@ -51,7 +49,6 @@ router.get('/competitions', async (req, res, next) => {
 // when the user clicks on any competition show the info
 router.get('/:competitionId', async (req, res, next) => {
     try {
-        
         var competitionId = req.params.competitionId;
 
         var members = await competitionDbService.getCompetitionParticipants(competitionId);
@@ -62,6 +59,7 @@ router.get('/:competitionId', async (req, res, next) => {
                 maxParticipants: comp.max_num_players,
                 entryPoints: comp.entry_points
             },
+            competitionName: comp.name,
             competitionStart: comp.start_time,
             competitionEnd: comp.end_time,
             startingBalance: comp.start_balance,
@@ -70,6 +68,9 @@ router.get('/:competitionId', async (req, res, next) => {
                     id: x.portfolio_id,
                     balance: x.base_balance,
                     profits: x.investment_profit,
+                    firstName: x.profile.first_name,
+                    lastName: x.profile.last_name,
+                    email: x.profile.email,
                 }
             }).sort((a, b) => {
                 let r1 = a.profits + a.balance;
@@ -79,15 +80,14 @@ router.get('/:competitionId', async (req, res, next) => {
         });
 
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
 
-
 // when the user clicks on Competition in navbar show the list of personal competitions
 router.get('/join/:competitionId', async (req, res, next) => {
     try {
-        
         // get profile id from cookie
         var profileId = req.body.profileId;
         
@@ -106,6 +106,7 @@ router.get('/join/:competitionId', async (req, res, next) => {
         res.sendStatus(201);
 
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
