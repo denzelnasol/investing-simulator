@@ -18,7 +18,7 @@ async function getPortfoliosByProfile(profileId) {
     include: {
       competition: {
         select: {
-          competition_id: true,
+          name: true
         }
       }
     }
