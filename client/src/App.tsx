@@ -44,7 +44,7 @@ const App = () => {
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
 
-        <Route path='clist' element={<CompetitionList />}/>
+        <Route path='competition-list' element={<CompetitionList />}/>
 
       </Routes>
       <Footer/>

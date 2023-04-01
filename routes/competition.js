@@ -59,6 +59,7 @@ router.get('/:competitionId', async (req, res, next) => {
                 maxParticipants: comp.max_num_players,
                 entryPoints: comp.entry_points
             },
+            competitionName: comp.name,
             competitionStart: comp.start_time,
             competitionEnd: comp.end_time,
             startingBalance: comp.start_balance,

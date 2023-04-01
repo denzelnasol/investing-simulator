@@ -2,7 +2,7 @@ import React from 'react';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Participant } from './sharedInterfaces/ParticipantInterface'
+import { Participant } from './sharedTypes/ParticipantInterface'
 
 function CompetitionStandings(props: {participants: Participant[]}) {
     const data = props.participants.map((p, index) => {

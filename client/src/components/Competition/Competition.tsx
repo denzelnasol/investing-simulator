@@ -7,7 +7,7 @@ import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompeititonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
 import { getCompetitionData } from 'api/Competition/Competition';
-import { Participant } from './sharedInterfaces/ParticipantInterface';
+import { Participant } from './sharedTypes/ParticipantInterface';
 
 import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
@@ -19,6 +19,7 @@ function Competition({ ...props }) {
     const [searchParams] = useSearchParams();
 
     const [participants, setParticipants] = useState<Participant[]>([]);
+    const [competitionName, setCompetitionName] = useState("");
     const [config, setConfig] = useState({
         startdate: '',
         enddate: '',
@@ -36,6 +37,7 @@ function Competition({ ...props }) {
             const data = await getCompetitionData(id);
             console.log(data);
 
+            setCompetitionName(data.competitionName);
             setParticipants(data.rankings);
         }
 
@@ -62,7 +64,7 @@ function Competition({ ...props }) {
     return (
         <Card className="competition-card mx-4">
             <div className="text-5xl font-bold text-gray-700 text-center">
-                Competition Page
+                {competitionName}
             </div>
 
             <Toolbar className="my-3 bg-gray-300" left={leftToolbarContents} right={rightToolbarContents} />
