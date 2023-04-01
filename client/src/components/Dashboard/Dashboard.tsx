@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 // API
-import { getProfile, verifyUser, getPortfolio, getStocks } from 'api/Profile/User';
+import { getProfile, getPortfolio, getStocks } from 'api/Profile/User';
 import { getCurrentStockInfo } from 'api/Stock/Stock';
 
 // Components
-import { Divider } from 'primereact/divider';
 import { Chart } from 'primereact/chart';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -18,10 +16,7 @@ import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
 import './style.scss';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-
   // ** useStates ** //
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [portfolio, setPortfolio] = useState<any>(null);
   const [stocks, setStocks] = useState<any>(null);
@@ -60,17 +55,6 @@ const Dashboard = () => {
   // ** useEffect ** //
   useEffect(() => {
     const token = Cookies.get('token');
-    if (!token) {
-      navigate('/login');
-    }
-
-    async function userVerified() {
-      const isUserVerified = await verifyUser(token);
-      if (isUserVerified) {
-        setIsAuthenticated(true);
-      }
-      return isUserVerified;
-    }
 
     async function getUserProfile() {
       const profile = await getProfile(token);
@@ -117,15 +101,10 @@ const Dashboard = () => {
       setStocks(updatedStocks);
     }
 
-    userVerified();
     getUserProfile();
     getUserPortfolio();
     getUserStocks();
   }, [isTradeSelected]);
-
-  if (!isAuthenticated) {
-    navigate('/login');
-  }
 
   // ** DataTable ** //
   const netChangeColumn = (rowData) => {

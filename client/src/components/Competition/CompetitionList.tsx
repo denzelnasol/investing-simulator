@@ -21,11 +21,11 @@ function CompetitionList(props) {
 
             // update list of competitions on UI
             const competitionLinks = portfolios.map((p: fetchedPortfolio) => {
-                console.log(p);
+                console.log(p.fk_competition);
                 return (
                     <li key={p.fk_competition}>
                         <Link to="/competition?id=123" style={{ textDecoration: 'none' }}>
-                            <Button label={p.fk_competition} />
+                            <Button label={p.portfolio_type} />
                         </Link>
                     </li>
                 )
