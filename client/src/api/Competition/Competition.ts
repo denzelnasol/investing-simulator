@@ -2,16 +2,17 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
-    baseURL: `${process.env.REACT_APP_NODE_URL}/competition`,
+    baseURL: `${process.env.REACT_APP_NODE_URL}/competitions`,
   });
 
-  export const createCompetition = async ({entry_points, max_num_players, start_balance, start_time, end_time}) => {
+  export const createCompetition = async ({entry_points, max_num_players, start_balance, start_time, end_time, name}) => {
     const data = {
         entry_points,
         max_num_players,
         start_balance,
         start_time,
-        end_time
+        end_time,
+        name,
     };
 
     const result = await axiosInstance.post('/create', data)

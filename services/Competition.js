@@ -1,6 +1,7 @@
 const prisma = require("../src/db");
 
 
+
 // returns a list of all competitions in db
 async function getCompetitions() {
     return await prisma.competition.findMany();
@@ -36,10 +37,8 @@ async function getCompetitionInfo(competitionId) {
     });
 }
 
-async function createCompetition(balance, startDate, endDate, entryPoints = -1, numPlayers = -1) {
-    // let startDate = new Date();
-    // let endDate = new Date();
-    // endDate.setMonth(endDate.getMonth() + COMPETITION_DURATION_MONTHS);
+async function createCompetition(balance, startDate, endDate, entryPoints = -1, numPlayers = -1, name) {
+   
     return await prisma.competition.create({
         data: {
             max_num_players: numPlayers,
@@ -47,6 +46,7 @@ async function createCompetition(balance, startDate, endDate, entryPoints = -1, 
             start_balance: balance,
             start_time: startDate,
             end_time: endDate,
+            name: name,
         }
     });
 }

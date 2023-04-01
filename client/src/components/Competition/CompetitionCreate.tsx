@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { createCompetition } from 'api/Competition/Competition';
+import { InputText } from 'primereact/inputtext';
 
 function CompetitionCreate() {
   const [balance, setBalance] = useState(null);
@@ -11,9 +12,19 @@ function CompetitionCreate() {
   const [endDate, setEndDate] = useState(null);
   const [entryPoints, setEntryPoints] = useState(null);
   const [maxPlayers, setMaxPlayers] = useState(null);
+  const [name, setName] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!startDate || !(startDate instanceof Date)) {
+      console.error('Invalid start date');
+      return;
+    }
+  
+    if (!endDate || !(endDate instanceof Date)) {
+      console.error('Invalid end date');
+      return;
+    }
 
     const result = await createCompetition({
       entry_points: entryPoints,
@@ -21,6 +32,7 @@ function CompetitionCreate() {
       start_balance: balance,
       start_time: startDate,
       end_time: endDate,
+      name: name,
     });
 
     if (result) {
@@ -36,6 +48,19 @@ function CompetitionCreate() {
         <form onSubmit={handleSubmit}>
         <div className="p-inputgroup">
             <span className="p-inputgroup-addon">
+            <i className="pi pi-user"></i>
+            </span>
+            <InputText
+            id="name"
+            name="name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Competition name"
+            required
+            />
+        </div>
+        <div className="p-inputgroup">
+            <span className="p-inputgroup-addon">
             <i className="pi pi-wallet"></i>
             </span>
             <InputNumber
@@ -45,8 +70,6 @@ function CompetitionCreate() {
             onChange={(event) => setBalance(event.value)}
             placeholder="Starting balance"
             required
-            mode="currency"
-            currency="USD"
             />
         </div>
         <div className="p-inputgroup">
@@ -60,7 +83,7 @@ function CompetitionCreate() {
             onChange={(event) => setStartDate(event.value)}
             placeholder="Start date"
             required
-            dateFormat="mm/dd/yy"
+            
             />
         </div>
         <div className="p-inputgroup">
@@ -74,7 +97,7 @@ function CompetitionCreate() {
             onChange={(event) => setEndDate(event.value)}
             placeholder="End date"
             required
-            dateFormat="mm/dd/yy"
+            
             />
         </div>
         <div className="p-inputgroup">
