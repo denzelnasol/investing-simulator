@@ -32,21 +32,18 @@ const verifyUser = async (token: any) => {
     const result: boolean = await axiosInstance.get('/verify', {
         headers: { Authorization: token },
     })
-        .then((res) => {
-            if (res.data.success) {
-                return true;
-            }
-            return false;
+        .then(res => {
+            return res.data.success;
         })
-        .catch((err) => {
+        .catch(err => {
             console.error(err);
             return false;
         });
-
+    
     return result;
 }
 
-export const registerUser = async (firstName: string, lastName: string, password: string, email: string, phoneNumber: string) => {
+const registerUser = async (firstName: string, lastName: string, password: string, email: string, phoneNumber: string) => {
     const data = {
         firstName,
         lastName,
@@ -57,11 +54,7 @@ export const registerUser = async (firstName: string, lastName: string, password
 
     const result = await axiosInstance.post('/register', data)
         .then(res => {
-            if (res.data.success) {
-                return true;
-            } else {
-                return false;
-            }
+            return res.data.success;
         })
         .catch(err => {
             console.error(err);
@@ -86,6 +79,22 @@ const getPortfolio = async (token: any, competitionName: string = null) => {
     return result.data;
 }
 
+const getAllPortfolios = async (token) => {
+    const result = await axiosInstance.get('/all-portfolios', {
+         headers: {Authorization: token}
+    })
+        .then(res => {
+            return res.data.portfolios;
+        })
+        .catch(err => {
+            console.log(err);
+            return null;
+        });
+    
+    return result;
+}
+
+
 const getStocks = async (token: any, competitionName: string = null) => {
     const result: any = await axiosInstance.get('/owned-stocks', {
         headers: { Authorization: token },
@@ -98,7 +107,9 @@ const getStocks = async (token: any, competitionName: string = null) => {
 export {
     loginUser,
     verifyUser,
+    registerUser,
     getProfile,
     getPortfolio,
+    getAllPortfolios,
     getStocks
 }
