@@ -37,9 +37,9 @@ const App = () => {
         <Route path='/' element={<Welcome />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/competition' element={<Competition />} />
-        <Route path='/stock' element={<Stock />} />
-        <Route path='/stock-table' element={<StockTable />} />
+        <Route path='/competition' element={<Private componentToRender={Competition} />} />
+        <Route path='/stock' element={<Private componentToRender={Stock} />} />
+        <Route path='/stock-table' element={<Private componentToRender={StockTable} />} />
 
         <Route path='/dashboard' element={<Private componentToRender={Dashboard} />} />
 
