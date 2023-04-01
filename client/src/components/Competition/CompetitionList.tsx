@@ -25,7 +25,7 @@ function CompetitionList(props) {
                 return (
                     <li key={p.fk_competition}>
                         <Link to="/competition?id=123" style={{ textDecoration: 'none' }}>
-                            <Button label={p.fk_competition} />
+                            <Button label={p.base_balance} />
                         </Link>
                     </li>
                 )
