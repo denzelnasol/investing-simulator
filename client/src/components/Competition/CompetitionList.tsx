@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
-import { getAllPortfolios } from 'api/Profile/User';
+import { getCompetitionPortfolios } from 'api/Profile/User';
 
-interface fetchedPortfolio {
+interface Competition {
+    name: string,
+    [key: string]: any
+}
+
+interface FetchedPortfolio {
     fk_competition: string,
+    name: string,
+    competition: Competition,
     [key: string]: any
 }
 
@@ -16,16 +23,16 @@ function CompetitionList(props) {
         async function fetchData() {
             // fetch portfolios (request returns competition ids as well)
             const token: string = Cookies.get('token');
-            const portfolios = await getAllPortfolios(token);
+            const portfolios = await getCompetitionPortfolios(token);
             console.log(portfolios);
 
             // update list of competitions on UI
-            const competitionLinks = portfolios.map((p: fetchedPortfolio) => {
+            const competitionLinks = portfolios.map((p: FetchedPortfolio) => {
                 console.log(p);
                 return (
                     <li key={p.fk_competition}>
                         <Link to="/competition?id=123" style={{ textDecoration: 'none' }}>
-                            <Button label={p.base_balance} />
+                            <Button label={p.competition.name} />
                         </Link>
                     </li>
                 )

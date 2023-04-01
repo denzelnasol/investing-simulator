@@ -79,8 +79,8 @@ const getPortfolio = async (token: any, competitionName: string = null) => {
     return result.data;
 }
 
-const getAllPortfolios = async (token) => {
-    const result = await axiosInstance.get('/all-portfolios', {
+const getCompetitionPortfolios = async (token) => {
+    const result = await axiosInstance.get('/competition-portfolios', {
          headers: {Authorization: token}
     })
         .then(res => {
@@ -110,6 +110,6 @@ export {
     registerUser,
     getProfile,
     getPortfolio,
-    getAllPortfolios,
+    getCompetitionPortfolios,
     getStocks
 }
