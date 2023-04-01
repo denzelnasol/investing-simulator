@@ -30,3 +30,22 @@ const axiosInstance = axios.create({
     return result;
 }
 
+
+const testCompetitionApiCall = async () => {
+
+    const result = await axiosInstance.get('/competitions')
+        .then(res => {
+            return res.data;
+        })
+        .catch(err => {
+            console.error(err);
+            return false;
+        });
+
+    return result;
+};
+
+
+export {
+    testCompetitionApiCall,
+};
