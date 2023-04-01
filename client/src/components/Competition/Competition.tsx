@@ -60,7 +60,7 @@ function Competition({ ...props }) {
     const rightToolbarContents = (
         <>
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
-            <CompetitionInvite />
+            <CompetitionInvite competitionName competitionId={searchParams.get("id")} />
             <div className='mr-2'></div>
             <CompetitionConfiguration onSave={handleConfigSave} startingConfig={config}/>
         </>

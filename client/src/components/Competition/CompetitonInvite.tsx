@@ -17,7 +17,6 @@ function CompetitionInvite({ ...props }) {
     const [visible, setVisible] = useState(false);
     const [emails, setEmails] = useState([]);
 
-
     // ** Callback Functions ** //
     const showDialog = () => {
         setVisible(true);
@@ -28,7 +27,7 @@ function CompetitionInvite({ ...props }) {
     };
 
     const sendInvitations = () => {
-        sendEmail(emails);
+        sendEmail(emails, props.competitionName, props.competitionId);
         setEmails([]);
         hideDialog();
     }

@@ -6,9 +6,11 @@ const axiosInstance = axios.create({
   });
 
 
-const sendEmail = async (emails) => {
+const sendEmail = async (emails: Array<string>, competitionName: string, competitionId: string) => {
     const data = {
-        emails
+        emails,
+        competitionName,
+        competitionId,
     };
     
     try {

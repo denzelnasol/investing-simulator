@@ -15,14 +15,15 @@ const transporter = nodemailer.createTransport({
 router.post('/send', async (req, res) => {
   try {
     const emails = req.body.emails.join(', ');
-
+    const competitionName = req.body.competitionName;
+    const competitionId = req.body.competitionId;
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: emails,
       subject: "Competition Link",
       text: "Hello world?",
-      html: "<b>Hello world?</b>",
+      html: `<a href="${process.env.NODE_URL}/competitions/join/${competitionId}">Click here to go to join the competition</a>`,
     };
 
     transporter.sendMail(mailOptions, function(error, info){
