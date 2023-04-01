@@ -22,6 +22,8 @@ import AboutUs from 'components/FillerPage/AboutUs';
 import CompetitionList from 'components/Competition/CompetitionList'
 import StockTable from 'components/StockTable/StockTable';
 
+import Private from 'components/Private/Private';
+
 // Styles
 import './app.scss';
 
@@ -32,19 +34,21 @@ const App = () => {
     <div className='app'>
       <Navbar/>
       <Routes>
+        {/* 'Public' routes */}
         <Route path='/' element={<Welcome />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/competition' element={<Competition />} />
-        <Route path='/stock' element={<Stock />} />
-        <Route path='/stock-table' element={<StockTable />} />
-        <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/real-time-data' element={<RealTimeData/>}/>
         <Route path='/practice-invest' element={<PracticeInvest/>}/>
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
 
-        <Route path='competition-list' element={<CompetitionList />}/>
+        {/* Login restricted routes */}
+        <Route path='/competition-list' element={<Private componentToRender={CompetitionList} />}/>
+        <Route path='/competition' element={<Private componentToRender={Competition} />} />
+        <Route path='/stock' element={<Private componentToRender={Stock} />} />
+        <Route path='/stock-table' element={<Private componentToRender={StockTable} />} />
+        <Route path='/dashboard' element={<Private componentToRender={Dashboard} />} />
 
       </Routes>
       <Footer/>

@@ -103,6 +103,14 @@ const getStocks = async (token: any, competitionName: string = null) => {
     return result.data;
 }
 
+const getHistory = async (token: any, competitionName: string = null) => {
+    const result: any = await axiosInstance.get('/history', {
+        headers: { Authorization: token },
+        params: { competitionName }
+    });
+    return result.data;
+}
+
 
 export {
     loginUser,
@@ -111,5 +119,6 @@ export {
     getProfile,
     getPortfolio,
     getCompetitionPortfolios,
-    getStocks
+    getStocks,
+    getHistory,
 }
