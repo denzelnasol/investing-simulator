@@ -3,6 +3,8 @@ import Cookies from 'js-cookie';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
 import { getCompetitionPortfolios } from 'api/Profile/User';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Competition {
     name: string,
@@ -17,6 +19,7 @@ interface FetchedPortfolio {
 
 function CompetitionList(props) {
     const [competitions, setCompetitions] = useState<any>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
@@ -45,10 +48,16 @@ function CompetitionList(props) {
 
     return (
         <div>
-            <h1>Your Ongoing Competitions</h1>
-            <ul style={{listStyleType: 'none'}}>
-                {competitions}
-            </ul>
+            <div className='col-12'>
+                <h1>Create a new Competition</h1>
+                <Button label="Create New Competition" onClick={() => navigate(`/create`)} />
+            </div>
+            <div className='col-12'>
+                <h1>Your Ongoing Competitions</h1>
+                <ul style={{listStyleType: 'none'}}>
+                    {competitions}
+                </ul>
+            </div>
         </div>
     );
 };

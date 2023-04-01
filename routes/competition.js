@@ -117,19 +117,13 @@ router.post('/create', async (req, res, next) => {
     try {
         // get profile id from cookie
         var profileId = req.body.profileId;
-        var requirements = req.body.requirements;
+        var competitionID = req.body.competitionID;
         const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
-        console.log(start_balance)
-        console.log(start_time);
-        console.log(end_time);
-        console.log(entry_points);
-        console.log(max_num_players);
-        console.log(name);
 
         let comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
 
         let result = await portfolioDbService
-            .createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
+            .createCompetitionPortfolio(profileId, competitionID, comp.start_balance);
 
         res.status(201).json({
             competitionId: comp.competition_id
