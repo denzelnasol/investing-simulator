@@ -26,9 +26,7 @@ function CompetitionList(props) {
             console.log(portfolios);
 
             // update list of competitions on UI
-            const competitionLinks = portfolios.map((p: FetchedPortfolio) => {
-                console.log(p);
-                
+            const competitionLinks = portfolios.map((p: FetchedPortfolio) => {                
                 const competitionName = p.competition.name;
                 const competitionId = p.fk_competition;
                 return (

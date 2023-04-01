@@ -33,9 +33,7 @@ async function getCompetitionParticipants(competitionId) {
                 }
             }
         }
-    });
-    console.log(res);
-    
+    });    
     return res;
 }
 

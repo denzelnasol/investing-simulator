@@ -6,17 +6,19 @@ import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompeititonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
-
-import Card from 'components/PrimeReact/Card/Card';
-import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
+import { getCompetitionData } from 'api/Competition/Competition';
+import { Participant } from './sharedInterfaces/ParticipantInterface';
 
 import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
-import { getCompetitionData } from 'api/Competition/Competition';
+import Card from 'components/PrimeReact/Card/Card';
+import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
+
 
 function Competition({ ...props }) {
     const [searchParams] = useSearchParams();
 
+    const [participants, setParticipants] = useState<Participant[]>([]);
     const [config, setConfig] = useState({
         startdate: '',
         enddate: '',
@@ -33,10 +35,12 @@ function Competition({ ...props }) {
             const id = searchParams.get("id");
             const data = await getCompetitionData(id);
             console.log(data);
+
+            setParticipants(data.rankings);
         }
 
         fetchData();
-    });
+    }, []);
 
     const leftToolbarContents = (
         <>
@@ -65,7 +69,7 @@ function Competition({ ...props }) {
 
             <CompetitionSidebar />
             <CompetitionGraph />
-            <CompetitionStandings />
+            <CompetitionStandings participants={participants}/>
         </Card>
     );
 }
