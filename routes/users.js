@@ -2,9 +2,6 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
-const ProfileService = require('../services/Profile');
-const PortfolioService = require('../services/Portfolio');
-
 const { getProfile, getProfileByEmail, createProfile } = require('../services/Profile');
 const { createMainPortfolio, getPortfolio, getMainPortfolio, getPortfoliosByProfile } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');

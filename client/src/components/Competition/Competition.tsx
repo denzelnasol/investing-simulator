@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
-import CompetitionInvite from 'components/Competition/CompeititonInvite';
+import CompetitionInvite from 'components/Competition/CompetitonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
 
 import Card from 'components/PrimeReact/Card/Card';
