@@ -23,6 +23,7 @@ const Login = () => {
 
   const login = async () => {
     const isUserValid: boolean = await loginUser(email, password); 
+    console.log(isUserValid);
     if (!isUserValid) {
       setPassword('');
       setIsInvalid(true);

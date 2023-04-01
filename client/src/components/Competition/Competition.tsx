@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompeititonInvite';
+import CompetitionConfiguration from './CompetitionConfig';
 
 import Card from 'components/PrimeReact/Card/Card';
 import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
@@ -14,6 +15,15 @@ import Button from 'components/PrimeReact/Button/Button';
 import { testCompetitionApiCall } from 'api/Competition/Competition';
 
 function Competition({ ...props }) {
+    const [config, setConfig] = useState({
+        startdate: '',
+        enddate: '',
+        playersize: 0,
+    });
+    const handleConfigSave = (newConfig) => {
+        setConfig(newConfig);
+    };
+
     // get competition id from query string in URL
     const [searchParams] = useSearchParams();
     const id = searchParams.get("id");
@@ -29,9 +39,9 @@ function Competition({ ...props }) {
 
     const leftToolbarContents = (
         <>
-            <div className="mr-5 font-bold text-gray-700">Start Date: </div>
-            <div className="mr-5 font-bold text-gray-700">End Date: </div>
-            <div className="font-bold text-gray-700">Player Size: </div>
+            <div className="mr-5 font-bold text-gray-700">Start Date: {config.startdate}</div>
+            <div className="mr-5 font-bold text-gray-700">End Date: {config.enddate}</div>
+            <div className="font-bold text-gray-700">Player Size: {config.playersize}</div>
         </>
     );
     
@@ -39,6 +49,8 @@ function Competition({ ...props }) {
         <>
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
             <CompetitionInvite />
+            <div className='mr-2'></div>
+            <CompetitionConfiguration onSave={handleConfigSave}/>
         </>
     );
 

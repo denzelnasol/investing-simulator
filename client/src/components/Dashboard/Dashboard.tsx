@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 // API
-import { getProfile, verifyUser, getPortfolio, getStocks, getHistory } from 'api/Profile/User';
+import { getProfile, getPortfolio, getStocks, getHistory } from 'api/Profile/User';
 import { getCurrentStockInfo } from 'api/Stock/Stock';
 
 // Components
-import { Divider } from 'primereact/divider';
 import { Chart } from 'primereact/chart';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -29,10 +27,7 @@ function formatDate(date: Date): string {
 }
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-
   // ** useStates ** //
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [portfolio, setPortfolio] = useState<any>(null);
   const [stocks, setStocks] = useState<any>(null);
@@ -70,17 +65,6 @@ const Dashboard = () => {
   // ** useEffect ** //
   useEffect(() => {
     const token = Cookies.get('token');
-    if (!token) {
-      navigate('/login');
-    }
-
-    async function userVerified() {
-      const isUserVerified = await verifyUser(token);
-      if (isUserVerified) {
-        setIsAuthenticated(true);
-      }
-      return isUserVerified;
-    }
 
     async function getUserProfile() {
       const profile = await getProfile(token);
@@ -143,16 +127,11 @@ const Dashboard = () => {
       });
     }
 
-    userVerified();
     getUserProfile();
     getUserPortfolio();
     getUserStocks();
     getUserBalanceHistory();
   }, [isTradeSelected]);
-
-  if (!isAuthenticated) {
-    navigate('/login');
-  }
 
   // ** DataTable ** //
   const netChangeColumn = (rowData) => {
