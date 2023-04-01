@@ -11,7 +11,6 @@ interface Competition {
 
 interface FetchedPortfolio {
     fk_competition: string,
-    name: string,
     competition: Competition,
     [key: string]: any
 }
@@ -29,10 +28,13 @@ function CompetitionList(props) {
             // update list of competitions on UI
             const competitionLinks = portfolios.map((p: FetchedPortfolio) => {
                 console.log(p);
+                
+                const competitionName = p.competition.name;
+                const competitionId = p.fk_competition;
                 return (
-                    <li key={p.fk_competition}>
-                        <Link to="/competition?id=123" style={{ textDecoration: 'none' }}>
-                            <Button label={p.competition.name} />
+                    <li key={competitionId}>
+                        <Link to={`/competition?id=${competitionId}`} style={{ textDecoration: 'none' }}>
+                            <Button label={competitionName} />
                         </Link>
                     </li>
                 )

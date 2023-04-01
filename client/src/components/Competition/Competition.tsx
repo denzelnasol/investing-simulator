@@ -12,9 +12,11 @@ import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
 
 import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
-import { testCompetitionApiCall } from 'api/Competition/Competition';
+import { getCompetitionData } from 'api/Competition/Competition';
 
 function Competition({ ...props }) {
+    const [searchParams] = useSearchParams();
+
     const [config, setConfig] = useState({
         startdate: '',
         enddate: '',
@@ -24,14 +26,13 @@ function Competition({ ...props }) {
         setConfig(newConfig);
     };
 
-    // get competition id from query string in URL
-    const [searchParams] = useSearchParams();
-    const id = searchParams.get("id");
-
     // fetch information about competition
     useEffect(() => {
         async function fetchData() {
-            testCompetitionApiCall();
+            // get competition id from query string in URL
+            const id = searchParams.get("id");
+            const data = await getCompetitionData(id);
+            console.log(data);
         }
 
         fetchData();
