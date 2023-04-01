@@ -21,9 +21,9 @@ function Competition({ ...props }) {
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [competitionName, setCompetitionName] = useState("");
     const [config, setConfig] = useState({
-        startdate: '',
-        enddate: '',
-        playersize: 0,
+        startDate: new Date(),
+        endDate: new Date(),
+        playerSize: 0,
     });
     const handleConfigSave = (newConfig) => {
         setConfig(newConfig);
@@ -39,6 +39,11 @@ function Competition({ ...props }) {
 
             setCompetitionName(data.competitionName);
             setParticipants(data.rankings);
+            setConfig({
+                startDate: new Date(data.competitionStart),
+                endDate: new Date(data.competitionEnd),
+                playerSize: data.requirements.maxParticipants,
+            });
         }
 
         fetchData();
@@ -46,9 +51,9 @@ function Competition({ ...props }) {
 
     const leftToolbarContents = (
         <>
-            <div className="mr-5 font-bold text-gray-700">Start Date: {config.startdate}</div>
-            <div className="mr-5 font-bold text-gray-700">End Date: {config.enddate}</div>
-            <div className="font-bold text-gray-700">Player Size: {config.playersize}</div>
+            <div className="mr-5 font-bold text-gray-700">Start Date: {config.startDate.toDateString()}</div>
+            <div className="mr-5 font-bold text-gray-700">End Date: {config.endDate.toDateString()}</div>
+            <div className="font-bold text-gray-700">Player Size: {config.playerSize}</div>
         </>
     );
     
@@ -57,7 +62,7 @@ function Competition({ ...props }) {
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
             <CompetitionInvite />
             <div className='mr-2'></div>
-            <CompetitionConfiguration onSave={handleConfigSave}/>
+            <CompetitionConfiguration onSave={handleConfigSave} startingConfig={config}/>
         </>
     );
 
