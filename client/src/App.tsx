@@ -34,21 +34,21 @@ const App = () => {
     <div className='app'>
       <Navbar/>
       <Routes>
+        {/* 'Public' routes */}
         <Route path='/' element={<Welcome />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/competition' element={<Private componentToRender={Competition} />} />
-        <Route path='/stock' element={<Private componentToRender={Stock} />} />
-        <Route path='/stock-table' element={<Private componentToRender={StockTable} />} />
-
-        <Route path='/dashboard' element={<Private componentToRender={Dashboard} />} />
-
         <Route path='/real-time-data' element={<RealTimeData/>}/>
         <Route path='/practice-invest' element={<PracticeInvest/>}/>
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
 
-        <Route path='clist' element={<Private componentToRender={CompetitionList} />}/>
+        {/* Login restricted routes */}
+        <Route path='/competition-list' element={<Private componentToRender={CompetitionList} />}/>
+        <Route path='/competition' element={<Private componentToRender={Competition} />} />
+        <Route path='/stock' element={<Private componentToRender={Stock} />} />
+        <Route path='/stock-table' element={<Private componentToRender={StockTable} />} />
+        <Route path='/dashboard' element={<Private componentToRender={Dashboard} />} />
 
       </Routes>
       <Footer/>

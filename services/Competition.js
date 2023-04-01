@@ -20,11 +20,21 @@ async function getPersonalCompetitions(profileId) {
 
 // returns the list of participants in a competition (not sorted)
 async function getCompetitionParticipants(competitionId) {
-    return await prisma.portfolio.findMany({
+    const res = await prisma.portfolio.findMany({
         where: {
             fk_competition: competitionId
         },
-    });
+        include: {
+            profile: {
+                select: {
+                    first_name: true,
+                    last_name: true,
+                    email: true
+                }
+            }
+        }
+    });    
+    return res;
 }
 
 // get competition info

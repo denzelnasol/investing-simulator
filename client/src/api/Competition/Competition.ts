@@ -1,12 +1,11 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_NODE_URL,
+    baseURL: `${process.env.REACT_APP_NODE_URL}/competitions`,
 });
 
-const testCompetitionApiCall = async () => {
-
-    const result = await axiosInstance.get('/competitions')
+async function getCompetitionData(competitionId: string) {
+    const result = await axiosInstance.get(`${competitionId}`)
         .then(res => {
             return res.data;
         })
@@ -18,7 +17,6 @@ const testCompetitionApiCall = async () => {
     return result;
 };
 
-
 export {
-    testCompetitionApiCall,
+    getCompetitionData,
 };

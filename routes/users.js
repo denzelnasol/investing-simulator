@@ -6,7 +6,7 @@ const ProfileService = require('../services/Profile');
 const PortfolioService = require('../services/Portfolio');
 
 const { getProfile, getProfileByEmail, createProfile } = require('../services/Profile');
-const { createMainPortfolio, getPortfolio, getMainPortfolio, getPortfoliosByProfile } = require('../services/Portfolio');
+const { createMainPortfolio, getPortfolio, getMainPortfolio, getCompetitionPortfolios } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');
 const { getRTStockSummary } = require('../services/StockApi');
 const { getHistory } = require('../services/History');
@@ -67,11 +67,11 @@ router.post('/register', async (req, res, next) => {
 });
 
 /* Get a specific user's portfolios and associated competition names */
-router.get('/all-portfolios', requireAuth, async (req, res, next) => {
+router.get('/competition-portfolios', requireAuth, async (req, res, next) => {
 	const { email } = req.user;
 
 	const profile = await getProfileByEmail(email);
-	const portfolios = await getPortfoliosByProfile(profile.profile_id);
+	const portfolios = await getCompetitionPortfolios(profile.profile_id);
 	if (!portfolios) {
 		res.send({ success: false })
 		return;
