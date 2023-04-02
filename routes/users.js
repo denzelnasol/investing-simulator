@@ -3,7 +3,7 @@ var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
 const { getProfile, getProfileByEmail, createProfile } = require('../services/Profile');
-const { createMainPortfolio, getPortfolio, getMainPortfolio, getCompetitionPortfolios } = require('../services/Portfolio');
+const { createMainPortfolio, getPortfolio, getMainPortfolio, getCompetitionPortfolios, getCompetitonPortfolio } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');
 const { getRTStockSummary } = require('../services/StockApi');
 const { getHistory } = require('../services/History');
@@ -79,8 +79,8 @@ router.get('/competition-portfolios', requireAuth, async (req, res, next) => {
 
 router.get('/portfolio', requireAuth, async (req, res) => {
 	const email = req.user.email;
-	const competitionName = req.params['competitionName'];
-	if (competitionName) {
+	const competitionId = req.params['competitionId'];
+	if (competitionId) {
 		// retrieve the portfolio associated with the competition
 		return;
 	}
@@ -93,28 +93,22 @@ router.get('/portfolio', requireAuth, async (req, res) => {
 
 router.get('/owned-stocks', requireAuth, async (req, res) => {
 	const email = req.user.email;
-	const competitionName = req.params['competitionName'];
-	if (competitionName) {
-		// retrieve the stocks for portfolio associated with the competition
-		return;
+	const profile = await getProfileByEmail(email);
+	
+	let portfolio;
+	const competitionId = req.query['competitionId'];
+	if (competitionId) {
+		portfolio = await getCompetitonPortfolio(profile.profile_id, competitionId);
+	} else {
+		portfolio = await getMainPortfolio(profile.profile_id);
 	}
 
-	// retrieve the stocks for main portfolio
-	const profile = await getProfileByEmail(email);
-	const portfolio = await getMainPortfolio(profile.profile_id);
 	const stocks = await getStocks(portfolio.portfolio_id);
-
 	res.send(stocks);
 })
 
-router.get('/history', async (req, res) => {
-  let authToken = req.headers['authorization'];
-  if (!authToken) {
-    return res.status(401).json({ success: false, message: 'Unauthorized' });
-  }
-
-  authToken = jwt.verify(authToken, process.env.JWT_KEY);
-  const email = authToken.email;
+router.get('/history', requireAuth, async (req, res) => {
+  const email = req.user.email;
 
   const competitionName = req.params['competitionName'];
   if (competitionName) {

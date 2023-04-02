@@ -71,10 +71,10 @@ const getProfile = async (token: any) => {
     return result.data;
 }
 
-const getPortfolio = async (token: any, competitionName: string = null) => {
+const getPortfolio = async (token: any, competitionId: string = null) => {
     const result: any = await axiosInstance.get('/portfolio', {
         headers: { Authorization: token },
-        params: { competitionName }
+        params: { competitionId }
     })
     return result.data;
 }
@@ -95,10 +95,12 @@ const getCompetitionPortfolios = async (token) => {
 }
 
 
-const getStocks = async (token: any, competitionName: string = null) => {
+const getStocks = async (token: string, competitionId: string = null) => {
+    console.log(competitionId);
+
     const result: any = await axiosInstance.get('/owned-stocks', {
         headers: { Authorization: token },
-        params: { competitionName }
+        params: { competitionId: competitionId }
     })  
     return result.data;
 }

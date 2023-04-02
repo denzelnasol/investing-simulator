@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import './style.scss';
 
+import { getCompetitionData } from 'api/Competition/Competition';
+import { Participant } from './sharedTypes/ParticipantInterface';
+
+// components
+import CompetitionPortfolio from './CompetitionPortfolio';
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompetitonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
-import { getCompetitionData } from 'api/Competition/Competition';
-import { Participant } from './sharedTypes/ParticipantInterface';
-
-import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
 import Card from 'components/PrimeReact/Card/Card';
 import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
@@ -18,6 +20,8 @@ import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
 function Competition({ ...props }) {
     const [searchParams] = useSearchParams();
 
+    /* useStates */
+    const [competitionId, setCompetitionId] = useState("");
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [competitionName, setCompetitionName] = useState("");
     const [config, setConfig] = useState({
@@ -37,6 +41,7 @@ function Competition({ ...props }) {
             const data = await getCompetitionData(id);
             console.log(data);
 
+            setCompetitionId(id);
             setCompetitionName(data.competitionName);
             setParticipants(data.rankings);
             setConfig({
@@ -77,6 +82,10 @@ function Competition({ ...props }) {
             <CompetitionSidebar />
             <CompetitionGraph />
             <CompetitionStandings participants={participants}/>
+
+            <br />
+
+            <CompetitionPortfolio competitionId={competitionId}/>
         </Card>
     );
 }

@@ -19,6 +19,14 @@ function StocksOwnedTable(props: Props) {
     /* useStates */
     const [selectedStock, setSelectedStock] = useState(null);
     const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
+
+    const header = () => {
+        return (
+            <div className="flex justify-content-between align-items-center">
+                <h1 className="m-0 text-gray-700">Stocks Owned</h1>
+            </div>
+        );
+    }
     
     const netChangeColumn = (rowData) => {
         return (
@@ -56,6 +64,7 @@ function StocksOwnedTable(props: Props) {
                 ? <Skeleton height='18rem' /> 
                 :
                 <DataTable
+                    header={header}
                     value={props.stocks}
                     selectionMode="single"
                     paginator
