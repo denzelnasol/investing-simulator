@@ -20,14 +20,14 @@ function Competition({ ...props }) {
 
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [competitionName, setCompetitionName] = useState("");
+    const [competitionData, setCompetitionData] = useState<any>(null);
+    const [competitionId, setCompetitionId] = useState<string>(null);
+    const [refresh, setRefresh] = useState<boolean>(false);
     const [config, setConfig] = useState({
         startDate: new Date(),
         endDate: new Date(),
         playerSize: 0,
     });
-    const handleConfigSave = (newConfig) => {
-        setConfig(newConfig);
-    };
 
     // fetch information about competition
     useEffect(() => {
@@ -35,7 +35,8 @@ function Competition({ ...props }) {
             // get competition id from query string in URL
             const id = searchParams.get("id");
             const data = await getCompetitionData(id);
-            console.log(data);
+            setCompetitionData(data);
+            setCompetitionId(id);
 
             setCompetitionName(data.competitionName);
             setParticipants(data.rankings);
@@ -47,7 +48,7 @@ function Competition({ ...props }) {
         }
 
         fetchData();
-    }, []);
+    }, [refresh]);
 
     const leftToolbarContents = (
         <>
@@ -62,7 +63,7 @@ function Competition({ ...props }) {
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
             <CompetitionInvite competitionName competitionId={searchParams.get("id")} />
             <div className='mr-2'></div>
-            <CompetitionConfiguration onSave={handleConfigSave} startingConfig={config}/>
+            <CompetitionConfiguration competition={competitionData} competitionId={competitionId} refresh={() => setRefresh(!refresh)}  />
         </>
     );
 

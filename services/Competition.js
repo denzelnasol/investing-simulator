@@ -62,10 +62,23 @@ async function createCompetition(balance, startDate, endDate, entryPoints = -1, 
     });
 }
 
+async function updateCompetition(competitionId, startDate, endDate, playerSize) {
+    return await prisma.competition.update({
+        where: { competition_id: competitionId },
+        data: {
+          start_time: startDate,
+          end_time: endDate,
+          max_num_players: playerSize
+        }
+      });
+      
+}
+
 module.exports = {
     getCompetitionInfo,
     getCompetitions,
     getPersonalCompetitions,
     getCompetitionParticipants,
     createCompetition,
+    updateCompetition,
 };

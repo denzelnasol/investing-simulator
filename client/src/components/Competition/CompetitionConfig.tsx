@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import { updateCompetition } from 'api/Competition/Competition';
 
 interface Config {
   startDate: Date,
@@ -10,17 +11,20 @@ interface Config {
   playerSize: number,
 };
 
-function CompetitionConfiguration(props: {startingConfig: Config, onSave: (config: Config) => void}) {
-  const {startingConfig} = props;
-
+function CompetitionConfiguration({ ...props }) {
   /* use states */
   const [visible, setVisible] = useState(false);
-  const [configuration, setConfiguration] = useState({
-    startDate: startingConfig.startDate,
-    endDate: startingConfig.endDate,
-    playerSize: startingConfig.playerSize,
-  });
-  const [minEndDate, setMinEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState<any>(null);
+  const [endDate, setEndDate] = useState<any>(null);
+  const [playerSize, setPlayerSize] = useState<number>(null);
+
+  useEffect(() => {
+    if (props.competition) {
+      setStartDate(props.competition.competitionStart);
+      setEndDate(props.competition.competitionEnd);
+      setPlayerSize(props.competition.requirements.maxParticipants);
+    }
+  }, [props.competition]);
 
   const showDialog = () => {
     setVisible(true);
@@ -28,22 +32,19 @@ function CompetitionConfiguration(props: {startingConfig: Config, onSave: (confi
   const hideDialog = () => {
     setVisible(false);
   };
+  const saveConfiguration = async () => {
 
-  const saveConfiguration = () => {
-    props.onSave(configuration);
-    hideDialog();
-  };
-
-  const handleStartDateChange = (e) => {
-    const startDate = e.value;
-    const nextDay = new Date(startDate);
-    nextDay.setDate(startDate.getDate() + 1);
-    setMinEndDate(nextDay);
-    setConfiguration({...configuration, startDate: startDate ?? null});
-  };
-
-  const handleEndDateChange = (e) => {
-    setConfiguration({...configuration, endDate: e.value ?? null});
+    const data = {
+      startDate,
+      endDate,
+      playerSize,
+      competitionId: props.competitionId
+    }
+    const result = await updateCompetition(data);
+    if (result) {
+      hideDialog();
+      props.refresh();
+    }
   };
 
   const footer = (
@@ -59,32 +60,32 @@ function CompetitionConfiguration(props: {startingConfig: Config, onSave: (confi
 
       <Dialog header="Configuration" visible={visible} modal onHide={hideDialog} footer={footer}>
         <div className="p-field">
-          <label htmlFor="startdate">Start Date</label> <br/>
-          <Calendar 
-            id="startdate" 
-            value={configuration.startDate ? new Date(configuration.startDate) : null} 
-            onChange={handleStartDateChange} 
-            minDate={new Date()}
+          <label htmlFor="startdate">Start Date</label> <br />
+          <Calendar
+            id="startdate"
+            value={startDate ? new Date(startDate) : null}
+            onChange={(e) => setStartDate(e.value)}
+            maxDate={new Date(endDate)}
           />
         </div>
 
         <div className="p-field">
-          <label htmlFor="enddate">End Date</label> <br/>
-          <Calendar 
-            id="enddate" 
-            value={configuration.endDate ? new Date(configuration.endDate) : null}
-            onChange={handleEndDateChange} 
-            minDate={minEndDate}
+          <label htmlFor="enddate">End Date</label> <br />
+          <Calendar
+            id="enddate"
+            value={endDate ? new Date(endDate) : null}
+            onChange={(e) => setEndDate(e.value)}
+            minDate={new Date(startDate)}
           />
         </div>
 
         <div className="p-field">
-          <label htmlFor="playersize">Player Size</label> <br/>
-          <InputText 
-            id="playersize" 
-            type="number" 
-            value={configuration.playerSize.toString()} 
-            onChange={(e) => setConfiguration({ ...configuration, playerSize: parseInt(e.target.value) })} 
+          <label htmlFor="playersize">Player Size</label> <br />
+          <InputText
+            id="playersize"
+            type="number"
+            value={playerSize ? playerSize.toString() : ""}
+            onChange={(e) => setPlayerSize(parseInt(e.target.value))}
           />
         </div>
       </Dialog>

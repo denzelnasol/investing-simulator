@@ -169,7 +169,19 @@ router.post('/create', async (req, res, next) => {
     }
 });
 
+router.post('/update', async (req, res) => {
 
+    const { playerSize, startDate, endDate, competitionId } = req.body;
+    try {
+        const result = await competitionDbService.updateCompetition(competitionId, startDate, endDate, playerSize)
+        if (result) {
+            return res.sendStatus(201);
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(404).json(e);
+    }
+})
 
 
 
