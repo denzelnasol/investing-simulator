@@ -113,8 +113,7 @@ const StockTable = ({ ...props }) => {
       <Button label="Trade" onClick={() => {
         setSelectedStock(rowData)
         setIsTradeSelected(true)
-      }
-      }
+      }}
       />
     );
   }

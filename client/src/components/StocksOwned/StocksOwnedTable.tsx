@@ -11,7 +11,6 @@ import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 
 interface Props {
-    isLoading: boolean,
     rows: number,
     stocks: any,
     onTrade: (isTrading: boolean) => void,
@@ -22,6 +21,7 @@ function StocksOwnedTable(props: Props) {
     const [selectedStock, setSelectedStock] = useState(null);
     const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
     const [tableData, setTableData] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         async function getTableData() {
@@ -52,11 +52,13 @@ function StocksOwnedTable(props: Props) {
             }));
          
             setTableData(tableData);
+            setIsLoading(false);
         }
 
         getTableData();
     }, [props.stocks]);
 
+    /* UI */
     const header = () => {
         return (
             <div className="flex justify-content-between align-items-center">
@@ -64,7 +66,6 @@ function StocksOwnedTable(props: Props) {
             </div>
         );
     }
-    
     const netChangeColumn = (rowData) => {
         return (
           <span className={`font-semibold ${rowData.netChange >= 0 ? "text-green-500" : "text-red-600"}`}>
@@ -72,7 +73,6 @@ function StocksOwnedTable(props: Props) {
           </span>
         );
     }
-
     const tradeColumn = (rowData) => {
         return (
           <Button label="Trade" onClick={() => {
@@ -97,7 +97,7 @@ function StocksOwnedTable(props: Props) {
                 isSell={true}
             />
 
-            {props.isLoading 
+            {isLoading 
                 ? <Skeleton height='18rem' /> 
                 :
                 <DataTable

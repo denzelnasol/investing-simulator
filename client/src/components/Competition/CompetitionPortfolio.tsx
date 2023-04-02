@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 
-import { getCurrentStockInfo } from 'api/Stock/Stock';
-
 // components
 import StocksOwnedTable from '../StocksOwned/StocksOwnedTable';
 import { getStocks } from "api/Profile/User";
@@ -33,7 +31,7 @@ function CompetitionPortfolio(props: Props) {
     
     return (
         <div>
-            <StocksOwnedTable isLoading={false} rows={10} stocks={stocks} onTrade={() => {}} />       
+            <StocksOwnedTable rows={10} stocks={stocks} onTrade={() => {}} />       
         </div>
     );
 }
