@@ -48,8 +48,7 @@ function StocksOwnedTable(props: Props) {
                 hideTradeDialog={() => {
                     setIsTradeSelected(false);
                     props.onTrade(false);
-                }
-                }
+                }}
                 isSell={true}
             />
 

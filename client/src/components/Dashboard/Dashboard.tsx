@@ -16,11 +16,6 @@ import './style.scss';
 
 const CHART_MAX_NUM_DATAPOINTS = 14;
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
-
 function formatDate(date: Date): string {
   return date.getMonth().toString() + '/' + date.getDay().toString() + '/' + date.getFullYear().toString();
 }
@@ -148,7 +143,11 @@ const Dashboard = () => {
 
       {/* Welcome message */}
       <div className='col-12'>
-        <DashboardWelcome isLoading={isLoading} name={profile.first_name} balance={portfolio.base_balance} netProfit={profitLossValue} />
+        <DashboardWelcome 
+          isLoading={isLoading} 
+          name={profile ? profile.first_name : ""} 
+          balance={portfolio ? portfolio.base_balance: 0} 
+          netProfit={profitLossValue} />
       </div>
 
       {/* balance chart (line) */}
@@ -162,7 +161,7 @@ const Dashboard = () => {
         <h1 style={{ textAlign: 'center' }}> Stocks Owned</h1>
         <StocksOwnedTable isLoading={isLoading} rows={10} stocks={stocks} onTrade={handleOnTrade} />
       </div>
-      
+
     </div>
   );
 
