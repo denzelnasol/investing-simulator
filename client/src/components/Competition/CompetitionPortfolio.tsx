@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
+
+import { getCurrentStockInfo } from 'api/Stock/Stock';
 
 // components
 import StocksOwnedTable from '../StocksOwned/StocksOwnedTable';
@@ -10,16 +12,20 @@ interface Props {
 }
 
 function CompetitionPortfolio(props: Props) {
+    /* useStates */
+    const [stocks, setStocks] = useState<any>(null);
 
     useEffect(() => {
         async function fetchOwnedStocks() {
             const token: string = Cookies.get('token');
 
             console.log(props.competitionId);
-
-            const stocks = await getStocks(token, props.competitionId);
-            
-            console.log(stocks);
+            if (props.competitionId) {
+                const stocks = await getStocks(token, props.competitionId);
+                console.log(stocks);
+                
+                setStocks(stocks);
+            }
         }
 
         fetchOwnedStocks();
@@ -27,7 +33,7 @@ function CompetitionPortfolio(props: Props) {
     
     return (
         <div>
-            <StocksOwnedTable isLoading={false} rows={10} stocks={null} onTrade={() => {}} />       
+            <StocksOwnedTable isLoading={false} rows={10} stocks={stocks} onTrade={() => {}} />       
         </div>
     );
 }

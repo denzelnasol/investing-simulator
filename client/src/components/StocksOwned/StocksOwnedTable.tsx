@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+
+import { getCurrentStockInfo } from 'api/Stock/Stock';
 
 // components
 import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
@@ -19,6 +21,41 @@ function StocksOwnedTable(props: Props) {
     /* useStates */
     const [selectedStock, setSelectedStock] = useState(null);
     const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
+    const [tableData, setTableData] = useState<any>(null);
+
+    useEffect(() => {
+        async function getTableData() {
+            if (!props.stocks) {
+                return;
+            }
+
+            const tableData = await Promise.all(props.stocks.map(async (stock: any) => {
+                const symbol = stock.fk_stock;
+                const currentStockInfo = await getCurrentStockInfo(symbol);
+                const currentPrice = currentStockInfo.regularMarketPrice;
+                const ask = currentStockInfo.ask;
+                const longName = currentStockInfo.longName;
+                const fullExchangeName = currentStockInfo.fullExchangeName;
+                const ownedShares = stock.num_shares;
+                const netChange = (stock.amount_invested + (currentPrice * ownedShares)).toFixed(2);
+
+                return {
+                    ...stock,
+                    netChange,
+                    currentPrice,
+                    symbol,
+                    ask,
+                    longName,
+                    fullExchangeName,
+                    ownedShares,
+                };
+            }));
+         
+            setTableData(tableData);
+        }
+
+        getTableData();
+    }, [props.stocks]);
 
     const header = () => {
         return (
@@ -65,7 +102,7 @@ function StocksOwnedTable(props: Props) {
                 :
                 <DataTable
                     header={header}
-                    value={props.stocks}
+                    value={tableData}
                     selectionMode="single"
                     paginator
                     rows={10}

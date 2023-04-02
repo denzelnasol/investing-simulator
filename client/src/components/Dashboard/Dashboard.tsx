@@ -76,37 +76,23 @@ const Dashboard = () => {
 
     async function getUserStocks() {
       const stocks = await getStocks(token);
+      setStocks(stocks);
+      
       let totalInvested = 0;
       let totalCost = 0;
-      const updatedStocks = await Promise.all(stocks.map(async (stock: any) => {
-
+      await Promise.all(stocks.forEach(async (stock: any) => {
         const symbol = stock.fk_stock;
+
         const currentStockInfo = await getCurrentStockInfo(symbol);
         const currentPrice = currentStockInfo.regularMarketPrice;
-        const ask = currentStockInfo.ask;
-        const longName = currentStockInfo.longName;
-        const fullExchangeName = currentStockInfo.fullExchangeName;
         const ownedShares = stock.num_shares;
-        const netChange = (stock.amount_invested + (currentPrice * ownedShares)).toFixed(2);
 
         totalInvested += stock.amount_invested;
         totalCost += (currentPrice * ownedShares);
-
-        return {
-          ...stock,
-          netChange,
-          currentPrice,
-          symbol,
-          ask,
-          longName,
-          fullExchangeName,
-          ownedShares,
-        };
-
       }));
+      
       const profitLossValue = parseFloat((totalInvested + totalCost).toFixed(2))
       setProfitLossValue(profitLossValue);
-      setStocks(updatedStocks);
     }
 
     async function getUserBalanceHistory() {
