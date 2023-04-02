@@ -6,6 +6,7 @@ const axiosInstance = axios.create({
   });
 
   export const createCompetition = async ({entry_points, max_num_players, start_balance, start_time, end_time, name}) => {
+    const token = Cookies.get('token');
     const data = {
         entry_points,
         max_num_players,
@@ -14,8 +15,11 @@ const axiosInstance = axios.create({
         end_time,
         name,
     };
+    const headers = {
+        Authorization: token
+      };
 
-    const result = await axiosInstance.post('/create', data)
+    const result = await axiosInstance.post('/create', data,{headers})
         .then(res => {
             if (res.data.success) {
                 return true;

@@ -54,7 +54,11 @@ async function createCompetitionPortfolio(profileId, competitionId, balance) {
         portfolio_type: 'competition',
         base_balance: balance,
         fk_profile: profileId,
-        fk_competition: competitionId,
+        competition: {
+          connect: {
+            competition_id: competitionId
+          }
+        }
     }
   }); 
 }

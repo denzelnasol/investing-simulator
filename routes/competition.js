@@ -7,6 +7,7 @@ router.use(cookieParser());
 
 const portfolioDbService = require('../services/Portfolio');
 const competitionDbService = require('../services/Competition');
+const { verify } = require('crypto');
 
 // when the user searches for competitions show the list of competitions
 // router.get('/all', async (req, res, next) => {
@@ -113,28 +114,29 @@ router.get('/join/:competitionId', async (req, res, next) => {
 
 
 // create competition
-router.post('/create', async (req, res, next) => {
+router.post('/create', async (req, res, next) => { 
     try {
-        // get profile id from cookie
+        // get profile id from cookie 
+        const cookie = getTokenFromRequest(req)  
+        const token = await verifyToken(cookie);
         var profileId = req.body.profileId;
-        var competitionID = req.body.competitionID;
+        console.log(profileId);
         const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
 
         let comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
 
-        let result = await portfolioDbService
-            .createCompetitionPortfolio(profileId, competitionID, comp.start_balance);
-
+        let result = await portfolioDbService.createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
         res.status(201).json({
             competitionId: comp.competition_id
         });
-
-
     } catch (err) {
         console.log(err);
         res.status(404).json(err);
     }
 });
+
+
+
 
 
 module.exports = router;

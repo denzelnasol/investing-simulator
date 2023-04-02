@@ -1,3 +1,4 @@
+const { profile } = require("console");
 const prisma = require("../src/db");
 
 
