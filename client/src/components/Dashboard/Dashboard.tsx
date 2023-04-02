@@ -143,7 +143,6 @@ const Dashboard = () => {
 
       {/* Table of owned stocks */}
       <div className='col-6'>
-        <h1 style={{ textAlign: 'center' }}> Stocks Owned</h1>
         <StocksOwnedTable rows={10} stocks={stocks} onTrade={handleOnTrade} />
       </div>
 

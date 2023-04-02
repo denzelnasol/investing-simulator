@@ -11,6 +11,7 @@ import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 
 interface Props {
+    portfolioId?: string
     rows: number,
     stocks: any,
     onTrade: (isTrading: boolean) => void,
@@ -55,6 +56,8 @@ function StocksOwnedTable(props: Props) {
             setIsLoading(false);
         }
 
+        //async function get
+
         getTableData();
     }, [props.stocks]);
 
@@ -88,6 +91,8 @@ function StocksOwnedTable(props: Props) {
     return (
         <>
             <StockTradeDialog
+                portfolioId={props.portfolioId}
+                balance={0}
                 stock={selectedStock}
                 displayTradeDialog={isTradeSelected}
                 hideTradeDialog={() => {

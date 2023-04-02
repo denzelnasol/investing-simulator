@@ -25,6 +25,7 @@ const StockTable = ({ ...props }) => {
   const [stockFilters, setStockFilters] = useState(null);
   const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+  const [portfolioId, setPortfolioId] = useState<any>();
   const [balance, setBalance] = useState<number>(0);
 
   // ** useEffects ** //
@@ -42,7 +43,7 @@ const StockTable = ({ ...props }) => {
       const portfolio = await getPortfolio(authToken, competitionId); // get main portfolio if competitionId is null
 
       console.log(portfolio.portfolio_type);
-
+      setPortfolioId(portfolio.portfolio_id);
       setBalance(portfolio.base_balance);
     }
 
@@ -51,7 +52,7 @@ const StockTable = ({ ...props }) => {
     initializeFilters();
   }, []);
 
-  // ** Callback Functions ** //
+  // ** Callback Functions ** // 
 
   const initializeFilters = () => {
     setStockFilters({
@@ -127,10 +128,12 @@ const StockTable = ({ ...props }) => {
   return (
     <>
       <StockTradeDialog
+        portfolioId={portfolioId}
         stock={selectedStock}
         displayTradeDialog={isTradeSelected}
         hideTradeDialog={() => setIsTradeSelected(false)}
         balance={balance}
+        isSell={false}
       />
 
       <DataTable
