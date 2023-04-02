@@ -10,6 +10,7 @@ const indexRouter = require('./../routes/index');
 const usersRouter = require('./../routes/users');
 const stockRouter = require('./../routes/stock');
 const competitionRouter = require('./../routes/competition');
+const emailRouter = require('./../routes/email');
 
 // constants
 const PORT = 8080;
@@ -29,6 +30,7 @@ app.use('./competition', competitionRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/stock', stockRouter);
 app.use('/api/competitions', competitionRouter);
+app.use('/api/email', emailRouter);
 app.use('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
