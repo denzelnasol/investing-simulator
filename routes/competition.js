@@ -145,13 +145,17 @@ router.get('/join/:competitionId', async (req, res, next) => {
 router.post('/create', async (req, res, next) => { 
     try {
         // get profile id from cookie 
-        const cookie = getTokenFromRequest(req)  
+        const cookie = getTokenFromRequest(req)
         const token = await verifyToken(cookie);
-        if(!token) {
-            res.status(403).json('profileID not found');
-            return
+
+        if (!token) {
+            res.status(403).json('Player is not yet logged in.');
+            return;
         }
-        var profileId = req.body.profileId;
+        const email = token.email;
+
+        const profile = await getProfileByEmail(email);
+        const profileId = profile.profile_id;
         console.log(profileId);
         const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
 
