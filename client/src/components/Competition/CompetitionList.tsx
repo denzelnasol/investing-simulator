@@ -10,6 +10,8 @@ import { Button } from 'primereact/button';
 import { DataTable } from "primereact/datatable";
 import { Column } from 'primereact/column';
 import { getCompetitionData } from 'api/Competition/Competition';
+import { Skeleton } from 'primereact/skeleton';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 interface Competition {
     name: string,
@@ -24,9 +26,13 @@ interface FetchedPortfolio {
 
 function CompetitionList(props) {
     const navigate = useNavigate();
+
+    // ** useStates ** //
     const [competitions, setCompetitions] = useState<any>([]);
     const [selectedCompetition, setSelectedCompetition] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    // ** useEffects ** //
     useEffect(() => {
         async function fetchData() {
             // fetch portfolios (request returns competition ids as well)
@@ -52,6 +58,7 @@ function CompetitionList(props) {
                 )
             }));
             setCompetitions(competitionLinks);
+            setIsLoading(false);
         }
 
         fetchData();
@@ -64,12 +71,26 @@ function CompetitionList(props) {
 
     }, [selectedCompetition]);
 
+    const renderTableHeader = () => {
+        return (
+            <div className="flex justify-content-between">
+                <div className="flex font-medium text-4xl">Competition List</div>
+                <div className="flex">
+                    <Button icon="pi pi-plus" label="Competition" onClick={() => navigate(`/create`)} />
+                </div>
+            </div>
+        );
+    }
+
+    const tableHeader = renderTableHeader();
+
     const competitionListTable = (
         <DataTable
             value={competitions}
             selectionMode="single"
             selection={selectedCompetition}
             onSelectionChange={e => setSelectedCompetition(e.value)}
+            header={tableHeader}
         >
             <Column field="competitionName" header="Name"></Column>
             <Column field="startDate" header="Start Date"></Column>
@@ -78,10 +99,14 @@ function CompetitionList(props) {
     );
 
     return (
-        <div>
-            <h1>Your Ongoing Competitions</h1>
-            {competitionListTable}
-        </div>
+        <>
+            {isLoading
+                ? 
+                <div className="flex m-10 justify-content-center">
+                    <ProgressSpinner />
+                </div> 
+                : competitionListTable}
+        </>
     );
 };
 

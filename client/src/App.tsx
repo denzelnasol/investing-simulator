@@ -21,6 +21,7 @@ import RealTimeData from 'components/FillerPage/RealTimeData';
 import AboutUs from 'components/FillerPage/AboutUs';
 import CompetitionList from 'components/Competition/CompetitionList'
 import StockTable from 'components/StockTable/StockTable';
+import CompetitionCreate from 'components/Competition/CompetitionCreate';
 
 import Private from 'components/Private/Private';
 
@@ -43,6 +44,7 @@ const App = () => {
         <Route path='/practice-invest' element={<PracticeInvest/>}/>
         <Route path='/compete-other' element={<CompeteOther/>}/>
         <Route path ='/about' element={<AboutUs/>}/>
+        <Route path ='/create' element={<CompetitionCreate/>}/>
 
         {/* Login restricted routes */}
         <Route path='/competition-list' element={<Private componentToRender={CompetitionList} />}/>

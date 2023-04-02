@@ -107,8 +107,6 @@ router.get('/join/:competitionId', async (req, res, next) => {
         const members = await competitionDbService.getCompetitionParticipants(competitionId);
 
         for (const member of members) {
-            console.log(member.profile.email);
-
             if (member.profile.email === email) {
                 res.status(200).json({
                     isPlayerAlreadyInCompetition: true,
@@ -142,28 +140,37 @@ router.get('/join/:competitionId', async (req, res, next) => {
 
 
 // create competition
-router.post('/create', async (req, res, next) => {
+router.post('/create', async (req, res, next) => { 
     try {
+        // get profile id from cookie 
+        const cookie = getTokenFromRequest(req)
+        const token = await verifyToken(cookie);
+
+        if (!token) {
+            res.status(403).json('Player is not yet logged in.');
+            return;
+        }
+        const email = token.email;
+
+        const profile = await getProfileByEmail(email);
+        const profileId = profile.profile_id;
+        console.log(profileId);
+        const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
+
+        const comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
         
-        // get profile id from cookie
-        var profileId = req.body.profileId;
-        var requirements = req.body.requirements;
-        const { balance, start, end, entry, maxPlayers } = requirements;
-
-        let comp = await competitionDbService.createCompetition(balance, start, end, entry, maxPlayers);
-
-        let result = await portfolioDbService
-            .createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
-
-        res.sendStatus(201).json({
-            competitionId: comp.competition_id
-        });
-
+        const result = await portfolioDbService.createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
+        if (result) {
+            return res.sendStatus(201);
+        }
     } catch (err) {
         console.log(err);
         res.status(404).json(err);
     }
 });
+
+
+
 
 
 module.exports = router;
