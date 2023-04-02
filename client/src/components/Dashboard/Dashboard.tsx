@@ -12,6 +12,7 @@ import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 import Button from 'components/PrimeReact/Button/Button';
 import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
+import StocksOwnedTable from './StocksOwnedTable';
 
 // Styles
 import './style.scss';
@@ -135,26 +136,6 @@ const Dashboard = () => {
     getUserBalanceHistory();
   }, [isTradeSelected]);
 
-  // ** DataTable ** //
-  const netChangeColumn = (rowData) => {
-    return (
-      <span className={`font-semibold ${rowData.netChange >= 0 ? "text-green-500" : "text-red-600"}`}>
-        {rowData.netChange}
-      </span>
-    )
-  }
-
-  const tradeColumn = (rowData) => {
-    return (
-      <Button label="Trade" onClick={() => {
-        setSelectedStock(rowData)
-        setIsTradeSelected(true)
-      }
-      }
-      />
-    );
-  }
-
   // ** UI ** //
   const welcomeText = (
     <div className="flex flex-column m-4">
@@ -178,24 +159,6 @@ const Dashboard = () => {
   const historyGraph = (
     isLoading ? <Skeleton height='20rem' /> : <Chart className="" type="line" data={chartData} options={options} />
   )
-
-  const stocksOwnedTable = (
-
-    isLoading ? <Skeleton height='18rem' /> :
-    <DataTable
-      value={stocks}
-      selectionMode="single"
-      paginator
-      rows={10}
-    >
-      <Column field="symbol" header="Name" sortable></Column>
-      <Column field="num_shares" header="Shares"></Column>
-      <Column body={netChangeColumn} header="Net Change"></Column>
-      <Column field="currentPrice" header="Current Share Price"></Column>
-      <Column body={tradeColumn}></Column>
-    </DataTable>
-
-  );
 
   return (
     <>
@@ -224,7 +187,7 @@ const Dashboard = () => {
 
         <div className='col-6'>
           <h1 style={{ textAlign: 'center' }}> Stocks Owned</h1>
-          {stocksOwnedTable}
+          <StocksOwnedTable isLoading={isLoading} rows={10} stocks={stocks} />
         </div>
       </div>
     </>
