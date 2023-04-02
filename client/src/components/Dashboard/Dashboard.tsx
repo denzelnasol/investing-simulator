@@ -9,6 +9,7 @@ import { getCurrentStockInfo } from 'api/Stock/Stock';
 import { Chart } from 'primereact/chart';
 import { Skeleton } from 'primereact/skeleton';
 import StocksOwnedTable from './StocksOwnedTable';
+import DashboardWelcome from './DashboardWelcome';
 
 // Styles
 import './style.scss';
@@ -137,61 +138,32 @@ const Dashboard = () => {
     getUserBalanceHistory();
   }, [isTradeSelected]);
 
-  // ** UI ** //
-  const welcomeText = (
-    <div className="flex flex-column m-4">
-
-      {isLoading
-        ? <Skeleton className='flex mb-3' width='6rem' />
-        : <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
-          {`Hello ${profile && profile.first_name}, you have a current balance of ${formatter.format(portfolio && portfolio.base_balance)}`}
-        </div>}
-
-      {isLoading
-        ? <Skeleton className='flex' width='6rem' />
-        :
-        <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
-          {`Current Profit/Loss: ${formatter.format(profitLossValue)}`}
-        </div>
-      }
-    </div>
-  );
 
   const historyGraph = (
     isLoading ? <Skeleton height='20rem' /> : <Chart className="" type="line" data={chartData} options={options} />
   )
 
   return (
-    <>
-      {/* <StockTradeDialog
-        stock={selectedStock}
-        displayTradeDialog={isTradeSelected}
-        hideTradeDialog={() => setIsTradeSelected(false)}
-        isSell={true}
-      /> */}
-      <div className="grid">
+    <div className='grid'>
 
-        <div className='col-12'>
-          {welcomeText}
-        </div>
-
+      {/* Welcome message */}
+      <div className='col-12'>
+        <DashboardWelcome isLoading={isLoading} name={profile.first_name} balance={portfolio.base_balance} netProfit={profitLossValue} />
       </div>
-
-      {/* <Divider /> */}
 
       {/* balance chart (line) */}
-      <div className='grid'>
-        <div className='col-6'>
-          <h1 style={{ textAlign: 'center' }}>Graph of Changes</h1> <br></br>
-          {historyGraph}
-        </div>
-
-        <div className='col-6'>
-          <h1 style={{ textAlign: 'center' }}> Stocks Owned</h1>
-          <StocksOwnedTable isLoading={isLoading} rows={10} stocks={stocks} onTrade={handleOnTrade} />
-        </div>
+      <div className='col-6'>
+        <h1 style={{ textAlign: 'center' }}>Graph of Changes</h1> <br></br>
+        {historyGraph}
       </div>
-    </>
+
+      {/* Table of owned stocks */}
+      <div className='col-6'>
+        <h1 style={{ textAlign: 'center' }}> Stocks Owned</h1>
+        <StocksOwnedTable isLoading={isLoading} rows={10} stocks={stocks} onTrade={handleOnTrade} />
+      </div>
+      
+    </div>
   );
 
 }
