@@ -84,6 +84,15 @@ async function startCompetition(competitionId) {
       });
 }
 
+async function endCompetition(competitionId) {
+    return await prisma.competition.update({
+        where: { competition_id: competitionId },
+        data: {
+          state: 'ended',
+        }
+      });
+}
+
 module.exports = {
     getCompetitionInfo,
     getCompetitions,
@@ -92,4 +101,5 @@ module.exports = {
     createCompetition,
     updateCompetition,
     startCompetition,
+    endCompetition,
 };

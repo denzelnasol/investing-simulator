@@ -6,7 +6,7 @@ import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompetitonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
-import { getCompetitionData, startCompetition } from 'api/Competition/Competition';
+import { endCompetition, getCompetitionData, startCompetition } from 'api/Competition/Competition';
 import { Participant } from './sharedTypes/ParticipantInterface';
 
 import './style.scss';
@@ -31,6 +31,14 @@ function Competition({ ...props }) {
 
     // fetch information about competition
     useEffect(() => {
+        async function checkCompetitionEnded(endDate: Date, competitionId: string, state: string) {
+            const currentDate = new Date();
+            if (endDate < currentDate && state !== 'ended') {
+                await endCompetition(competitionId);
+                fetchData();
+            }
+        }
+
         async function fetchData() {
             // get competition id from query string in URL
             const id = searchParams.get("id");
@@ -45,6 +53,8 @@ function Competition({ ...props }) {
                 endDate: new Date(data.competitionEnd),
                 playerSize: data.requirements.maxParticipants,
             });
+
+            await checkCompetitionEnded(new Date(data.competitionEnd), id, data.state);
         }
 
         fetchData();

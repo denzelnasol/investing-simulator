@@ -196,6 +196,19 @@ router.post('/start', async (req, res) => {
     }
 })
 
+router.post('/end', async (req, res) => {
+    const { competitionId } = req.body;
+    try {
+        const result = await competitionDbService.endCompetition(competitionId)
+        if (result) {
+            return res.sendStatus(201);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(404).json(e);
+    }
+})
+
 
 
 module.exports = router;

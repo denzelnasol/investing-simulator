@@ -55,10 +55,17 @@ async function startCompetition(competitionId: string) {
     return result.status;
 }
 
+async function endCompetition(competitionId: string) {
+    const data = { competitionId };
+    const result = await axiosInstance.post('/end', data);
+    return result.status;
+}
+
 export {
     getCompetitionData,
     acceptInvite,
     createCompetition,
     updateCompetition,
     startCompetition,
+    endCompetition
 };
