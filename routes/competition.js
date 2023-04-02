@@ -107,8 +107,6 @@ router.get('/join/:competitionId', async (req, res, next) => {
         const members = await competitionDbService.getCompetitionParticipants(competitionId);
 
         for (const member of members) {
-            console.log(member.profile.email);
-
             if (member.profile.email === email) {
                 res.status(200).json({
                     isPlayerAlreadyInCompetition: true,
@@ -159,12 +157,12 @@ router.post('/create', async (req, res, next) => {
         console.log(profileId);
         const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
 
-        let comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
-
-        let result = await portfolioDbService.createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
-        res.status(201).json({
-            competitionId: comp.competition_id
-        });
+        const comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
+        
+        const result = await portfolioDbService.createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
+        if (result) {
+            return res.sendStatus(201);
+        }
     } catch (err) {
         console.log(err);
         res.status(404).json(err);

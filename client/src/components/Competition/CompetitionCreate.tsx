@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar } from 'primereact/calendar';
 import { createCompetition } from 'api/Competition/Competition';
 import { InputText } from 'primereact/inputtext';
+import { useNavigate } from 'react-router-dom';
 
 function CompetitionCreate() {
+  const navigate = useNavigate();
+
   const [balance, setBalance] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -25,7 +28,6 @@ function CompetitionCreate() {
       console.error('Invalid end date');
       return;
     }
-
     const result = await createCompetition({
       entry_points: entryPoints,
       max_num_players: maxPlayers,
@@ -36,16 +38,14 @@ function CompetitionCreate() {
     });
 
     if (result) {
-      console.log('Competition created');
-    } else {
-      console.error('Error creating competition');
+      navigate('/competition-list');
     }
   };
 
   return (
     <div style={{ padding: '2em' }}>
         <h1 style={{ color: 'var(--primary-color)'}}>Competition Create</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete='off'>
         <div className="p-inputgroup">
             <span className="p-inputgroup-addon">
             <i className="pi pi-user"></i>
