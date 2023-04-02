@@ -6,7 +6,7 @@ import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompetitonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
-import { getCompetitionData } from 'api/Competition/Competition';
+import { getCompetitionData, startCompetition } from 'api/Competition/Competition';
 import { Participant } from './sharedTypes/ParticipantInterface';
 
 import './style.scss';
@@ -50,20 +50,64 @@ function Competition({ ...props }) {
         fetchData();
     }, [refresh]);
 
+    const triggerRefresh = () => {
+        setRefresh(!refresh);
+    }
+
     const leftToolbarContents = (
         <>
             <div className="mr-5 font-bold text-gray-700">Start Date: {config.startDate.toDateString()}</div>
             <div className="mr-5 font-bold text-gray-700">End Date: {config.endDate.toDateString()}</div>
-            <div className="font-bold text-gray-700">Player Size: {config.playerSize}</div>
+            <div className="mr-5 font-bold text-gray-700">Player Size: {config.playerSize}</div>
+
+            {competitionData && competitionData.state === 'started'
+                && <div className="font-bold text-green-500">Game Ongoing</div>
+            }
+
+            {competitionData && competitionData.state === 'ended'
+                && <div className="font-bold text-red-500">Game Ended</div>
+            }
         </>
     );
-    
+
+    const startButton = (
+        <Button
+            className="mr-2"
+            label="Start Competition"
+            icon="pi pi-arrow-circle-right"
+            iconPos="right"
+            onClick={async () => {
+                await startCompetition(competitionId)
+                triggerRefresh();
+            }}
+            disabled={competitionData && (competitionData.state === 'started' || competitionData.state === 'ended')}
+        />
+    );
+
+    const configurationDialog = (
+        <CompetitionConfiguration
+            competition={competitionData}
+            competitionId={competitionId}
+            refresh={triggerRefresh}
+        />
+    )
+
+    const inviteButton = (
+        <CompetitionInvite competitionName competitionId={searchParams.get("id")} />
+    );
+
     const rightToolbarContents = (
         <>
-            <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
-            <CompetitionInvite competitionName competitionId={searchParams.get("id")} />
-            <div className='mr-2'></div>
-            <CompetitionConfiguration competition={competitionData} competitionId={competitionId} refresh={() => setRefresh(!refresh)}  />
+            {
+                (competitionData && (competitionData.state === 'started' || competitionData.state === 'ended'))
+                    ? <> </>
+                    : <>
+                        {startButton}
+                        {inviteButton}
+                        <div className='mr-2'></div>
+                        {configurationDialog}
+                    </>
+            }
         </>
     );
 
@@ -77,7 +121,7 @@ function Competition({ ...props }) {
 
             <CompetitionSidebar />
             <CompetitionGraph />
-            <CompetitionStandings participants={participants}/>
+            <CompetitionStandings participants={participants} />
         </Card>
     );
 }

@@ -8,6 +8,12 @@ enum pf_type {
   competition
 }
 
+enum competition_state {
+  started
+  ended
+  setup
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -45,6 +51,7 @@ model competition {
   start_time      DateTime
   end_time        DateTime
   name            String      @db.VarChar(100)
+  state           competition_state
   portfolio       portfolio[]
 }
 

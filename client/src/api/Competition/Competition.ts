@@ -40,12 +40,18 @@ async function acceptInvite(competitionId: string) {
     const token = Cookies.get('token');
     const result = await axiosInstance.get(`/join/${competitionId}`, {
         headers: { Authorization: token },
-    })
+    });
     return result;
 }
 
 async function updateCompetition(data) {
-    const result = await axiosInstance.post(`/update`, data)
+    const result = await axiosInstance.post(`/update`, data);
+    return result.status;
+}
+
+async function startCompetition(competitionId: string) {
+    const data = { competitionId };
+    const result = await axiosInstance.post('/start', data);
     return result.status;
 }
 
@@ -54,4 +60,5 @@ export {
     acceptInvite,
     createCompetition,
     updateCompetition,
+    startCompetition,
 };
