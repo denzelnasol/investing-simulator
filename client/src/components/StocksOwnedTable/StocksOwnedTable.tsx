@@ -22,14 +22,17 @@ function StocksOwnedTable(props: Props) {
     /* useStates */
     const [selectedStock, setSelectedStock] = useState(null);
     const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
-    const [portfolio, setPortfolio] = useState<any>(null);
+    const [portfolioId, setPortfolioId] = useState("");
+    const [portfolioBalance, setPortfolioBalance] = useState(0);
     const [tableData, setTableData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        async function fetchedPortfolio() {
-            const fetchedPortfolio = await getPortfolio(props.competitionId);
-            setPortfolio(fetchedPortfolio);
+        async function fetchPortfolio() {
+            const {portfolio_id, base_balance} = await getPortfolio(props.competitionId); // deaults to main portfolio if this prop is not provided
+
+            setPortfolioId(portfolio_id);
+            setPortfolioBalance(base_balance);
         }
 
         async function fetchTableData() {
@@ -64,7 +67,7 @@ function StocksOwnedTable(props: Props) {
         }
 
         //async function get
-        fetchedPortfolio();
+        fetchPortfolio();
         fetchTableData();
     }, [props.stocks]);
 
@@ -98,8 +101,8 @@ function StocksOwnedTable(props: Props) {
     return (
         <>
             <StockTradeDialog
-                portfolioId={portfolio ? portfolio.portfolio_id : ""}
-                balance={portfolio ? portfolio.base_balance : 0}
+                portfolioId={portfolioId}
+                balance={portfolioBalance}
                 stock={selectedStock}
                 displayTradeDialog={isTradeSelected}
                 hideTradeDialog={() => {

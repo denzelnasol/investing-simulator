@@ -61,7 +61,6 @@ const StockTradeDialog = (props: Props) => {
 
   const executeTrade = async () => {
     setIsLoading(true);
-    const authToken = Cookies.get('token');
     const symbol = props.stock && props.stock.symbol;
     const asking = props.stock && props.stock.ask;
 

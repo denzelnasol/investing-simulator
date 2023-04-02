@@ -8,7 +8,7 @@ import { getCurrentStockInfo } from 'api/Stock/Stock';
 // Components
 import { Chart } from 'primereact/chart';
 import { Skeleton } from 'primereact/skeleton';
-import StocksOwnedTable from '../StocksOwned/StocksOwnedTable';
+import StocksOwnedTable from '../StocksOwnedTable/StocksOwnedTable';
 import DashboardWelcome from './DashboardWelcome';
 
 // Styles

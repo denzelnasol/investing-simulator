@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
 // components
-import StocksOwnedTable from '../StocksOwned/StocksOwnedTable';
+import StocksOwnedTable from '../StocksOwnedTable/StocksOwnedTable';
 import { getStocks } from "api/Profile/User";
 import { Button } from 'primereact/button';
 

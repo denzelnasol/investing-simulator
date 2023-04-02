@@ -39,7 +39,7 @@ const StockTable = ({ ...props }) => {
     async function getUserPortfolio() {
       const competitionId = searchParams.get("competition-id") 
       console.log(competitionId);
-      const portfolio = await getPortfolio(competitionId); // get main portfolio if competitionId is null
+      const portfolio = await getPortfolio(competitionId); // gets main portfolio if competitionId is null
 
       console.log(portfolio.portfolio_type);
       setPortfolioId(portfolio.portfolio_id);
