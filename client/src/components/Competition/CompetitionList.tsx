@@ -32,7 +32,6 @@ function CompetitionList(props) {
             // fetch portfolios (request returns competition ids as well)
             const token: string = Cookies.get('token');
             const portfolios = await getCompetitionPortfolios(token);
-            console.log(portfolios);
 
             if (!portfolios) return;
 
