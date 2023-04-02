@@ -54,7 +54,7 @@ const InviteAccepted = () => {
 
     return (
       <div>
-        Invitation Excepted!
+        Invitation Accepted!
       </div>
     );
   }
