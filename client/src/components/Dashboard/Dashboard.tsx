@@ -74,13 +74,13 @@ const Dashboard = () => {
       setPortfolio(portfolio);
     }
 
-    async function getUserStocks() {
-      const stocks = await getStocks(token);
-      setStocks(stocks);
+    async function updateNetProfit() {
+      const fetchedStocks = await getStocks(token);
+      setStocks(fetchedStocks);
       
       let totalInvested = 0;
       let totalCost = 0;
-      await Promise.all(stocks.forEach(async (stock: any) => {
+      fetchedStocks.forEach(async (stock: any) => {
         const symbol = stock.fk_stock;
 
         const currentStockInfo = await getCurrentStockInfo(symbol);
@@ -89,10 +89,9 @@ const Dashboard = () => {
 
         totalInvested += stock.amount_invested;
         totalCost += (currentPrice * ownedShares);
-      }));
-      
-      const profitLossValue = parseFloat((totalInvested + totalCost).toFixed(2))
-      setProfitLossValue(profitLossValue);
+        const profitLossValue = parseFloat((totalInvested + totalCost).toFixed(2))
+        setProfitLossValue(profitLossValue);
+      });
     }
 
     async function getUserBalanceHistory() {
@@ -115,7 +114,7 @@ const Dashboard = () => {
 
     getUserProfile();
     getUserPortfolio();
-    getUserStocks();
+    updateNetProfit();
     getUserBalanceHistory();
   }, [isTradeSelected]);
 
