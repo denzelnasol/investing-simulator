@@ -7,14 +7,12 @@ import { buyStock, sellStock } from "api/Stock/Stock";
 import Button from 'components/PrimeReact/Button/Button';
 import { Dialog } from 'primereact/dialog';
 import { InputNumber } from 'primereact/inputnumber';
-import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
 // Styles
 import './style.scss';
 
 const StockTradeDialog = ({ ...props }) => {
-  const navigate = useNavigate();
 
   // ** useRef ** //
   const toast = useRef(null);
@@ -147,6 +145,10 @@ const StockTradeDialog = ({ ...props }) => {
       onHide={onHide}
     >
       <div className="p-fluid grid formgrid">
+
+        <h3 className="col-12">
+          {`Available Funds: ${props.balance}`}
+        </h3>
 
         <div className="col-12 mb-2">
           {stockDescription}
