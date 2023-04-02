@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
+import './style.scss';
 
 // Components
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
@@ -12,11 +13,11 @@ import StockTradeDialog from "components/StockTradeDialog/StockTradeDialog";
 
 // API
 import { getCurrentStockInfo } from "api/Stock/Stock";
-
-import './style.scss';
 import { getPortfolio } from "api/Profile/User";
+import { useSearchParams } from "react-router-dom";
 
 const StockTable = ({ ...props }) => {
+  const [searchParams] = useSearchParams();
 
   // ** useStates ** //
   const [data, setData] = useState([]);
@@ -35,8 +36,13 @@ const StockTable = ({ ...props }) => {
     };
 
     async function getUserPortfolio() {
+      const competitionId = searchParams.get("competition-id") 
+      console.log(competitionId);
       const authToken = Cookies.get('token');
-      const portfolio = await getPortfolio(authToken);
+      const portfolio = await getPortfolio(authToken, competitionId); // get main portfolio if competitionId is null
+
+      console.log(portfolio.portfolio_type);
+
       setBalance(portfolio.base_balance);
     }
 
@@ -126,6 +132,7 @@ const StockTable = ({ ...props }) => {
         hideTradeDialog={() => setIsTradeSelected(false)}
         balance={balance}
       />
+
       <DataTable
         value={data}
         selectionMode="single"

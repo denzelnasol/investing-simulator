@@ -79,15 +79,16 @@ router.get('/competition-portfolios', requireAuth, async (req, res, next) => {
 
 router.get('/portfolio', requireAuth, async (req, res) => {
 	const email = req.user.email;
-	const competitionId = req.params['competitionId'];
+	const profile = await getProfileByEmail(email);
+
+	let portfolio;
+	const competitionId = req.query['competitionId'];
 	if (competitionId) {
-		// retrieve the portfolio associated with the competition
-		return;
+		portfolio = await getCompetitonPortfolio(profile.profile_id, competitionId);
+	} else {
+		portfolio = await getMainPortfolio(profile.profile_id);
 	}
 
-	// get the main portfolio
-	const profile = await getProfileByEmail(email);
-	const portfolio = await getMainPortfolio(profile.profile_id);
 	res.send(portfolio);
 })
 
