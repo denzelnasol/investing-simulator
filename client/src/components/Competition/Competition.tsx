@@ -130,7 +130,7 @@ function Competition({ ...props }) {
             <Toolbar className="my-3 bg-gray-300" left={leftToolbarContents} right={rightToolbarContents} />
 
             <CompetitionSidebar />
-            <CompetitionGraph />
+            <CompetitionGraph competition={competitionData} competitionId={competitionId} />
             <CompetitionStandings participants={participants} />
         </Card>
     );

@@ -23,10 +23,6 @@ const formatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
-function formatDate(date: Date): string {
-  return date.getMonth().toString() + '/' + date.getDay().toString() + '/' + date.getFullYear().toString();
-}
-
 const Dashboard = () => {
   // ** useStates ** //
   const [profile, setProfile] = useState<any>(null);
@@ -115,14 +111,18 @@ const Dashboard = () => {
 
     async function getUserBalanceHistory() {
       const history = await getHistory(token);
+
       setChartData((chart: any) => {
         chart.labels = history.history
-          .slice(CHART_MAX_NUM_DATAPOINTS - 1)
-          .map((h: any) => h.time);
+          // .slice(CHART_MAX_NUM_DATAPOINTS - 1)
+          .map((h: any) => {
+            return new Date(h.time).toDateString();
+          });
+
         chart.datasets[0].data = history.history
-          .slice(CHART_MAX_NUM_DATAPOINTS - 1)
           .map((h: any) => h.balance);
-        chart.labels.push(formatDate(new Date()));
+
+        chart.labels.push(new Date().toDateString());
         chart.datasets[0].data.push(history.currentBalance);
         setIsLoading(false);
         return chart;
