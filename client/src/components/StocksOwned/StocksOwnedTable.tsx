@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { getCurrentStockInfo } from 'api/Stock/Stock';
+import { getPortfolio } from "api/Profile/User";
 
 // components
 import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
@@ -11,7 +12,7 @@ import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
 
 interface Props {
-    portfolioId?: string
+    competitionId?: string
     rows: number,
     stocks: any,
     onTrade: (isTrading: boolean) => void,
@@ -21,11 +22,17 @@ function StocksOwnedTable(props: Props) {
     /* useStates */
     const [selectedStock, setSelectedStock] = useState(null);
     const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
+    const [portfolio, setPortfolio] = useState<any>(null);
     const [tableData, setTableData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        async function getTableData() {
+        async function fetchedPortfolio() {
+            const fetchedPortfolio = await getPortfolio(props.competitionId);
+            setPortfolio(fetchedPortfolio);
+        }
+
+        async function fetchTableData() {
             if (!props.stocks) {
                 return;
             }
@@ -51,14 +58,14 @@ function StocksOwnedTable(props: Props) {
                     ownedShares,
                 };
             }));
-         
+            
             setTableData(tableData);
             setIsLoading(false);
         }
 
         //async function get
-
-        getTableData();
+        fetchedPortfolio();
+        fetchTableData();
     }, [props.stocks]);
 
     /* UI */
@@ -91,8 +98,8 @@ function StocksOwnedTable(props: Props) {
     return (
         <>
             <StockTradeDialog
-                portfolioId={props.portfolioId}
-                balance={0}
+                portfolioId={portfolio ? portfolio.portfolio_id : ""}
+                balance={portfolio ? portfolio.base_balance : 0}
                 stock={selectedStock}
                 displayTradeDialog={isTradeSelected}
                 hideTradeDialog={() => {

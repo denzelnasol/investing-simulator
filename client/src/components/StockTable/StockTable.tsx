@@ -39,8 +39,7 @@ const StockTable = ({ ...props }) => {
     async function getUserPortfolio() {
       const competitionId = searchParams.get("competition-id") 
       console.log(competitionId);
-      const authToken = Cookies.get('token');
-      const portfolio = await getPortfolio(authToken, competitionId); // get main portfolio if competitionId is null
+      const portfolio = await getPortfolio(competitionId); // get main portfolio if competitionId is null
 
       console.log(portfolio.portfolio_type);
       setPortfolioId(portfolio.portfolio_id);

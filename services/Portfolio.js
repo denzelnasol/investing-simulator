@@ -19,7 +19,7 @@ async function getCompetitionPortfolios(profileId) {
       competition: {
         select: {
           name: true
-        }
+        } 
       }
     }
   });

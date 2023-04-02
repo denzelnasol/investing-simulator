@@ -26,7 +26,7 @@ function CompetitionPortfolio(props: Props) {
                 const stocks = await getStocks(token, props.competitionId);
                 console.log(stocks);
                 
-                setStocks(stocks);
+                setStocks(stocks); 
             }
         }
 
@@ -35,7 +35,7 @@ function CompetitionPortfolio(props: Props) {
     
     return (
         <div>
-            <StocksOwnedTable rows={10} stocks={stocks} onTrade={() => {}} />       
+            <StocksOwnedTable rows={10} competitionId={props.competitionId} stocks={stocks} onTrade={() => {}} />       
             <Button
                 label="Buy More"
                 icon='pi pi-plus'

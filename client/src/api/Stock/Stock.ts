@@ -113,11 +113,12 @@ async function sellStock(symbol: Symbol | string, asking: number, quantity: numb
     symbol,
     asking,
     quantity,
-    authToken,
     portfolioId,
   };
 
-  const response = await axiosInstance.post('/sell-stock', data);
+  const response = await axiosInstance.post('/sell-stock', data, {
+    headers: {Authorization: authToken}
+  });
   return response.data.success;
 }
 

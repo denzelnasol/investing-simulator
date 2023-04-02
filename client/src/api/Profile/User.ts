@@ -71,9 +71,11 @@ const getProfile = async (token: any) => {
     return result.data;
 }
 
-const getPortfolio = async (token: any, competitionId: string = null) => {
+const getPortfolio = async (competitionId: string = null) => {
+    const authToken = Cookies.get('token');
+
     const result: any = await axiosInstance.get('/portfolio', {
-        headers: { Authorization: token },
+        headers: { Authorization: authToken },
         params: { competitionId }
     })
     return result.data;

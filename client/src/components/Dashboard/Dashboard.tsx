@@ -70,7 +70,7 @@ const Dashboard = () => {
     }
 
     async function getUserPortfolio() {
-      const portfolio = await getPortfolio(token);
+      const portfolio = await getPortfolio();
       setPortfolio(portfolio);
     }
 
@@ -84,7 +84,7 @@ const Dashboard = () => {
         const symbol = stock.fk_stock;
 
         const currentStockInfo = await getCurrentStockInfo(symbol);
-        const currentPrice = currentStockInfo.regularMarketPrice;
+        const currentPrice = currentStockInfo.regularMarketPrice; 
         const ownedShares = stock.num_shares;
 
         totalInvested += stock.amount_invested;

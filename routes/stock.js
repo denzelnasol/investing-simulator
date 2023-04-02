@@ -103,22 +103,25 @@ router.post('/buy-stock', requireAuth, async (req, res) => {
     await buyStock(portfolioId, stock.symbol, quantity, asking);
     res.send({ success: true })
   } catch (err) {
+    console.log(err);
     res.send({ success: false });
   }
 })
 
-router.post('/sell-stock', async (req, res) => {
-  const { symbol, asking, quantity, authToken } = req.body;
+router.post('/sell-stock', requireAuth, async (req, res) => {
+  const { symbol, asking, quantity } = req.body;
+  let { portfolioId } = req.body;
+  const email = req.user.email;
 
   try {
-    const token = jwt.verify(authToken, process.env.JWT_KEY);
-    const email = token.email;
-
     const profile = await getProfileByEmail(email);
     const profileId = profile.profile_id;
 
-    const mainPortfolio = await getMainPortfolio(profileId);
-    const portfolioId = mainPortfolio.portfolio_id;
+    // if portfolio was not specified, use the main portfolio as default
+    if (!portfolioId) {
+      const mainPortfolio = await getMainPortfolio(profileId);
+      portfolioId = mainPortfolio.portfolio_id;
+    }
 
     // Add the stock if it doesn't yet exist in the table
     let stock = await getStockBySymbol(symbol);
@@ -129,6 +132,7 @@ router.post('/sell-stock', async (req, res) => {
     await sellStock(portfolioId, stock.symbol, quantity, asking);
     res.send({ success: true })
   } catch (err) {
+    console.log(err);
     res.send({ success: false });
   }
 })
