@@ -8,6 +8,8 @@ router.use(cookieParser());
 const portfolioDbService = require('../services/Portfolio');
 const competitionDbService = require('../services/Competition');
 const { verify } = require('crypto');
+const { verifyToken, getTokenFromRequest} = require('../services/Auth');
+
 
 // when the user searches for competitions show the list of competitions
 // router.get('/all', async (req, res, next) => {
@@ -119,6 +121,10 @@ router.post('/create', async (req, res, next) => {
         // get profile id from cookie 
         const cookie = getTokenFromRequest(req)  
         const token = await verifyToken(cookie);
+        if(!token) {
+            res.status(403).json('profileID not found');
+            return
+        }
         var profileId = req.body.profileId;
         console.log(profileId);
         const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
