@@ -27,6 +27,7 @@ import Private from 'components/Private/Private';
 
 // Styles
 import './app.scss';
+import InviteAccepted from 'components/Competition/InviteAccepted';
 
 
 const App = () => {
@@ -51,6 +52,7 @@ const App = () => {
         <Route path='/stock' element={<Private componentToRender={Stock} />} />
         <Route path='/stock-table' element={<Private componentToRender={StockTable} />} />
         <Route path='/dashboard' element={<Private componentToRender={Dashboard} />} />
+        <Route path='/invite-accept/:competitionId' element={<InviteAccepted />} />
 
       </Routes>
       <Footer/>

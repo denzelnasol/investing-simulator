@@ -7,9 +7,8 @@ router.use(cookieParser());
 
 const portfolioDbService = require('../services/Portfolio');
 const competitionDbService = require('../services/Competition');
-const { verify } = require('crypto');
-const { verifyToken, getTokenFromRequest} = require('../services/Auth');
-
+const { verifyToken, getTokenFromRequest } = require('../services/Auth');
+const { getProfileByEmail } = require('../services/Profile');
 
 // when the user searches for competitions show the list of competitions
 // router.get('/all', async (req, res, next) => {
@@ -91,22 +90,49 @@ router.get('/:competitionId', async (req, res, next) => {
 // when the user clicks on Competition in navbar show the list of personal competitions
 router.get('/join/:competitionId', async (req, res, next) => {
     try {
-        // get profile id from cookie
-        var profileId = req.body.profileId;
-        
-        var competitionId = req.params.competitionId;
+        const cookie = getTokenFromRequest(req)
+        const token = await verifyToken(cookie);
 
-        var members = await competitionDbService.getCompetitionParticipants(competitionId);
-        var comp = await competitionDbService.getCompetitionInfo(competitionId);
+        if (!token) {
+            res.status(403).json('Player is not yet logged in.');
+            return;
+        }
+        const email = token.email;
+
+        const profile = await getProfileByEmail(email);
+        const profileId = profile.profile_id;
+        
+        const competitionId = req.params.competitionId;
+
+        const members = await competitionDbService.getCompetitionParticipants(competitionId);
+
+        for (const member of members) {
+            console.log(member.profile.email);
+
+            if (member.profile.email === email) {
+                res.status(200).json({
+                    isPlayerAlreadyInCompetition: true,
+                    isCompetitionFilled: false,
+                    text: 'This player is already in the competition.'
+                });
+                return;
+            }
+        }
+
+        const comp = await competitionDbService.getCompetitionInfo(competitionId);
         if (comp.max_num_players === members.length) {
-            res.status(403).json('competition is maxed out!');
+            res.status(200).json({
+                isPlayerAlreadyInCompetition: false,
+                isCompetitionFilled: true,
+                text: 'competition is maxed out!'
+            });
             return;
         }
 
-        let result = await portfolioDbService
-            .createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
-
-        res.sendStatus(201);
+        const result = await portfolioDbService.createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
+        if (result) {
+            return res.sendStatus(201);
+        }
 
     } catch (err) {
         console.log(err);

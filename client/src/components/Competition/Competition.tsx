@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
-import CompetitionInvite from 'components/Competition/CompeititonInvite';
+import CompetitionInvite from 'components/Competition/CompetitonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
 import { getCompetitionData } from 'api/Competition/Competition';
 import { Participant } from './sharedTypes/ParticipantInterface';
@@ -60,7 +60,7 @@ function Competition({ ...props }) {
     const rightToolbarContents = (
         <>
             <Button className="mr-2" label="Start Competition" icon="pi pi-arrow-circle-right" iconPos="right"/>
-            <CompetitionInvite />
+            <CompetitionInvite competitionName competitionId={searchParams.get("id")} />
             <div className='mr-2'></div>
             <CompetitionConfiguration onSave={handleConfigSave} startingConfig={config}/>
         </>
