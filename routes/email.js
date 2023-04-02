@@ -23,7 +23,7 @@ router.post('/send', async (req, res) => {
       to: emails,
       subject: "Competition Link",
       text: "Hello world?",
-      html: `<a href="${process.env.NODE_URL}/competitions/join/${competitionId}">Click here to go to join the competition</a>`,
+      html: `<a href="${process.env.REACT_URL}/invite-accept/${competitionId}">Click here to go to join the competition!</a>`,
     };
 
     transporter.sendMail(mailOptions, function(error, info){

@@ -7,7 +7,7 @@ router.use(cookieParser());
 
 const portfolioDbService = require('../services/Portfolio');
 const competitionDbService = require('../services/Competition');
-const { verifyToken } = require('../services/Auth');
+const { verifyToken, getTokenFromRequest } = require('../services/Auth');
 const { getProfileByEmail } = require('../services/Profile');
 
 // when the user searches for competitions show the list of competitions
@@ -90,11 +90,12 @@ router.get('/:competitionId', async (req, res, next) => {
 // when the user clicks on Competition in navbar show the list of personal competitions
 router.get('/join/:competitionId', async (req, res, next) => {
     try {
-        const cookie = req.cookies.token;
+        const cookie = getTokenFromRequest(req)
         const token = await verifyToken(cookie);
 
         if (!token) {
             res.status(403).json('Player is not yet logged in.');
+            return;
         }
         const email = token.email;
 
@@ -109,20 +110,29 @@ router.get('/join/:competitionId', async (req, res, next) => {
             console.log(member.profile.email);
 
             if (member.profile.email === email) {
-                res.status(403).json('This player is already in the competition.');
+                res.status(200).json({
+                    isPlayerAlreadyInCompetition: true,
+                    isCompetitionFilled: false,
+                    text: 'This player is already in the competition.'
+                });
                 return;
             }
         }
 
         const comp = await competitionDbService.getCompetitionInfo(competitionId);
         if (comp.max_num_players === members.length) {
-            res.status(403).json('competition is maxed out!');
+            res.status(200).json({
+                isPlayerAlreadyInCompetition: false,
+                isCompetitionFilled: true,
+                text: 'competition is maxed out!'
+            });
             return;
         }
 
-        await portfolioDbService.createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
-
-        res.sendStatus(201);
+        const result = await portfolioDbService.createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
+        if (result) {
+            return res.sendStatus(201);
+        }
 
     } catch (err) {
         console.log(err);
