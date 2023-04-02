@@ -7,11 +7,7 @@ import { getCurrentStockInfo } from 'api/Stock/Stock';
 
 // Components
 import { Chart } from 'primereact/chart';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
-import Button from 'components/PrimeReact/Button/Button';
-import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
 import StocksOwnedTable from './StocksOwnedTable';
 
 // Styles
@@ -35,7 +31,6 @@ const Dashboard = () => {
   const [stocks, setStocks] = useState<any>(null);
   const [profitLossValue, setProfitLossValue] = useState<number>(0);
   const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
-  const [selectedStock, setSelectedStock] = useState(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ** Graph Data ** //
@@ -64,6 +59,10 @@ const Dashboard = () => {
     //     },
     // },
   };
+
+  const handleOnTrade = (isTrading: boolean) => {
+    setIsTradeSelected(isTrading);
+  }
 
   // ** useEffect ** //
   useEffect(() => {
@@ -116,6 +115,7 @@ const Dashboard = () => {
 
     async function getUserBalanceHistory() {
       const history = await getHistory(token);
+
       setChartData((chart: any) => {
         chart.labels = history.history
           .slice(CHART_MAX_NUM_DATAPOINTS - 1)
@@ -125,6 +125,7 @@ const Dashboard = () => {
           .map((h: any) => h.balance);
         chart.labels.push(formatDate(new Date()));
         chart.datasets[0].data.push(history.currentBalance);
+
         setIsLoading(false);
         return chart;
       });
@@ -162,12 +163,12 @@ const Dashboard = () => {
 
   return (
     <>
-      <StockTradeDialog
+      {/* <StockTradeDialog
         stock={selectedStock}
         displayTradeDialog={isTradeSelected}
         hideTradeDialog={() => setIsTradeSelected(false)}
         isSell={true}
-      />
+      /> */}
       <div className="grid">
 
         <div className='col-12'>
@@ -187,7 +188,7 @@ const Dashboard = () => {
 
         <div className='col-6'>
           <h1 style={{ textAlign: 'center' }}> Stocks Owned</h1>
-          <StocksOwnedTable isLoading={isLoading} rows={10} stocks={stocks} />
+          <StocksOwnedTable isLoading={isLoading} rows={10} stocks={stocks} onTrade={handleOnTrade} />
         </div>
       </div>
     </>

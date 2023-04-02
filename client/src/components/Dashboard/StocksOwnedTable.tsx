@@ -12,6 +12,7 @@ interface Props {
     isLoading: boolean,
     rows: number,
     stocks: any,
+    onTrade: (isTrading: boolean) => void,
 };
 
 function StocksOwnedTable(props: Props) {
@@ -32,20 +33,23 @@ function StocksOwnedTable(props: Props) {
           <Button label="Trade" onClick={() => {
             setSelectedStock(rowData)
             setIsTradeSelected(true)
-          }
-          }
+            
+            props.onTrade(true);
+            }}
           />
         );
     }
-
-    console.log(props.isLoading);
 
     return (
         <>
             <StockTradeDialog
                 stock={selectedStock}
                 displayTradeDialog={isTradeSelected}
-                hideTradeDialog={() => setIsTradeSelected(false)}
+                hideTradeDialog={() => {
+                    setIsTradeSelected(false);
+                    props.onTrade(false);
+                }
+                }
                 isSell={true}
             />
 
