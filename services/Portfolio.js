@@ -7,18 +7,18 @@ async function getPortfolio(portfolioId) {
       portfolio_id: portfolioId
     }
   });
-  return portfolio;
 } 
 
-async function getPortfoliosByProfile(profileId) {
+async function getCompetitionPortfolios(profileId) {
   const portfolios = await prisma.portfolio.findMany({
     where: {
       fk_profile: profileId,
+      portfolio_type: 'competition'
     },
     include: {
       competition: {
         select: {
-          competition_id: true,
+          name: true
         }
       }
     }
@@ -62,7 +62,7 @@ async function createCompetitionPortfolio(profileId, competitionId, balance) {
 module.exports = {
   getPortfolio,
   getMainPortfolio,
-  getPortfoliosByProfile,
+  getCompetitionPortfolios,
   createMainPortfolio,
   createCompetitionPortfolio
 };

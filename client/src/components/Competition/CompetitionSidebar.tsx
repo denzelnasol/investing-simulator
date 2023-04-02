@@ -15,6 +15,16 @@ function CompetitionSidebar(props) {
       onHide={() => setVisible(false)}
       className="scrollable-sidebar surface-200"
     >
+      <h2>Competition Infomation</h2>
+      <p>Compete with individuals with this exciting feature. Here you can compete against 
+        up to 4 players to see who is the best day trader!
+      </p> <br/>
+      <p>How this works</p> <br/>
+      <p>Invite up to 3 other players to join your competition through the "invite" button.</p>
+      <p>Now you can choose the start date, end date and player size for the competition through the configure button</p>
+      <p>Once all players joined, you can begin the competition by clicking 'Start Competition'</p> <br/>
+      <p>Good luck! May the best trader win!</p>
+
     </Sidebar>
   );
 

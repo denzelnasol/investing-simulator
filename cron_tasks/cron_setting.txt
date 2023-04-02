@@ -1,2 +1,2 @@
 sudo crontab -e
-29 3 * * * node take_bal_snapshots.js
+0 0 * * * node take_bal_snapshots.js

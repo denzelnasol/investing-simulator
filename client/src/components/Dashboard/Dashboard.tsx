@@ -1,42 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 // API
-import { getProfile, verifyUser, getPortfolio, getStocks } from 'api/Profile/User';
+import { getProfile, getPortfolio, getStocks, getHistory } from 'api/Profile/User';
 import { getCurrentStockInfo } from 'api/Stock/Stock';
 
 // Components
-import { Divider } from 'primereact/divider';
 import { Chart } from 'primereact/chart';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Skeleton } from 'primereact/skeleton';
 import Button from 'components/PrimeReact/Button/Button';
 import StockTradeDialog from 'components/StockTradeDialog/StockTradeDialog';
 
 // Styles
 import './style.scss';
 
-const Dashboard = () => {
-  const navigate = useNavigate();
+const CHART_MAX_NUM_DATAPOINTS = 14;
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
+const Dashboard = () => {
   // ** useStates ** //
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [portfolio, setPortfolio] = useState<any>(null);
   const [stocks, setStocks] = useState<any>(null);
   const [profitLossValue, setProfitLossValue] = useState<number>(0);
   const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ** Graph Data ** //
   const [chartData, setChartData] = useState({
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: [],
     datasets: [
       {
-        label: 'TFSA',
+        label: 'Balance',
         backgroundColor: '#42A5F5',
-        data: [1200, 4500, 8000, 7621, 5621, 5500, 4000],
+        data: [],
       },
 
     ],
@@ -46,31 +50,19 @@ const Dashboard = () => {
     legend: {
       position: 'top',
     },
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
+    // scales: {
+    //   yAxes:
+    //     {
+    //       ticks: {
+    //         beginAtZero: true,
+    //       },
+    //     },
+    // },
   };
 
   // ** useEffect ** //
   useEffect(() => {
     const token = Cookies.get('token');
-    if (!token) {
-      navigate('/login');
-    }
-
-    async function userVerified() {
-      const isUserVerified = await verifyUser(token);
-      if (isUserVerified) {
-        setIsAuthenticated(true);
-      }
-      return isUserVerified;
-    }
 
     async function getUserProfile() {
       const profile = await getProfile(token);
@@ -117,15 +109,30 @@ const Dashboard = () => {
       setStocks(updatedStocks);
     }
 
-    userVerified();
+    async function getUserBalanceHistory() {
+      const history = await getHistory(token);
+      setChartData((chart: any) => {
+        chart.labels = history.history
+        .slice(CHART_MAX_NUM_DATAPOINTS - 1)
+        .map((h: any) => h.time);
+        
+        chart.datasets[0].data = history.history
+          .slice(CHART_MAX_NUM_DATAPOINTS - 1)
+          .map((h: any) => h.balance);
+
+        chart.labels.push(new Date().toLocaleDateString());
+        chart.datasets[0].data.push(history.currentBalance);
+
+        setIsLoading(false);
+        return chart;
+      });
+    }
+
     getUserProfile();
     getUserPortfolio();
     getUserStocks();
+    getUserBalanceHistory();
   }, [isTradeSelected]);
-
-  if (!isAuthenticated) {
-    navigate('/login');
-  }
 
   // ** DataTable ** //
   const netChangeColumn = (rowData) => {
@@ -151,21 +158,29 @@ const Dashboard = () => {
   const welcomeText = (
     <div className="flex flex-column m-4">
 
-      <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
-        {`Hello ${profile && profile.first_name}, you have a current balance of $${portfolio && portfolio.base_balance.toFixed(2)}`}
-      </div>
+      {isLoading
+        ? <Skeleton className='flex mb-3' width='6rem' />
+        : <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
+          {`Hello ${profile && profile.first_name}, you have a current balance of ${formatter.format(portfolio && portfolio.base_balance)}`}
+        </div>}
 
-      <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
-        {`Current Profit/Loss: $${profitLossValue}`}
-      </div>
+      {isLoading
+        ? <Skeleton className='flex' width='6rem' />
+        :
+        <div className="flex text-lg" style={{ color: 'var(--primary-color)' }}>
+          {`Current Profit/Loss: ${formatter.format(profitLossValue)}`}
+        </div>
+      }
     </div>
   );
 
   const historyGraph = (
-    <Chart className="" type="line" data={chartData} options={options} />
-  );
+    isLoading ? <Skeleton height='20rem' /> : <Chart className="" type="line" data={chartData} options={options} />
+  )
 
   const stocksOwnedTable = (
+
+    isLoading ? <Skeleton height='18rem' /> :
     <DataTable
       value={stocks}
       selectionMode="single"

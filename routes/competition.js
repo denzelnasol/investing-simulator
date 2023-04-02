@@ -7,6 +7,8 @@ router.use(cookieParser());
 
 const portfolioDbService = require('../services/Portfolio');
 const competitionDbService = require('../services/Competition');
+const { verifyToken, getTokenFromRequest } = require('../services/Auth');
+const { getProfileByEmail } = require('../services/Profile');
 
 // when the user searches for competitions show the list of competitions
 // router.get('/all', async (req, res, next) => {
@@ -30,7 +32,7 @@ const competitionDbService = require('../services/Competition');
 // });
 
 // when the user clicks on Competition in navbar show the list of personal competitions
-router.get('/competitions', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
         
         // get profile id from cookie
@@ -40,6 +42,7 @@ router.get('/competitions', async (req, res, next) => {
         res.json({ competitions: competitions });
 
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
@@ -48,7 +51,6 @@ router.get('/competitions', async (req, res, next) => {
 // when the user clicks on any competition show the info
 router.get('/:competitionId', async (req, res, next) => {
     try {
-        
         var competitionId = req.params.competitionId;
 
         var members = await competitionDbService.getCompetitionParticipants(competitionId);
@@ -59,6 +61,7 @@ router.get('/:competitionId', async (req, res, next) => {
                 maxParticipants: comp.max_num_players,
                 entryPoints: comp.entry_points
             },
+            competitionName: comp.name,
             competitionStart: comp.start_time,
             competitionEnd: comp.end_time,
             startingBalance: comp.start_balance,
@@ -67,6 +70,9 @@ router.get('/:competitionId', async (req, res, next) => {
                     id: x.portfolio_id,
                     balance: x.base_balance,
                     profits: x.investment_profit,
+                    firstName: x.profile.first_name,
+                    lastName: x.profile.last_name,
+                    email: x.profile.email,
                 }
             }).sort((a, b) => {
                 let r1 = a.profits + a.balance;
@@ -76,60 +82,95 @@ router.get('/:competitionId', async (req, res, next) => {
         });
 
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
 
-
 // when the user clicks on Competition in navbar show the list of personal competitions
 router.get('/join/:competitionId', async (req, res, next) => {
     try {
-        
-        // get profile id from cookie
-        var profileId = req.body.profileId;
-        
-        var competitionId = req.params.competitionId;
+        const cookie = getTokenFromRequest(req)
+        const token = await verifyToken(cookie);
 
-        var members = await competitionDbService.getCompetitionParticipants(competitionId);
-        var comp = await competitionDbService.getCompetitionInfo(competitionId);
+        if (!token) {
+            res.status(403).json('Player is not yet logged in.');
+            return;
+        }
+        const email = token.email;
+
+        const profile = await getProfileByEmail(email);
+        const profileId = profile.profile_id;
+        
+        const competitionId = req.params.competitionId;
+
+        const members = await competitionDbService.getCompetitionParticipants(competitionId);
+
+        for (const member of members) {
+            if (member.profile.email === email) {
+                res.status(200).json({
+                    isPlayerAlreadyInCompetition: true,
+                    isCompetitionFilled: false,
+                    text: 'This player is already in the competition.'
+                });
+                return;
+            }
+        }
+
+        const comp = await competitionDbService.getCompetitionInfo(competitionId);
         if (comp.max_num_players === members.length) {
-            res.status(403).json('competition is maxed out!');
+            res.status(200).json({
+                isPlayerAlreadyInCompetition: false,
+                isCompetitionFilled: true,
+                text: 'competition is maxed out!'
+            });
             return;
         }
 
-        let result = await portfolioDbService
-            .createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
-
-        res.sendStatus(201);
+        const result = await portfolioDbService.createCompetitionPortfolio(profileId, competitionId, comp.start_balance);
+        if (result) {
+            return res.sendStatus(201);
+        }
 
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
 
 
 // create competition
-router.post('/create', async (req, res, next) => {
+router.post('/create', async (req, res, next) => { 
     try {
+        // get profile id from cookie 
+        const cookie = getTokenFromRequest(req)
+        const token = await verifyToken(cookie);
+
+        if (!token) {
+            res.status(403).json('Player is not yet logged in.');
+            return;
+        }
+        const email = token.email;
+
+        const profile = await getProfileByEmail(email);
+        const profileId = profile.profile_id;
+        console.log(profileId);
+        const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
+
+        const comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
         
-        // get profile id from cookie
-        var profileId = req.body.profileId;
-        var requirements = req.body.requirements;
-        const { balance, start, end, entry, maxPlayers } = requirements;
-
-        let comp = await competitionDbService.createCompetition(balance, start, end, entry, maxPlayers);
-
-        let result = await portfolioDbService
-            .createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
-
-        res.sendStatus(201).json({
-            competitionId: comp.competition_id
-        });
-
+        const result = await portfolioDbService.createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
+        if (result) {
+            return res.sendStatus(201);
+        }
     } catch (err) {
+        console.log(err);
         res.status(404).json(err);
     }
 });
+
+
+
 
 
 module.exports = router;

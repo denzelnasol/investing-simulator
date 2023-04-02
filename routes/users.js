@@ -2,20 +2,17 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
-var router = express.Router();
-router.use(cookieParser());
-
-const ProfileService = require('../services/Profile');
-const PortfolioService = require('../services/Portfolio');
-
 const { getProfile, getProfileByEmail, createProfile } = require('../services/Profile');
-const { createMainPortfolio, getPortfolio, getMainPortfolio, getPortfoliosByProfile } = require('../services/Portfolio');
+const { createMainPortfolio, getPortfolio, getMainPortfolio, getCompetitionPortfolios } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');
 const { getRTStockSummary } = require('../services/StockApi');
 const { getHistory } = require('../services/History');
 const { requireAuth } = require('../services/Auth');
 
 const PORTFOLIO_STARTING_BALANCE = 10000;
+
+var router = express.Router();
+router.use(cookieParser());
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -69,11 +66,11 @@ router.post('/register', async (req, res, next) => {
 });
 
 /* Get a specific user's portfolios and associated competition names */
-router.get('/all-portfolios', requireAuth, async (req, res, next) => {
+router.get('/competition-portfolios', requireAuth, async (req, res, next) => {
 	const { email } = req.user;
 
 	const profile = await getProfileByEmail(email);
-	const portfolios = await getPortfoliosByProfile(profile.profile_id);
+	const portfolios = await getCompetitionPortfolios(profile.profile_id);
 	if (!portfolios) {
 		res.send({ success: false })
 		return;
@@ -112,23 +109,45 @@ router.get('/owned-stocks', requireAuth, async (req, res) => {
 	res.send(stocks);
 })
 
-// dashboard/competition portfolios and view other peoples portfolios
-router.get('/portfolio/:portfolioId', async (req, res, next) => {
-	try {
-		let portfolioId = req.params.portfolioId;
-		let pf = await getPortfolio(portfolioId);
-		let st = await getStocks(pf.portfolio_id);
-		let stData = await getRTStockSummary(st.map(s => s.fk_stock));
-		let histData = await getHistory(pf.portfolio_id);
+router.get('/history', async (req, res) => {
+  let authToken = req.headers['authorization'];
+  if (!authToken) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
 
-		res.json({
-			balance: pf.base_balance,
-			stocks: stData,
-			history: histData,
-		});
-	} catch (err) {
-		res.status(404).json(err);
-	}
-});
+  authToken = jwt.verify(authToken, process.env.JWT_KEY);
+  const email = authToken.email;
+
+  const competitionName = req.params['competitionName'];
+  if (competitionName) {
+    // retrieve the stocks for portfolio associated with the competition
+    return;
+  }
+
+  // retrieve the stocks for main portfolio
+  const profile = await getProfileByEmail(email);
+  const portfolio = await getMainPortfolio(profile.profile_id);
+  const history = await getHistory(portfolio.portfolio_id);
+  res.send({ history: history, currentBalance: portfolio.base_balance });
+})
+
+// dashboard/competition portfolios and view other peoples portfolios
+// router.get('/portfolio/:portfolioId', async (req, res, next) => {
+//   try {
+//     let portfolioId = req.params.portfolioId;
+//     let pf = await getPortfolio(portfolioId);
+//     let st = await getStocks(pf.portfolio_id);
+//     let stData = await getRTStockSummary(st.map(s => s.fk_stock));
+//     let histData = await getHistory(pf.portfolio_id);
+  
+//     res.json({
+//       balance: pf.base_balance,
+//       stocks: stData,
+//       history: histData,
+//     });
+//   } catch (err) {
+//     res.status(404).json(err);
+//   }
+// });
 
 module.exports = router;

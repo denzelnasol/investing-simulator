@@ -25,6 +25,8 @@ wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.0.0/
 -O cloud-sql-proxy.exe
 
 <br>
+curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.0.0/cloud-sql-proxy.darwin.amd64
+<br>
 
 - You'll notice a cloud-sql-proxy file in your directory. To be able to execute it, enter the following command:<br>
   - chmod +x cloud-sql-proxy<br>

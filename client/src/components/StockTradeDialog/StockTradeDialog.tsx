@@ -23,14 +23,19 @@ const StockTradeDialog = ({ ...props }) => {
   const [quantity, setQuantity] = useState<number>(0);
   const [minQuantity, setMinQuantity] = useState<number>(1);
   const [maxQuantity, setMaxQuantity] = useState<number>(100);
-  
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   /** @todo Find way to prevent purchasing shares if total is less than current balance */
   useEffect(() => {
+    if (!props.stock) return;
+
     let min = 0;
     let max = 100;
-    if (props.stock && props.isSell) {
+    if (props.isSell) {
       min = 1;
       max = props.stock.ownedShares;
+    } else {
+      max = Math.floor(props.balance / props.stock.ask);
     }
 
     if (props.balance < 0) {
@@ -47,6 +52,7 @@ const StockTradeDialog = ({ ...props }) => {
   }
 
   const executeTrade = async () => {
+    setIsLoading(true);
     const symbol = props.stock && props.stock.symbol;
     const asking = props.stock && props.stock.ask;
     if (props.isSell) {
@@ -58,6 +64,8 @@ const StockTradeDialog = ({ ...props }) => {
           detail: `${quantity} shares of ${props.stock.symbol} sold`,
           life: 3000
         });
+
+        setIsLoading(false);
       }
     } else {
       const res = await buyStock(symbol, asking, quantity);
@@ -68,19 +76,24 @@ const StockTradeDialog = ({ ...props }) => {
           detail: `${quantity} shares of ${props.stock.symbol} purchased`,
           life: 3000
         });
+        setIsLoading(false);
       }
     }
     onHide();
   };
-  
+
   // ** Components ** //
   const renderFooter = () => {
     return (
       <div className="flex flex-column justify-content-center">
         <div className="field mb-1 text-left">
-          {props.balance <= 0 ? <small id="btn" className="p-error block mt-0 text-left">Insufficient Funds</small>: <></>}
+          {props.balance <= 0 ? <small id="btn" className="p-error block mt-0 text-left">Insufficient Funds</small> : <></>}
         </div>
-        <Button id="btn" className="w-full" label={`${props.isSell ? 'Sell' : 'Buy'}`} onClick={executeTrade} disabled={props.balance && props.balance <= 0}/>
+        <Button
+          id="btn"
+          className="w-full" label={`${props.isSell ? 'Sell' : 'Buy'}`}
+          onClick={executeTrade}
+          disabled={(props.balance && props.balance <= 0) || quantity <= 0 || isLoading || quantity > maxQuantity} />
       </div>
     );
   }

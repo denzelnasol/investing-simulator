@@ -44,6 +44,7 @@ model competition {
   start_balance   Float
   start_time      DateTime
   end_time        DateTime
+  name            String      @db.VarChar(100)
   portfolio       portfolio[]
 }
 

@@ -79,8 +79,8 @@ const getPortfolio = async (token: any, competitionName: string = null) => {
     return result.data;
 }
 
-const getAllPortfolios = async (token) => {
-    const result = await axiosInstance.get('/all-portfolios', {
+const getCompetitionPortfolios = async (token) => {
+    const result = await axiosInstance.get('/competition-portfolios', {
          headers: {Authorization: token}
     })
         .then(res => {
@@ -103,6 +103,14 @@ const getStocks = async (token: any, competitionName: string = null) => {
     return result.data;
 }
 
+const getHistory = async (token: any, competitionName: string = null) => {
+    const result: any = await axiosInstance.get('/history', {
+        headers: { Authorization: token },
+        params: { competitionName }
+    });
+    return result.data;
+}
+
 
 export {
     loginUser,
@@ -110,6 +118,7 @@ export {
     registerUser,
     getProfile,
     getPortfolio,
-    getAllPortfolios,
-    getStocks
+    getCompetitionPortfolios,
+    getStocks,
+    getHistory,
 }
