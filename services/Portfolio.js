@@ -7,7 +7,18 @@ async function getPortfolio(portfolioId) {
       portfolio_id: portfolioId
     }
   });
-} 
+}
+
+async function getPortfolioByCompetitionId(competitionId, profileId) {
+  return await prisma.portfolio.findFirst({
+    where: {
+      AND: {
+        fk_competition: competitionId,
+        fk_profile: profileId,
+      }
+    }
+  });
+}
 
 async function getCompetitionPortfolios(profileId) {
   const portfolios = await prisma.portfolio.findMany({
@@ -77,6 +88,7 @@ module.exports = {
   getCompetitionPortfolios,
   getCompetitonPortfolio,
   createMainPortfolio,
-  createCompetitionPortfolio
+  createCompetitionPortfolio,
+  getPortfolioByCompetitionId,
 };
 
