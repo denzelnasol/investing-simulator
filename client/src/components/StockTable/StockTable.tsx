@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
+import './style.scss';
 
 // Components
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
@@ -12,11 +13,11 @@ import StockTradeDialog from "components/StockTradeDialog/StockTradeDialog";
 
 // API
 import { getCurrentStockInfo } from "api/Stock/Stock";
-
-import './style.scss';
 import { getPortfolio } from "api/Profile/User";
+import { useSearchParams } from "react-router-dom";
 
 const StockTable = ({ ...props }) => {
+  const [searchParams] = useSearchParams();
 
   // ** useStates ** //
   const [data, setData] = useState([]);
@@ -24,6 +25,7 @@ const StockTable = ({ ...props }) => {
   const [stockFilters, setStockFilters] = useState(null);
   const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+  const [portfolioId, setPortfolioId] = useState<any>();
   const [balance, setBalance] = useState<number>(0);
 
   // ** useEffects ** //
@@ -35,8 +37,12 @@ const StockTable = ({ ...props }) => {
     };
 
     async function getUserPortfolio() {
-      const authToken = Cookies.get('token');
-      const portfolio = await getPortfolio(authToken);
+      const competitionId = searchParams.get("competition-id") 
+      console.log(competitionId);
+      const portfolio = await getPortfolio(competitionId); // gets main portfolio if competitionId is null
+
+      console.log(portfolio.portfolio_type);
+      setPortfolioId(portfolio.portfolio_id);
       setBalance(portfolio.base_balance);
     }
 
@@ -45,7 +51,7 @@ const StockTable = ({ ...props }) => {
     initializeFilters();
   }, []);
 
-  // ** Callback Functions ** //
+  // ** Callback Functions ** // 
 
   const initializeFilters = () => {
     setStockFilters({
@@ -113,8 +119,7 @@ const StockTable = ({ ...props }) => {
       <Button label="Trade" onClick={() => {
         setSelectedStock(rowData)
         setIsTradeSelected(true)
-      }
-      }
+      }}
       />
     );
   }
@@ -122,11 +127,14 @@ const StockTable = ({ ...props }) => {
   return (
     <>
       <StockTradeDialog
+        portfolioId={portfolioId}
         stock={selectedStock}
         displayTradeDialog={isTradeSelected}
         hideTradeDialog={() => setIsTradeSelected(false)}
         balance={balance}
+        isSell={false}
       />
+
       <DataTable
         value={data}
         selectionMode="single"

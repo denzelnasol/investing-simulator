@@ -84,7 +84,7 @@ async function getHistoricalStockInfo(symbol: Symbol | string, queryOptions: Obj
   };
 }
 
-async function buyStock(symbol: Symbol | string, asking: number, quantity: number) {
+async function buyStock(symbol: Symbol | string, asking: number, quantity: number, portfolioId: string = null) {
   if (!symbol) {
     throw new Error("invalid stock symbol");
   }
@@ -94,14 +94,16 @@ async function buyStock(symbol: Symbol | string, asking: number, quantity: numbe
     symbol,
     asking,
     quantity,
-    authToken,
+    portfolioId,
   };
 
-  const response = await axiosInstance.post('/buy-stock', data);
+  const response = await axiosInstance.post('/buy-stock', data, {
+    headers: {Authorization: authToken}
+  });
   return response.data.success;
 }
 
-async function sellStock(symbol: Symbol | string, asking: number, quantity: number) {
+async function sellStock(symbol: Symbol | string, asking: number, quantity: number, portfolioId: string = null) {
   if (!symbol) {
     throw new Error("invalid stock symbol");
   }
@@ -111,10 +113,12 @@ async function sellStock(symbol: Symbol | string, asking: number, quantity: numb
     symbol,
     asking,
     quantity,
-    authToken,
+    portfolioId,
   };
 
-  const response = await axiosInstance.post('/sell-stock', data);
+  const response = await axiosInstance.post('/sell-stock', data, {
+    headers: {Authorization: authToken}
+  });
   return response.data.success;
 }
 

@@ -3,7 +3,7 @@ var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
 const { getProfile, getProfileByEmail, createProfile } = require('../services/Profile');
-const { createMainPortfolio, getPortfolio, getMainPortfolio, getCompetitionPortfolios, getPortfolioByCompetitionId } = require('../services/Portfolio');
+const { createMainPortfolio, getMainPortfolio, getCompetitonPortfolio, getCompetitionPortfolios, getPortfolioByCompetitionId } = require('../services/Portfolio');
 const { getStocks } = require('../services/Stock');
 const { getRTStockSummary } = require('../services/StockApi');
 const { getHistory } = require('../services/History');
@@ -79,31 +79,32 @@ router.get('/competition-portfolios', requireAuth, async (req, res, next) => {
 
 router.get('/portfolio', requireAuth, async (req, res) => {
 	const email = req.user.email;
-	const competitionName = req.params['competitionName'];
-	if (competitionName) {
-		// retrieve the portfolio associated with the competition
-		return;
+	const profile = await getProfileByEmail(email);
+
+	let portfolio;
+	const competitionId = req.query['competitionId'];
+	if (competitionId) {
+		portfolio = await getCompetitonPortfolio(profile.profile_id, competitionId);
+	} else {
+		portfolio = await getMainPortfolio(profile.profile_id);
 	}
 
-	// get the main portfolio
-	const profile = await getProfileByEmail(email);
-	const portfolio = await getMainPortfolio(profile.profile_id);
 	res.send(portfolio);
 })
 
 router.get('/owned-stocks', requireAuth, async (req, res) => {
 	const email = req.user.email;
-	const competitionName = req.params['competitionName'];
-	if (competitionName) {
-		// retrieve the stocks for portfolio associated with the competition
-		return;
+	const profile = await getProfileByEmail(email);
+	
+	let portfolio;
+	const competitionId = req.query['competitionId'];
+	if (competitionId) {
+		portfolio = await getCompetitonPortfolio(profile.profile_id, competitionId);
+	} else {
+		portfolio = await getMainPortfolio(profile.profile_id);
 	}
 
-	// retrieve the stocks for main portfolio
-	const profile = await getProfileByEmail(email);
-	const portfolio = await getMainPortfolio(profile.profile_id);
 	const stocks = await getStocks(portfolio.portfolio_id);
-
 	res.send(stocks);
 })
 

@@ -30,12 +30,24 @@ async function getCompetitionPortfolios(profileId) {
       competition: {
         select: {
           name: true
-        }
+        } 
       }
     }
   });
 
   return portfolios;
+}
+
+// get a user's portfolio for a specific competition
+async function getCompetitonPortfolio(profileId, competitionId) {
+  const portfolio = await prisma.portfolio.findFirst({
+    where: {
+      fk_profile: profileId,
+      fk_competition: competitionId
+    }
+  });
+
+  return portfolio;
 }
 
 async function getMainPortfolio(profileId) {
@@ -74,6 +86,7 @@ module.exports = {
   getPortfolio,
   getMainPortfolio,
   getCompetitionPortfolios,
+  getCompetitonPortfolio,
   createMainPortfolio,
   createCompetitionPortfolio,
   getPortfolioByCompetitionId,

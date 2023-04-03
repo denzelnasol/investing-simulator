@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Cookies from 'js-cookie';
 
 // API
 import { buyStock, sellStock } from "api/Stock/Stock";
@@ -7,14 +8,21 @@ import { buyStock, sellStock } from "api/Stock/Stock";
 import Button from 'components/PrimeReact/Button/Button';
 import { Dialog } from 'primereact/dialog';
 import { InputNumber } from 'primereact/inputnumber';
-import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
 // Styles
 import './style.scss';
 
-const StockTradeDialog = ({ ...props }) => {
-  const navigate = useNavigate();
+interface Props {
+  portfolioId: string,
+  stock: any,
+  balance: number,
+  displayTradeDialog: boolean,
+  hideTradeDialog: () => void,
+  isSell: boolean
+}
+
+const StockTradeDialog = (props: Props) => {
 
   // ** useRef ** //
   const toast = useRef(null);
@@ -55,8 +63,9 @@ const StockTradeDialog = ({ ...props }) => {
     setIsLoading(true);
     const symbol = props.stock && props.stock.symbol;
     const asking = props.stock && props.stock.ask;
+
     if (props.isSell) {
-      const res = await sellStock(symbol, asking, quantity);
+      const res = await sellStock(symbol, asking, quantity, props.portfolioId);
       if (res) {
         toast.current.show({
           severity: 'success',
@@ -68,16 +77,16 @@ const StockTradeDialog = ({ ...props }) => {
         setIsLoading(false);
       }
     } else {
-      const res = await buyStock(symbol, asking, quantity);
-      if (res) {
-        toast.current.show({
-          severity: 'success',
-          summary: 'Order Successfully Executed',
-          detail: `${quantity} shares of ${props.stock.symbol} purchased`,
-          life: 3000
-        });
-        setIsLoading(false);
-      }
+        const res = await buyStock(symbol, asking, quantity, props.portfolioId);
+        if (res) {
+          toast.current.show({
+            severity: 'success',
+            summary: 'Order Successfully Executed',
+            detail: `${quantity} shares of ${props.stock.symbol} purchased`,
+            life: 3000
+          });
+          setIsLoading(false);
+        }
     }
     onHide();
   };
@@ -147,6 +156,10 @@ const StockTradeDialog = ({ ...props }) => {
       onHide={onHide}
     >
       <div className="p-fluid grid formgrid">
+
+        <h3 className="col-12">
+          {`Available Funds: ${props.balance}`}
+        </h3>
 
         <div className="col-12 mb-2">
           {stockDescription}

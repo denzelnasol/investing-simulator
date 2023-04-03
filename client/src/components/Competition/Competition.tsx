@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import './style.scss';
 
+import { getCompetitionData } from 'api/Competition/Competition';
+import { Participant } from './sharedTypes/ParticipantInterface';
+import { endCompetition, startCompetition } from 'api/Competition/Competition';
+
+// components
+import CompetitionPortfolio from './CompetitionPortfolio';
 import CompetitionSidebar from 'components/Competition/CompetitionSidebar';
 import CompetitionStandings from 'components/Competition/CompetitionStandings';
 import CompetitionGraph from 'components/Competition/CompetitionGraph';
 import CompetitionInvite from 'components/Competition/CompetitonInvite';
 import CompetitionConfiguration from './CompetitionConfig';
-import { endCompetition, getCompetitionData, startCompetition } from 'api/Competition/Competition';
-import { Participant } from './sharedTypes/ParticipantInterface';
-
-import './style.scss';
 import Button from 'components/PrimeReact/Button/Button';
 import Card from 'components/PrimeReact/Card/Card';
 import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
@@ -18,10 +21,11 @@ import Toolbar from 'components/PrimeReact/Toolbar/Toolbar';
 function Competition({ ...props }) {
     const [searchParams] = useSearchParams();
 
+    /* useStates */
+    const [competitionId, setCompetitionId] = useState("");
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [competitionName, setCompetitionName] = useState("");
     const [competitionData, setCompetitionData] = useState<any>(null);
-    const [competitionId, setCompetitionId] = useState<string>(null);
     const [refresh, setRefresh] = useState<boolean>(false);
     const [config, setConfig] = useState({
         startDate: new Date(),
@@ -46,6 +50,7 @@ function Competition({ ...props }) {
             setCompetitionData(data);
             setCompetitionId(id);
 
+            setCompetitionId(id);
             setCompetitionName(data.competitionName);
             setParticipants(data.rankings);
             setConfig({
@@ -130,6 +135,8 @@ function Competition({ ...props }) {
             <Toolbar className="my-3 bg-gray-300" left={leftToolbarContents} right={rightToolbarContents} />
 
             <CompetitionSidebar />
+
+            <CompetitionPortfolio competitionId={competitionId}/>
             <CompetitionGraph competition={competitionData} competitionId={competitionId} />
             <CompetitionStandings participants={participants} />
         </Card>
