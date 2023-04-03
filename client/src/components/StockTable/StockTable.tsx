@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Cookies from 'js-cookie';
+import { useNavigate } from "react-router";
 import './style.scss';
 
 // Components
@@ -16,7 +16,8 @@ import { getCurrentStockInfo } from "api/Stock/Stock";
 import { getPortfolio } from "api/Profile/User";
 import { useSearchParams } from "react-router-dom";
 
-const StockTable = ({ ...props }) => {
+const StockTable = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   // ** useStates ** //
@@ -72,10 +73,18 @@ const StockTable = ({ ...props }) => {
 
   const onStockSelect = (event) => {
     setSelectedStock(event.data);
+    navigateToStockPage(event);
   };
 
   const clearStockFilter = () => {
     initializeFilters();
+  }
+
+  const navigateToStockPage = (clickEvent) => {
+    const stockSymbol = clickEvent.value.symbol;
+    console.log(stockSymbol);
+
+    navigate(`/stock?symbol=${stockSymbol}`);
   }
 
   // ** Components ** //
