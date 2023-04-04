@@ -52,10 +52,12 @@ function CompetitionGraph({ ...props }) {
             const labels = history.history.map((date: any) => {
                 return new Date(date.time).toDateString();
             })
+            labels.push(new Date().toDateString());
 
             for (const dataSet of playerDataSets) {
                 const history = await getHistoryByEmail(token, dataSet.email, props.competitionId);
                 dataSet.data = history.history.map((h: any) => h.balance);
+                dataSet.data.push(history.currentBalance);
             }
 
             setChartData(prevChart => ({ ...prevChart, datasets: playerDataSets, labels }))
