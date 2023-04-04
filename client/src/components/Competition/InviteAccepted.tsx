@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams  } from "react-router-dom";
 import { Message } from 'primereact/message';
 
 // API
@@ -12,6 +12,8 @@ import Card from "components/PrimeReact/Card/Card";
 
 const InviteAccepted = () => {
   const { competitionId } = useParams();
+  const [searchParams] = useSearchParams();
+
   const [isPlayerAlreadyInCompetition, setIsPlayerAlreadyInCompetition] = useState<boolean>(false);
   const [isCompetitionSizeFilled, setIsCompetitionSizeFilled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,7 +21,7 @@ const InviteAccepted = () => {
   useEffect(() => {
     async function fetchData() {
       // get competition id from query string in URL
-      const result = await acceptInvite(competitionId);
+      const result = await acceptInvite(searchParams.get('id'));
       if (result.data.isCompetitionFilled) {
         setIsCompetitionSizeFilled(true);
       }
