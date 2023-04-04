@@ -20,12 +20,8 @@ function CompetitionPortfolio({ ...props }) {
     useEffect(() => {
         async function fetchOwnedStocks() {
             const token: string = Cookies.get('token');
-
-            console.log(props.competitionId);
             if (props.competitionId) {
                 const stocks = await getStocks(token, props.competitionId);
-                console.log(stocks);
-
                 setStocks(stocks);
             }
         }

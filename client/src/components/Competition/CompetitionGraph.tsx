@@ -22,6 +22,7 @@ function CompetitionGraph({ ...props }) {
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [],
+        options: {},
     });
     const options = {
         responsive: true,
@@ -37,9 +38,9 @@ function CompetitionGraph({ ...props }) {
 
         const token = Cookies.get('token');
 
-        async function getUsersBalanceHistory(players) {
+        async function getUsersBalanceHistory(players: any) {
 
-            const playerDataSets = players.map((player) => {
+            const playerDataSets = players.map((player: any) => {
                 return {
                     label: player.firstName,
                     backgroundColor: getRandomColor(),
@@ -47,20 +48,48 @@ function CompetitionGraph({ ...props }) {
                     email: player.email,
                 }
             })
-
-            const history = await getHistory(token);
-            const labels = history.history.map((date: any) => {
-                return new Date(date.time).toDateString();
-            })
-            labels.push(new Date().toDateString());
+            let labels = [];
 
             for (const dataSet of playerDataSets) {
                 const history = await getHistoryByEmail(token, dataSet.email, props.competitionId);
                 dataSet.data = history.history.map((h: any) => h.balance);
                 dataSet.data.push(history.currentBalance);
+
+                // Generate labels for each data point
+                history.history.forEach((h: any) => {
+                    const label = new Date(h.time).toLocaleDateString();
+                    if (!labels.includes(label)) {
+                        labels.push(label);
+                    }
+                });
+
+                // Add the current balance date to the labels
+                const currentDate = new Date().toLocaleDateString();
+                if (!labels.includes(currentDate)) {
+                    labels.push(currentDate);
+                }
             }
 
-            setChartData(prevChart => ({ ...prevChart, datasets: playerDataSets, labels }))
+            // Sort the labels in ascending order
+            labels = labels.sort((a: any, b: any) => new Date(a).valueOf() - new Date(b).valueOf());
+
+            setChartData({
+                datasets: playerDataSets,
+                labels,
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'MMM DD'
+                                },
+                            },
+                        }],
+                    },
+                },
+            });
         }
 
         getUsersBalanceHistory(props.competition.rankings);
