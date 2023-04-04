@@ -47,6 +47,7 @@ function Competition({ ...props }) {
             // get competition id from query string in URL
             const id = searchParams.get("id");
             const data = await getCompetitionData(id);
+            console.log(data);
             setCompetitionData(data);
             setCompetitionId(id);
 

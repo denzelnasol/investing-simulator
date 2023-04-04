@@ -26,6 +26,7 @@ const createCompetition = async ({ entry_points, max_num_players, start_balance,
 async function getCompetitionData(competitionId: string) {
     const result = await axiosInstance.get(`${competitionId}`)
         .then(res => {
+            console.log(res);
             return res.data;
         })
         .catch(err => {
