@@ -22,13 +22,7 @@ function WelcomeSignUp() {
 
                 <div>
                 <Link to="/register" style={{textDecoration:'none'}}>
-                    <InputText
-                        style={{ width: '15em' }}
-                        placeholder="Email"
-                        value={email}
-                        onChange={ e => setEmail(e.target.value) }
-                    />
-                    <Button label="Sign Up"/>   
+                    <Button className="p-button-raised w-8rem h-3rem p-button-success" label="Sign Up"/>   
                     </Link>   
                 </div>
             </div>

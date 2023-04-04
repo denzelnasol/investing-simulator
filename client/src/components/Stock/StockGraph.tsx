@@ -59,7 +59,9 @@ function StockGraph(props: {stockSymbol: string}) {
         datasets: [
             {
                 data: dataPoints,
-                borderColor: 'red'
+                borderColor: 'red',
+                fill: true,
+                backgroundColor: 'rgba(255, 0, 0, 0.1)',
             }
         ]
     };
