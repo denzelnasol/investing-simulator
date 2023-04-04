@@ -17,7 +17,14 @@ function CompetitionGraph({ ...props }) {
         return color;
     }
 
-
+    // Referenced from chatGPT
+    const hexToRgba = (hex: any, opacity: any) => {
+        const r = parseInt(hex.substring(1, 3), 16);
+        const g = parseInt(hex.substring(3, 5), 16);
+        const b = parseInt(hex.substring(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      }
+    
     // ** Graph Data ** //
     const [chartData, setChartData] = useState({
         labels: [],
@@ -41,11 +48,15 @@ function CompetitionGraph({ ...props }) {
         async function getUsersBalanceHistory(players: any) {
 
             const playerDataSets = players.map((player: any) => {
+                const randomColour = getRandomColor();
+                const rgbColour = hexToRgba(randomColour, 0.1);
                 return {
                     label: player.firstName,
-                    backgroundColor: getRandomColor(),
+                    backgroundColor: rgbColour,
+                    borderColor: randomColour,
                     data: [],
                     email: player.email,
+                    fill: true,
                 }
             })
             let labels = [];
