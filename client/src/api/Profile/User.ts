@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
     baseURL: `${process.env.REACT_APP_NODE_URL}/users`,
-  });
+});
 
 
 const loginUser = async (email: string, password: string): Promise<boolean> => {
@@ -11,7 +11,7 @@ const loginUser = async (email: string, password: string): Promise<boolean> => {
         email: email,
         password: password
     };
-    
+
     const result: boolean = await axiosInstance.post('/login', data)
         .then(res => {
             if (res.data.success) {
@@ -39,7 +39,7 @@ const verifyUser = async (token: any) => {
             console.error(err);
             return false;
         });
-    
+
     return result;
 }
 
@@ -71,17 +71,19 @@ const getProfile = async (token: any) => {
     return result.data;
 }
 
-const getPortfolio = async (token: any, competitionName: string = null) => {
+const getPortfolio = async (competitionId: string = null) => {
+    const authToken = Cookies.get('token');
+
     const result: any = await axiosInstance.get('/portfolio', {
-        headers: { Authorization: token },
-        params: { competitionName }
+        headers: { Authorization: authToken },
+        params: { competitionId }
     })
     return result.data;
 }
 
 const getCompetitionPortfolios = async (token) => {
     const result = await axiosInstance.get('/competition-portfolios', {
-         headers: {Authorization: token}
+        headers: { Authorization: token }
     })
         .then(res => {
             return res.data.portfolios;
@@ -90,23 +92,40 @@ const getCompetitionPortfolios = async (token) => {
             console.log(err);
             return null;
         });
-    
+
     return result;
 }
 
 
-const getStocks = async (token: any, competitionName: string = null) => {
+const getStocks = async (token: string, competitionId: string = null) => {
+    console.log(competitionId);
+
     const result: any = await axiosInstance.get('/owned-stocks', {
         headers: { Authorization: token },
-        params: { competitionName }
+        params: { competitionId: competitionId }
     })  
     return result.data;
 }
 
-const getHistory = async (token: any, competitionName: string = null) => {
-    const result: any = await axiosInstance.get('/history', {
+const getHistory = async (token: any, competitionId: string = null) => {
+    const data = {
+        competitionId,
+    };
+
+    const result: any = await axiosInstance.post('/history', data, {
         headers: { Authorization: token },
-        params: { competitionName }
+    });
+    return result.data;
+}
+
+const getHistoryByEmail = async (token: any, email: string, competitionId: string = null) => {
+    const data = {
+        competitionId,
+        email
+    }
+
+    const result: any = await axiosInstance.post('/history', data, {
+        headers: { Authorization: token },
     });
     return result.data;
 }
@@ -121,4 +140,5 @@ export {
     getCompetitionPortfolios,
     getStocks,
     getHistory,
+    getHistoryByEmail,
 }

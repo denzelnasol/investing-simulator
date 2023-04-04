@@ -38,6 +38,11 @@ const Navbar = () => {
       icon: 'pi pi-fw pi-info-circle',
       url: '/competition-list',
     },
+    {
+      label: 'Trade',
+      icon: 'pi pi-money-bill',
+      url: '/stock-table',
+    }
   ];
 
   const isUserLoggedIn: boolean = Cookies.get('token') ? true : false;
@@ -55,14 +60,6 @@ const Navbar = () => {
 
   const loggedInLeftNavBar = (
     <div className="flex">
-
-      <Button
-        label="Trade"
-        icon='pi pi-money-bill'
-        className='p-button-secondary p-ml-auto mr-2'
-        onClick={() => navigate('/stock-table')}
-      />
-
       <Button
         label='Logout'
         icon='pi pi-sign-out'

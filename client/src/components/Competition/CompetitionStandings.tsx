@@ -18,7 +18,7 @@ function CompetitionStandings(props: {participants: Participant[]}) {
             <div className="flex justify-content-between align-items-center">
                 <h1 className="m-0 text-gray-700">Current Standings</h1>
             </div>
-        )
+        );
     }
     
     return (

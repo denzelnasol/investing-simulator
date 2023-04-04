@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // API
 import { getCompetitionPortfolios } from 'api/Profile/User';
@@ -10,7 +10,6 @@ import { Button } from 'primereact/button';
 import { DataTable } from "primereact/datatable";
 import { Column } from 'primereact/column';
 import { getCompetitionData } from 'api/Competition/Competition';
-import { Skeleton } from 'primereact/skeleton';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 interface Competition {
@@ -24,7 +23,7 @@ interface FetchedPortfolio {
     [key: string]: any
 }
 
-function CompetitionList(props) {
+function CompetitionList() {
     const navigate = useNavigate();
 
     // ** useStates ** //
@@ -42,7 +41,7 @@ function CompetitionList(props) {
             if (!portfolios) return;
 
             // update list of competitions on UI
-            const competitionLinks = await Promise.all(portfolios.map(async (p) => {
+            const competitionLinks = await Promise.all(portfolios.map(async (p: FetchedPortfolio) => {
                 const competitionName = p.competition.name;
                 const competitionId = p.fk_competition;
                 const competitionData = await getCompetitionData(competitionId);

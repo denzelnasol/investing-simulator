@@ -58,8 +58,39 @@ async function createCompetition(balance, startDate, endDate, entryPoints = -1, 
             start_time: startDate,
             end_time: endDate,
             name: name,
+            state: 'setup',
         }
     });
+}
+
+async function updateCompetition(competitionId, startDate, endDate, playerSize) {
+    return await prisma.competition.update({
+        where: { competition_id: competitionId },
+        data: {
+          start_time: startDate,
+          end_time: endDate,
+          max_num_players: playerSize
+        }
+      });
+      
+}
+
+async function startCompetition(competitionId) {
+    return await prisma.competition.update({
+        where: { competition_id: competitionId },
+        data: {
+          state: 'started',
+        }
+      });
+}
+
+async function endCompetition(competitionId) {
+    return await prisma.competition.update({
+        where: { competition_id: competitionId },
+        data: {
+          state: 'ended',
+        }
+      });
 }
 
 module.exports = {
@@ -68,4 +99,7 @@ module.exports = {
     getPersonalCompetitions,
     getCompetitionParticipants,
     createCompetition,
+    updateCompetition,
+    startCompetition,
+    endCompetition,
 };

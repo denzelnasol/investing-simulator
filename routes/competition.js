@@ -34,7 +34,7 @@ const { getProfileByEmail } = require('../services/Profile');
 // when the user clicks on Competition in navbar show the list of personal competitions
 router.get('/', async (req, res, next) => {
     try {
-        
+
         // get profile id from cookie
         var profileId = req.body.profileId;
 
@@ -61,6 +61,7 @@ router.get('/:competitionId', async (req, res, next) => {
                 maxParticipants: comp.max_num_players,
                 entryPoints: comp.entry_points
             },
+            state: comp.state,
             competitionName: comp.name,
             competitionStart: comp.start_time,
             competitionEnd: comp.end_time,
@@ -101,7 +102,7 @@ router.get('/join/:competitionId', async (req, res, next) => {
 
         const profile = await getProfileByEmail(email);
         const profileId = profile.profile_id;
-        
+
         const competitionId = req.params.competitionId;
 
         const members = await competitionDbService.getCompetitionParticipants(competitionId);
@@ -140,7 +141,7 @@ router.get('/join/:competitionId', async (req, res, next) => {
 
 
 // create competition
-router.post('/create', async (req, res, next) => { 
+router.post('/create', async (req, res, next) => {
     try {
         // get profile id from cookie 
         const cookie = getTokenFromRequest(req)
@@ -154,11 +155,10 @@ router.post('/create', async (req, res, next) => {
 
         const profile = await getProfileByEmail(email);
         const profileId = profile.profile_id;
-        console.log(profileId);
         const { start_balance, start_time, end_time, entry_points, max_num_players, name } = req.body;
 
         const comp = await competitionDbService.createCompetition(start_balance, start_time, end_time, entry_points, max_num_players, name);
-        
+
         const result = await portfolioDbService.createCompetitionPortfolio(profileId, comp.competition_id, comp.start_balance);
         if (result) {
             return res.sendStatus(201);
@@ -169,7 +169,45 @@ router.post('/create', async (req, res, next) => {
     }
 });
 
+router.post('/update', async (req, res) => {
 
+    const { playerSize, startDate, endDate, competitionId } = req.body;
+    try {
+        const result = await competitionDbService.updateCompetition(competitionId, startDate, endDate, playerSize)
+        if (result) {
+            return res.sendStatus(201);
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(404).json(e);
+    }
+})
+
+router.post('/start', async (req, res) => {
+    const { competitionId } = req.body;
+    try {
+        const result = await competitionDbService.startCompetition(competitionId)
+        if (result) {
+            return res.sendStatus(201);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(404).json(e);
+    }
+})
+
+router.post('/end', async (req, res) => {
+    const { competitionId } = req.body;
+    try {
+        const result = await competitionDbService.endCompetition(competitionId)
+        if (result) {
+            return res.sendStatus(201);
+        }
+    } catch (e) {
+        console.log(e)
+        res.status(404).json(e);
+    }
+})
 
 
 

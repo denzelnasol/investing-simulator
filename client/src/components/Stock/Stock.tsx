@@ -1,10 +1,14 @@
-import { getCurrentStockInfo } from 'api/Stock/Stock';
-import StockDetails from './StockDetails';
-import Error from 'components/Error/Error';
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
+// api
+import { getCurrentStockInfo } from 'api/Stock/Stock';
+
+// components
+import StockDetails from './StockDetails';
+import Error from 'components/Error/Error';
 import StockGraph from './StockGraph';
+import { Card } from 'primereact/card';
 
 function fetchCurrentData(symbol: string) {
     return getCurrentStockInfo(symbol);
@@ -50,17 +54,18 @@ function Stock(props) {
     return (
         // return error page if stock symbol is not found
         error ? <Error /> : 
-        <div>
-            <h1>{name}</h1>
+        <Card title={name} style={{ margin: 20 }}>
             <StockGraph stockSymbol={stockSymbol ?? ""} />
-            <StockDetails 
-                ask={ask} 
-                marketCap={marketCap} 
-                exchange={exchange} 
-                yearlyHigh={yearlyHigh} 
-                yearlyLow={yearlyLow}
-            />           
-        </div>
+            <Card title="Details" style={{ marginTop: 20 }}>
+                <StockDetails 
+                    ask={ask} 
+                    marketCap={marketCap} 
+                    exchange={exchange} 
+                    yearlyHigh={yearlyHigh} 
+                    yearlyLow={yearlyLow}
+                />      
+            </Card>     
+        </Card>
     );
 }
 

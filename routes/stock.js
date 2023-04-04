@@ -1,10 +1,13 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+
 const { getProfileByEmail } = require('../services/Profile');
 const { getStockBySymbol, addStock, buyStock, getStockInfo, getAllAvailableStocks, sellStock } = require('../services/Stock');
 const { getRTStockDetails, getRTStockSummary } = require('../services/StockApi');
 const { getMainPortfolio } = require('../services/Portfolio');
+const { requireAuth } = require('../services/Auth');
+
 const yahooFinance = require('yahoo-finance2').default;
 const router = express.Router();
 router.use(cookieParser());
@@ -69,18 +72,20 @@ router.get('/all', async (req, res, next) => {
   }
 });
 
-router.post('/buy-stock', async (req, res) => {
-  const { symbol, asking, quantity, authToken } = req.body;
+router.post('/buy-stock', requireAuth, async (req, res) => {
+  const { symbol, asking, quantity } = req.body;
+  let { portfolioId } = req.body
+  const email = req.user.email;
 
   try {
-    const token = jwt.verify(authToken, process.env.JWT_KEY);
-    const email = token.email;
-
     const profile = await getProfileByEmail(email);
     const profileId = profile.profile_id;
 
-    const mainPortfolio = await getMainPortfolio(profileId);
-    const portfolioId = mainPortfolio.portfolio_id;
+    // if portfolio was not specified, use the main portfolio as default
+    if (!portfolioId) {
+      const mainPortfolio = await getMainPortfolio(profileId);
+      portfolioId = mainPortfolio.portfolio_id;
+    }
 
     // Add the stock if it doesn't yet exist in the table
     let stock = await getStockBySymbol(symbol);
@@ -98,22 +103,25 @@ router.post('/buy-stock', async (req, res) => {
     await buyStock(portfolioId, stock.symbol, quantity, asking);
     res.send({ success: true })
   } catch (err) {
+    console.log(err);
     res.send({ success: false });
   }
 })
 
-router.post('/sell-stock', async (req, res) => {
-  const { symbol, asking, quantity, authToken } = req.body;
+router.post('/sell-stock', requireAuth, async (req, res) => {
+  const { symbol, asking, quantity } = req.body;
+  let { portfolioId } = req.body;
+  const email = req.user.email;
 
   try {
-    const token = jwt.verify(authToken, process.env.JWT_KEY);
-    const email = token.email;
-
     const profile = await getProfileByEmail(email);
     const profileId = profile.profile_id;
 
-    const mainPortfolio = await getMainPortfolio(profileId);
-    const portfolioId = mainPortfolio.portfolio_id;
+    // if portfolio was not specified, use the main portfolio as default
+    if (!portfolioId) {
+      const mainPortfolio = await getMainPortfolio(profileId);
+      portfolioId = mainPortfolio.portfolio_id;
+    }
 
     // Add the stock if it doesn't yet exist in the table
     let stock = await getStockBySymbol(symbol);
@@ -124,6 +132,7 @@ router.post('/sell-stock', async (req, res) => {
     await sellStock(portfolioId, stock.symbol, quantity, asking);
     res.send({ success: true })
   } catch (err) {
+    console.log(err);
     res.send({ success: false });
   }
 })
