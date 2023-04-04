@@ -18,8 +18,14 @@ router.get('/current', async (req, res, next) => {
   const queryOptions = req.query.queryOptions;
   const moduleOptions = req.query.moduleOptions;
 
-  const result = await yahooFinance.quote(symbol, queryOptions, moduleOptions);
-  res.send(result);
+  try {
+    const result = await yahooFinance.quote(symbol, queryOptions, moduleOptions);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+    res.status(404).json(e);
+  }
+    
 });
 
 /* GET historical stock listing. */
