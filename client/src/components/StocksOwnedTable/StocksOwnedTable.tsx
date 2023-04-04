@@ -86,7 +86,7 @@ function StocksOwnedTable({ ...props }) {
     const header = () => {
         return (
             <div className="flex justify-content-between align-items-center">
-                <h1 className="m-0 text-gray-700">Stocks Owned</h1>
+                <h1 className="m-0 text-gray-700">Stock Portfolio</h1>
             </div>
         );
     }
