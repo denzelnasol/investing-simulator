@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
+// api
 import { getCurrentStockInfo } from 'api/Stock/Stock';
 import { getPortfolio } from "api/Profile/User";
 
@@ -19,6 +20,8 @@ interface Props {
 };
 
 function StocksOwnedTable(props: Props) {
+    const navigate = useNavigate();
+
     /* useStates */
     const [selectedStock, setSelectedStock] = useState(null);
     const [isTradeSelected, setIsTradeSelected] = useState<boolean>(false);
@@ -71,6 +74,13 @@ function StocksOwnedTable(props: Props) {
         fetchTableData();
     }, [props.stocks]);
 
+    const navigateToStockPage = (clickEvent) => {
+        const stockSymbol = clickEvent.value.symbol;
+        console.log(stockSymbol);
+
+        navigate(`/stock?symbol=${stockSymbol}`);
+    }
+
     /* UI */
     const header = () => {
         return (
@@ -89,10 +99,10 @@ function StocksOwnedTable(props: Props) {
     const tradeColumn = (rowData) => {
         return (
           <Button label="Trade" onClick={() => {
-            setSelectedStock(rowData)
-            setIsTradeSelected(true)
-            
-            props.onTrade(true);
+                setSelectedStock(rowData)
+                setIsTradeSelected(true)
+                
+                props.onTrade(true);
             }}
           />
         );
@@ -119,6 +129,7 @@ function StocksOwnedTable(props: Props) {
                     header={header}
                     value={tableData}
                     selectionMode="single"
+                    onSelectionChange={e => navigateToStockPage(e)}
                     paginator
                     rows={10}
                 >
