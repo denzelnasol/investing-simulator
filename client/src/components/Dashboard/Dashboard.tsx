@@ -90,24 +90,33 @@ const Dashboard = () => {
 
     async function getUserBalanceHistory() {
       const history = await getHistory(token);
-
+    
       setChartData((chart: any) => {
         chart.labels = history.history
           // .slice(CHART_MAX_NUM_DATAPOINTS - 1)
           .map((h: any) => {
             return new Date(h.time).toDateString();
           });
-
+    
+        chart.labels = chart.labels.reduce((uniqueLabels: any, label: any) => {
+          if (!uniqueLabels.includes(label)) {
+            uniqueLabels.push(label);
+          }
+          return uniqueLabels;
+        }, []);
+    
+        chart.labels.push(new Date().toDateString().valueOf());
+    
         chart.datasets[0].data = history.history
           .map((h: any) => h.balance);
-
-        chart.labels.push(new Date().toDateString());
+    
         chart.datasets[0].data.push(history.currentBalance);
-
+    
         setIsLoading(false);
         return chart;
       });
     }
+    
 
     getUserProfile();
     getUserPortfolio();
