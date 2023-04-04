@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import Cookies from 'js-cookie';
 
 // API
-import { buyStock, sellStock } from "api/Stock/Stock";
+import { buyStock, getDatabaseStock, sellStock } from "api/Stock/Stock";
 
 // Components
 import Button from 'components/PrimeReact/Button/Button';
 import { Dialog } from 'primereact/dialog';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast';
+import { Message } from 'primereact/message';
 
 // Styles
 import './style.scss';
@@ -22,7 +23,7 @@ interface Props {
   isSell: boolean
 }
 
-const StockTradeDialog = (props: Props) => {
+const StockTradeDialog = ({ ...props }) => {
 
   // ** useRef ** //
   const toast = useRef(null);
@@ -35,34 +36,55 @@ const StockTradeDialog = (props: Props) => {
 
   /** @todo Find way to prevent purchasing shares if total is less than current balance */
   useEffect(() => {
+
+    async function getDBStock(symbol) {
+      
+      let stockPrice = props.stock.ask;
+      if (!stockPrice) {
+        const dbStock = await getDatabaseStock(symbol);
+        stockPrice = dbStock.price_per_share;
+      }
+  
+      let min = 0;
+      let max = 100;
+      if (props.isSell) {
+        min = 1;
+        max = props.stock.ownedShares;
+      } else {
+        max = Math.floor((props.balance - 10) / stockPrice);
+      }
+  
+      if (props.balance < 0) {
+        max = 0;
+      }
+  
+      setMinQuantity(min);
+      setMaxQuantity(max);
+    }
+
+    // getDBStock(props.stock.symbol);
     if (!props.stock) return;
 
-    let min = 0;
-    let max = 100;
-    if (props.isSell) {
-      min = 1;
-      max = props.stock.ownedShares;
-    } else {
-      max = Math.floor(props.balance / props.stock.ask);
-    }
-
-    if (props.balance < 0) {
-      max = 0;
-    }
-
-    setMinQuantity(min);
-    setMaxQuantity(max);
+    getDBStock(props.stock.symbol);
   }, [props.stock]);
 
   // ** Callback Functions ** //
   const onHide = () => {
     props.hideTradeDialog();
+    if (props.refresh) {
+      props.refresh();
+    }
   }
 
   const executeTrade = async () => {
     setIsLoading(true);
     const symbol = props.stock && props.stock.symbol;
-    const asking = props.stock && props.stock.ask;
+    let asking = props.stock && props.stock.ask;
+
+    if (!asking) {
+      const dbStock = await getDatabaseStock(symbol);
+      asking = dbStock.price_per_share;
+    }
 
     if (props.isSell) {
       const res = await sellStock(symbol, asking, quantity, props.portfolioId);
@@ -158,7 +180,7 @@ const StockTradeDialog = (props: Props) => {
       <div className="p-fluid grid formgrid">
 
         <h3 className="col-12">
-          {`Available Funds: ${props.balance}`}
+          {`Available Funds: ${props.balance.toFixed(2)}`}
         </h3>
 
         <div className="col-12 mb-2">
@@ -167,9 +189,12 @@ const StockTradeDialog = (props: Props) => {
 
         {additionalInformationFields}
 
+
         <div className="field col-12">
           {quantityField}
         </div>
+
+        <Message className="ml-3 mb-2" severity="info" text="A $10 brokers fee will be applied"></Message>
       </div>
 
     </Dialog>

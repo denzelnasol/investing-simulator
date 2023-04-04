@@ -136,7 +136,7 @@ function Competition({ ...props }) {
 
             <CompetitionSidebar />
 
-            <CompetitionPortfolio competitionId={competitionId}/>
+            <CompetitionPortfolio competitionId={competitionId} refresh={triggerRefresh} competitionData={competitionData} />
             <CompetitionGraph competition={competitionData} competitionId={competitionId} />
             <CompetitionStandings participants={participants} />
         </Card>
