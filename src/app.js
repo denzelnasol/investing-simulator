@@ -5,6 +5,8 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var cors = require('cors');
+var https = require('https');
+var fs = require('fs');
 
 const indexRouter = require('./../routes/index');
 const usersRouter = require('./../routes/users');
@@ -51,8 +53,21 @@ app.use((err, req, res, next) => {
   res.send('Error');
 });
 
-app.listen(PORT, () => {
+// PRODUCTION
+// Load the SSL/TLS certificate and key
+const options = {
+  cert: fs.readFileSync('/etc/letsencrypt/live/investingsimulator.info/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/investingsimulator.info/privkey.pem')
+};
+
+// Create an HTTPS server with the SSL/TLS certificate and key
+https.createServer(options, app).listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
+
+// DEVELOPMENT
+// app.listen(PORT, () => {
+//   console.log(`Server is listening on port ${PORT}`);
+// });
 
 module.exports = app;
