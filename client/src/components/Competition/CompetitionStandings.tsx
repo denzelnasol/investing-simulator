@@ -12,6 +12,7 @@ function CompetitionStandings(props: {participants: Participant[]}) {
             balance: p.balance,
         };
     }).sort((a, b) => b.balance - a.balance);
+    
 
     const header = () => {
         return (
