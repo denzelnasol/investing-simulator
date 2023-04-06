@@ -16,17 +16,19 @@ const InviteAccepted = () => {
 
   const [isPlayerAlreadyInCompetition, setIsPlayerAlreadyInCompetition] = useState<boolean>(false);
   const [isCompetitionSizeFilled, setIsCompetitionSizeFilled] = useState<boolean>(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchData() {
       // get competition id from query string in URL
       const result = await acceptInvite(searchParams.get('id'));
-      if (result.data.isCompetitionFilled) {
-        setIsCompetitionSizeFilled(true);
-      }
 
-      if (result.data.isPlayerAlreadyInCompetition) {
+      if (!result) {
+        setIsUserLoggedIn(false);
+      } else if (result.data.isCompetitionFilled) {
+        setIsCompetitionSizeFilled(true);
+      } else if (result.data.isPlayerAlreadyInCompetition) {
         setIsPlayerAlreadyInCompetition(true);
       }
 
@@ -54,6 +56,14 @@ const InviteAccepted = () => {
       );
     }
 
+    if (!isUserLoggedIn) {
+      return (
+        <div>
+          Uh oh..
+        </div>
+      );
+    }
+
     return (
       <div>
         Invitation Accepted!
@@ -67,10 +77,12 @@ const InviteAccepted = () => {
       {isLoading
         ? <Skeleton className="w-full" height="8rem" />
         : <Card className="mt-3 w-30rem flex justify-content-center" title={titleText}>
-          {!isCompetitionSizeFilled && !isPlayerAlreadyInCompetition
+          {!isCompetitionSizeFilled && !isPlayerAlreadyInCompetition && isUserLoggedIn
             && <Message severity="success" text="View the competition in your competitions list!" />}
 
           {isCompetitionSizeFilled && <Message severity="error" text="Sorry, the competition is already filled!" />}
+
+          {!isUserLoggedIn && <Message severity="error" text="Log in before accepting the invite!" />}
 
           {isPlayerAlreadyInCompetition && <Message severity="info" text="You're already in this competition!" />}
         </Card>

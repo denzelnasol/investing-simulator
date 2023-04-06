@@ -39,10 +39,14 @@ async function getCompetitionData(competitionId: string) {
 
 async function acceptInvite(competitionId: string) {
     const token = Cookies.get('token');
-    const result = await axiosInstance.get(`/join/${competitionId}`, {
-        headers: { Authorization: token },
-    });
-    return result;
+    try {
+        const result = await axiosInstance.get(`/join/${competitionId}`, {
+            headers: { Authorization: token },
+        });
+        return result;
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 async function updateCompetition(data) {

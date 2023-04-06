@@ -89,23 +89,13 @@ const Dashboard = () => {
       setChartData((chart: any) => {
         chart.labels = history.history
           // .slice(CHART_MAX_NUM_DATAPOINTS - 1)
-          .map((h: any) => {
-            return new Date(h.time).toDateString();
-          });
-
-        chart.labels = chart.labels.reduce((uniqueLabels: any, label: any) => {
-          if (!uniqueLabels.includes(label)) {
-            uniqueLabels.push(label);
-          }
-          return uniqueLabels;
-        }, []);
-
-        chart.labels.push(new Date().toDateString().valueOf());
+          .map((h: any) => new Date(h.time).toDateString());
 
         chart.datasets[0].data = history.history
           .map((h: any) => h.balance);
 
-        chart.datasets[0].data.push(history.currentBalance);
+	chart.labels.push('Now');
+	chart.datasets[0].data.push(history.currentBalance);
 
         setIsLoading(false);
         return chart;
@@ -164,7 +154,7 @@ const Dashboard = () => {
               : <div className="flex justify-content-between">
                 <div className="flex flex-column">
                   <div className="flex font-semibold text-600">Balance</div>
-                  <div className={`flex text-xl font-bold mt-2 ${portfolio && portfolio.balance < 0 ? 'text-red-600' :'text-green-600'}`}>${portfolio ? portfolio.base_balance : 0}</div>
+                  <div className={`flex text-xl font-bold mt-2 ${portfolio && portfolio.balance < 0 ? 'text-red-600' :'text-green-600'}`}>{portfolio ? formatter.format(portfolio.base_balance)  : 0}</div>
                 </div>
 
                 <div className="flex balance-icon-container p-3">
