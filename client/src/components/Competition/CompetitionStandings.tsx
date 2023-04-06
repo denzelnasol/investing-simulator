@@ -11,7 +11,8 @@ function CompetitionStandings(props: {participants: Participant[]}) {
             name: `${p.firstName} ${p.lastName}`,
             balance: p.balance,
         };
-    });
+    }).sort((a, b) => b.balance - a.balance);
+    
 
     const header = () => {
         return (
