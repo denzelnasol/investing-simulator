@@ -86,17 +86,33 @@ const Dashboard = () => {
     async function getUserBalanceHistory() {
       const history = await getHistory(token);
 
+      const timestampToLabel = (timestamp: string): string => { 
+        return new Date(timestamp).toDateString(); 
+      };
+
+      // after this each datapoint will be unique
+      var uniqueSnapshots: Map<string, number> = new Map();
+      for (let h of history.history) {
+          uniqueSnapshots.set(timestampToLabel(h.time), h.balance);
+      }
+
+      // Sort the labels in ascending order
+      var labels: string[] = Array.from(uniqueSnapshots.keys())
+          .sort((a: string, b: string) => new Date(a).valueOf() - new Date(b).valueOf());
+
+      // get balances
+      var balances: number[] = [];
+      for (let i = 0; i < labels.length; i++) {
+        balances.push(uniqueSnapshots.get(labels[i]));
+      }
+
+      // add latest
+      labels.push('Now');
+      balances.push(history.currentBalance);
+
       setChartData((chart: any) => {
-        chart.labels = history.history
-          // .slice(CHART_MAX_NUM_DATAPOINTS - 1)
-          .map((h: any) => new Date(h.time).toDateString());
-
-        chart.datasets[0].data = history.history
-          .map((h: any) => h.balance);
-
-	chart.labels.push('Now');
-	chart.datasets[0].data.push(history.currentBalance);
-
+        chart.labels = labels;
+        chart.datasets[0].data = balances;
         setIsLoading(false);
         return chart;
       });

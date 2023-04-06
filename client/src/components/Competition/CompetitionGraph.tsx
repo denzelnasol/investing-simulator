@@ -47,9 +47,9 @@ function CompetitionGraph({ ...props }) {
 
         async function getUsersBalanceHistory(players: any) {
 
-            const playerDataSets = players.map((player: any) => {
-                const randomColour = getRandomColor();
-                const rgbColour = hexToRgba(randomColour, 0.1);
+            var playerDataSets: any[] = players.map((player: any) => {
+                let randomColour = getRandomColor();
+                let rgbColour = hexToRgba(randomColour, 0.1);
                 return {
                     label: player.firstName,
                     backgroundColor: rgbColour,
@@ -58,35 +58,68 @@ function CompetitionGraph({ ...props }) {
                     email: player.email,
                     fill: true,
                 }
-            })
-            let labels = [];
+            });
 
+            var dataMap: Map<string, number>[] = [];
+            var balances: number[] = [];
+
+            const timestampToLabel = (timestamp: string): string => { 
+                return new Date(timestamp).toLocaleDateString(); 
+            };
+
+            // get history of each player
             for (const dataSet of playerDataSets) {
-                const history = await getHistoryByEmail(token, dataSet.email, props.competitionId);
-                dataSet.data = history.history.map((h: any) => h.balance);
-                dataSet.data.push(history.currentBalance);
+                let history = await getHistoryByEmail(token, dataSet.email, props.competitionId);
 
-                // Generate labels for each data point
-                history.history.forEach((h: any) => {
-                    const label = new Date(h.time).toLocaleDateString();
-                    if (!labels.includes(label)) {
-                        labels.push(label);
-                    }
-                });
+                // after this each datapoint will be unique
+                let uniqueSnapshots: Map<string, number> = new Map();
+                for (let h of history.history) {
+                    uniqueSnapshots.set(timestampToLabel(h.time), h.balance);
+                }
 
-                // Add the current balance date to the labels
-                const currentDate = new Date().toLocaleDateString();
-                if (!labels.includes(currentDate)) {
-                    labels.push(currentDate);
+                dataMap.push(uniqueSnapshots);
+                balances.push(history.currentBalance);
+            }
+
+            // align points for each dataset
+            var labelSet: Set<string> = new Set();
+            for (let x of dataMap) {
+                for (const [time, balance] of x) {
+                    labelSet.add(time);
                 }
             }
 
+            // fill empty/missing datapoints with NaN
+            const fillMissingLabel = (x: string) => {
+                for (let h of dataMap) {
+                    if (!h.has(x)) {
+                        h.set(x, NaN);
+                    }
+                }
+            };
+            for (let x of labelSet) {
+                fillMissingLabel(x);
+            }
+
             // Sort the labels in ascending order
-            labels = labels.sort((a: any, b: any) => new Date(a).valueOf() - new Date(b).valueOf());
+            var labels: string[] = Array.from(labelSet)
+                .sort((a: string, b: string) => new Date(a).valueOf() - new Date(b).valueOf());
+
+            for (let x of labels) {
+                for (let i = 0; i < playerDataSets.length; i++) {
+                    playerDataSets[i].data.push(dataMap[i].get(x));
+                }
+            }
+
+            // add latest data
+            labels.push('Now');
+            for (let i = 0; i < playerDataSets.length; i++) {
+                playerDataSets[i].data.push(balances[i]);
+            }
 
             setChartData({
                 datasets: playerDataSets,
-                labels,
+                labels: labels,
                 options: {
                     scales: {
                         xAxes: [{
