@@ -17,9 +17,10 @@ interface Props {
     rows: number,
     stocks: any,
     onTrade: (isTrading: boolean) => void,
+    refresh: Function,
 };
 
-function StocksOwnedTable(props: Props) {
+function StocksOwnedTable({ ...props }) {
     const navigate = useNavigate();
 
     /* useStates */
@@ -72,7 +73,7 @@ function StocksOwnedTable(props: Props) {
         //async function get
         fetchPortfolio();
         fetchTableData();
-    }, [props.stocks]);
+    }, [props.stocks, props.refresh]);
 
     const navigateToStockPage = (clickEvent) => {
         const stockSymbol = clickEvent.value.symbol;
@@ -85,7 +86,7 @@ function StocksOwnedTable(props: Props) {
     const header = () => {
         return (
             <div className="flex justify-content-between align-items-center">
-                <h1 className="m-0 text-gray-700">Stocks Owned</h1>
+                <h1 className="m-0 text-gray-700">Stock Portfolio</h1>
             </div>
         );
     }
@@ -120,6 +121,7 @@ function StocksOwnedTable(props: Props) {
                     props.onTrade(false);
                 }}
                 isSell={true}
+                refresh={props.refresh}
             />
 
             {isLoading 

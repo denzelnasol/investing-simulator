@@ -52,7 +52,7 @@ async function buyStock(portfolioId, stock, numShares, pricePerShare) {
       getRTStockDetails(stock);
     }
 
-    const totalAmountCredited = -numShares * pricePerShare;
+    const totalAmountCredited = (-numShares * pricePerShare) - 10; // 10 for brokers fee
     const transactionTime = new Date();
     return await prisma.transaction.create({
         data: {
@@ -69,7 +69,7 @@ async function sellStock(portfolioId, stock, numShares, pricePerShare) {
     // note: db has a transaction trigger so we just need to modify transaction
     // when selling: amount should be positive (refer to docs)
     // balance will be updated by triggers
-    const totalAmountCredited = numShares * pricePerShare;
+    const totalAmountCredited = (numShares * pricePerShare) - 10; // 10 for brokers fee
     const transactionTime = new Date();
     return await prisma.transaction.create({
         data: {

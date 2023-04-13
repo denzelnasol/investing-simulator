@@ -122,11 +122,19 @@ async function sellStock(symbol: Symbol | string, asking: number, quantity: numb
   return response.data.success;
 }
 
+async function getDatabaseStock(symbol: Symbol | string) {
+  const data = {
+    symbol,
+  }
 
+  const result = await axiosInstance.post('/db-stock', data);
+  return result.data;
+}
 
 export {
   getCurrentStockInfo,
   getHistoricalStockInfo,
+  getDatabaseStock,
   buyStock,
   sellStock
 };

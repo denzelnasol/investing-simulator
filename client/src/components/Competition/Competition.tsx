@@ -47,6 +47,7 @@ function Competition({ ...props }) {
             // get competition id from query string in URL
             const id = searchParams.get("id");
             const data = await getCompetitionData(id);
+            console.log(data);
             setCompetitionData(data);
             setCompetitionId(id);
 
@@ -136,7 +137,7 @@ function Competition({ ...props }) {
 
             <CompetitionSidebar />
 
-            <CompetitionPortfolio competitionId={competitionId}/>
+            <CompetitionPortfolio competitionId={competitionId} refresh={triggerRefresh} competitionData={competitionData} />
             <CompetitionGraph competition={competitionData} competitionId={competitionId} />
             <CompetitionStandings participants={participants} />
         </Card>

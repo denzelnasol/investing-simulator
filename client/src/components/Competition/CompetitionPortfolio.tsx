@@ -11,7 +11,7 @@ interface Props {
     competitionId: string
 }
 
-function CompetitionPortfolio(props: Props) {
+function CompetitionPortfolio({ ...props }) {
     const navigate = useNavigate();
 
     /* useStates */
@@ -20,28 +20,28 @@ function CompetitionPortfolio(props: Props) {
     useEffect(() => {
         async function fetchOwnedStocks() {
             const token: string = Cookies.get('token');
-
-            console.log(props.competitionId);
             if (props.competitionId) {
                 const stocks = await getStocks(token, props.competitionId);
-                console.log(stocks);
-                
-                setStocks(stocks); 
+                setStocks(stocks);
             }
         }
 
         fetchOwnedStocks();
-    }, [props.competitionId]); // run this useEffect when competitionId is provided
-    
+    }, [props.competitionId, props.refresh]); // run this useEffect when competitionId is provided
+
     return (
         <div>
-            <StocksOwnedTable rows={10} competitionId={props.competitionId} stocks={stocks} onTrade={() => {}} />       
-            <Button
-                label="Buy More"
-                icon='pi pi-plus'
-                className='p-button-primary p-ml-auto mr-2'
-                onClick={() => navigate(`/stock-table?competition-id=${props.competitionId}`)}
-            />
+            <StocksOwnedTable rows={10} competitionId={props.competitionId} stocks={stocks} onTrade={() => { }} refresh={props.refresh} />
+            {
+                props.competitionData && (props.competitionData.state === 'started')
+                    ? <Button
+                        label="Buy More"
+                        icon='pi pi-plus'
+                        className='p-button-primary p-ml-auto mr-2'
+                        onClick={() => navigate(`/stock-table?competition-id=${props.competitionId}`)}
+                    />
+                    : <></>
+            }
         </div>
     );
 }

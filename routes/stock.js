@@ -18,8 +18,14 @@ router.get('/current', async (req, res, next) => {
   const queryOptions = req.query.queryOptions;
   const moduleOptions = req.query.moduleOptions;
 
-  const result = await yahooFinance.quote(symbol, queryOptions, moduleOptions);
-  res.send(result);
+  try {
+    const result = await yahooFinance.quote(symbol, queryOptions, moduleOptions);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+    res.status(404).json(e);
+  }
+    
 });
 
 /* GET historical stock listing. */
@@ -60,8 +66,6 @@ router.get('/:symbol', async (req, res, next) => {
 // when the user searches for stocks show a list of all available stocks
 router.get('/all', async (req, res, next) => {
   try {
-
-
     let stocks = await getAllAvailableStocks();
     let stData = await getRTStockSummary(stocks.map(x => x.symbol));
 
@@ -71,6 +75,15 @@ router.get('/all', async (req, res, next) => {
     res.status(404).json(err);
   }
 });
+
+router.post('/db-stock', async (req, res, next) => {
+  try {
+    const stock = await getStockBySymbol(req.body.symbol);
+    res.send(stock);
+  } catch (e) {
+    res.status(404).json(e);
+  }
+})
 
 router.post('/buy-stock', requireAuth, async (req, res) => {
   const { symbol, asking, quantity } = req.body;

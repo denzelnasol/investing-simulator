@@ -26,6 +26,7 @@ const createCompetition = async ({ entry_points, max_num_players, start_balance,
 async function getCompetitionData(competitionId: string) {
     const result = await axiosInstance.get(`${competitionId}`)
         .then(res => {
+            console.log(res);
             return res.data;
         })
         .catch(err => {
@@ -38,10 +39,14 @@ async function getCompetitionData(competitionId: string) {
 
 async function acceptInvite(competitionId: string) {
     const token = Cookies.get('token');
-    const result = await axiosInstance.get(`/join/${competitionId}`, {
-        headers: { Authorization: token },
-    });
-    return result;
+    try {
+        const result = await axiosInstance.get(`/join/${competitionId}`, {
+            headers: { Authorization: token },
+        });
+        return result;
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 async function updateCompetition(data) {

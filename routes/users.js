@@ -28,14 +28,16 @@ router.get('/profile', requireAuth, async (req, res) => {
 /* Login a user */
 router.post('/login', async (req, res, next) => {
 	const { email, password } = req.body;
-
+	console.log(email, password);
+	console.log('HERE');
 	const user = await getProfile(email, password);
 	//const user = await ProfileService.getProfileUnhashed;
+	console.log('THERE');
 	if (user === null) {
 		res.send({ success: false });
 		return;
 	}
-
+	console.log('hello there!');
 	const token = jwt.sign({ email }, process.env.JWT_KEY);
 	res.cookie('token', token, { httpOnly: false }); // MUST DISABLY HTTPONLY FOR COOKIE TO WORK
 	res.send({ success: true, token });
