@@ -25,7 +25,6 @@ model profile {
   password_hash String      @db.VarChar(50)
   email         String      @unique @db.VarChar(50)
   phone_number  String      @db.VarChar(32)
-  points        Int?        @default(0)
   portfolio     portfolio[]
 }
 
