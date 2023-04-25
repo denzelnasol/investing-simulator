@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 const yahooFinance = require('yahoo-finance2').default;
 
 // CHANGE THIS URL TO PRODUCTION DB
-const POSTGRES_URL = 'postgres://postgres:123456@34.122.66.103:5432/cmpt372';
+const POSTGRES_URL = 'postgres://postgres:123456@localhost/investing-sim-main';
 
 var pool = new Pool({
     connectionString: POSTGRES_URL
