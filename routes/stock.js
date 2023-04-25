@@ -89,7 +89,7 @@ router.post('/buy-stock', requireAuth, async (req, res) => {
   const { symbol, asking, quantity } = req.body;
   let { portfolioId } = req.body
   const email = req.user.email;
-
+  console.log('ASKING: ', asking);
   try {
     const profile = await getProfileByEmail(email);
     const profileId = profile.profile_id;
