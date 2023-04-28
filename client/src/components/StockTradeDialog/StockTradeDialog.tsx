@@ -107,8 +107,16 @@ const StockTradeDialog = ({ ...props }) => {
             detail: `${quantity} shares of ${props.stock.symbol} purchased`,
             life: 3000
           });
-          setIsLoading(false);
+        } else {
+          toast.current.show({
+            severity: 'fail',
+            summary: 'Bank Balance Insufficient',
+            detail: `Try purchasing a smaller amount, you are unable to afford`,
+            life: 3000
+          });
         }
+
+        setIsLoading(false);
     }
     onHide();
   };

@@ -1,6 +1,8 @@
 const prisma = require("../src/db");
 const { getRTStockDetails } = require("./StockApi");
 
+const BROKERS_FEE = 10;
+
 async function getStockBySymbol(symbol) {
   return await prisma.stock.findFirst({
     where: {
@@ -43,6 +45,16 @@ async function getStocks(portfolioId) {
   });
 }
 
+async function isValidPurchase(portfolioId, numShares, pricePerShare) {
+  const totalAmountCredited = (-numShares * pricePerShare) - 10; // 10 for brokers fee
+  let rec = await prisma.portfolio.findFirst({
+    where: {
+      portfolio_id: portfolioId
+    }
+  });
+  return rec.base_balance + totalAmountCredited >= 0;
+}
+
 async function buyStock(portfolioId, stock, numShares, pricePerShare) {
     // note: db has a transaction trigger so we just need to modify transaction
     // when purchasing: amount should be negative (refer to docs)
@@ -52,7 +64,7 @@ async function buyStock(portfolioId, stock, numShares, pricePerShare) {
       getRTStockDetails(stock);
     }
 
-    const totalAmountCredited = (-numShares * pricePerShare) - 10; // 10 for brokers fee
+    const totalAmountCredited = (-numShares * pricePerShare) - BROKERS_FEE; // 10 for brokers fee
     const transactionTime = new Date();
     return await prisma.transaction.create({
         data: {
@@ -69,7 +81,7 @@ async function sellStock(portfolioId, stock, numShares, pricePerShare) {
     // note: db has a transaction trigger so we just need to modify transaction
     // when selling: amount should be positive (refer to docs)
     // balance will be updated by triggers
-    const totalAmountCredited = (numShares * pricePerShare) - 10; // 10 for brokers fee
+    const totalAmountCredited = (numShares * pricePerShare) - BROKERS_FEE; // 10 for brokers fee
     const transactionTime = new Date();
     return await prisma.transaction.create({
         data: {
@@ -89,5 +101,6 @@ module.exports = {
   getStockInfo,
   getStocks,
   buyStock,
-  sellStock
+  sellStock,
+  isValidPurchase,
 }

@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 const { getProfileByEmail } = require('../services/Profile');
-const { getStockBySymbol, addStock, buyStock, getStockInfo, getAllAvailableStocks, sellStock } = require('../services/Stock');
+const { getStockBySymbol, addStock, buyStock, getStockInfo, getAllAvailableStocks, sellStock, isValidPurchase } = require('../services/Stock');
 const { getRTStockDetails, getRTStockSummary } = require('../services/StockApi');
 const { getMainPortfolio } = require('../services/Portfolio');
 const { requireAuth } = require('../services/Auth');
@@ -113,8 +113,12 @@ router.post('/buy-stock', requireAuth, async (req, res) => {
     // let details = await getRTStockDetails(symbol, [ 'regularMarketPrice' ]);
     // let pps = details.regularMarketPrice;
 
-    await buyStock(portfolioId, stock.symbol, quantity, asking);
-    res.send({ success: true })
+    let isValid = await isValidPurchase(portfolioId, quantity, asking);
+    if (isValid) {
+      await buyStock(portfolioId, stock.symbol, quantity, asking);
+    }
+    res.send({ success: isValid });
+
   } catch (err) {
     console.log(err);
     res.send({ success: false });
