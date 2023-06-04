@@ -21,7 +21,7 @@ router.get('/current', async (req, res, next) => {
   console.log('SYMBOL: ', symbol);
 
   try {
-    const result = await yahooFinance.quote(symbol, queryOptions, moduleOptions);
+    const result = await yahooFinance.quoteSummary(symbol, queryOptions, moduleOptions);
     res.send(result);
   } catch (e) {
     console.log(e);
