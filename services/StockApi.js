@@ -49,7 +49,7 @@ async function getYFStockSymbols(symbols) {
 
     // console.log('DATATAAAA: ', data);
 
-    data.then(result => {
+    const result = data.then(result => {
         console.log('DATATAAAA:', result);
         const parsedData = JSON.parse(result);
         const stocks = [];
@@ -73,6 +73,8 @@ async function getYFStockSymbols(symbols) {
       }).catch(error => {
         console.error('Error:', error);
       });
+
+      return result;
 }
 
 module.exports = {
