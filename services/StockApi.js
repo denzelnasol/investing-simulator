@@ -36,16 +36,16 @@ function getYFStockSymbols(symbols) {
     const command = `python3 stock_data.py ${symbolString}`;
   
     exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing Python script: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
-      if (stderr) {
-        console.error(`Python script returned an error: ${stderr}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
+    //   if (error) {
+    //     console.error(`Error executing Python script: ${error}`);
+    //     return res.status(500).json({ error: 'Internal Server Error' });
+    //   }
+    //   if (stderr) {
+    //     console.error(`Python script returned an error: ${stderr}`);
+    //     return res.status(500).json({ error: 'Internal Server Error' });
+    //   }
       
-      return res.json(stdout);
+      return JSON.parse(stdout);
     });
 }
 
