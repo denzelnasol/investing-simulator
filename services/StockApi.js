@@ -38,7 +38,7 @@ async function getYFStockSymbols(symbols) {
     const command = `python3 stock_data.py ${symbolString}`;
 
     const data = new Promise((resolve, reject) => {
-        exec(command, (error, stdout, stderr) => {
+        exec(command, async (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing Python script: ${error}`);
                 reject(error);
@@ -68,10 +68,10 @@ async function getYFStockSymbols(symbols) {
     try {
         const result = await data;
         res.json(result);
-      } catch (error) {
+    } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred' });
-      }
+    }
 }
 
 module.exports = {
