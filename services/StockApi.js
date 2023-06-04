@@ -30,15 +30,21 @@ async function getRTStockDetails(symbol, fields = []) {
     return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
 }
 
-async function getYFStockSymbols(symbols, callback) {
+async function getYFStockSymbols(symbols) {
     const symbolString = symbols.join(',');
 
     const command = `python3 stock_data.py ${symbolString}`;
   
-    exec(command, async (error, stdout, stderr) => {
-        return stdout
-    });
-    // return stdout;
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error executing Python script: ${error}`);
+            reject(error);
+          } else {
+            resolve(stdout);
+          }
+        });
+      });
 }
 
 module.exports = {
