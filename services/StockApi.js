@@ -32,42 +32,42 @@ async function getRTStockDetails(symbol, fields = []) {
 
 async function getYFStockSymbols(symbols) {
     // const symbolString = symbols.join(',');
-    const symbolString = "AMZN,GOOGL";
+    const symbolString = "AMZN";
 
     const command = `python3 stock_data.py ${symbolString}`;
 
-    const res = exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error executing Python script: ${error}`);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
-        if (stderr) {
-            console.error(`Python script returned an error: ${stderr}`);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
-
-        const parsedData = JSON.parse(stdout);
-
-        const stocks = [];
-
-        // Iterate over the keys of the data object
-        for (const symbol of Object.keys(parsedData)) {
-            const stock = {};
-            stock['symbol'] = parsedData[symbol].symbol;
-            stock['averageAnalystRating'] = parsedData[symbol].recommendationMean;
-            stock['regularMarketPrice'] = parsedData[symbol].currentPrice;
-            stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
-            stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
-            stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
-
-            // Add the stock object to the stocks object using the symbol as the key
-            stocks.push(stock);
-        }
-
-        return stocks;
+    const data = new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing Python script: ${error}`);
+                reject(error);
+            } else {
+                resolve(stdout);
+            }
+        });
     });
 
-    return res;
+    console.log('DATATAAAA: ', data);
+
+    const parsedData = JSON.parse(data);
+    const stocks = [];
+
+    // Iterate over the keys of the data object
+    for (const symbol of Object.keys(parsedData)) {
+        const stock = {};
+        stock['symbol'] = parsedData[symbol].symbol;
+        stock['averageAnalystRating'] = parsedData[symbol].recommendationMean;
+        stock['regularMarketPrice'] = parsedData[symbol].currentPrice;
+        stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
+        stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
+        stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
+
+      // Add the stock object to the stocks object using the symbol as the key
+      stocks.push(stock);
+    }
+
+
+    return stocks;
 }
 
 module.exports = {
