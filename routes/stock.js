@@ -22,7 +22,7 @@ router.get('/current', async (req, res, next) => {
 
   try {
     // const result = await yahooFinance.quoteSummary(symbol, queryOptions, moduleOptions);
-    const result = await getYFStockSymbols(symbol);
+    const result = getYFStockSymbols(symbol);
     console.log('RESULT: ', result)
     res.send(result);
   } catch (e) {

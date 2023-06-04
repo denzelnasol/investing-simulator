@@ -30,7 +30,7 @@ async function getRTStockDetails(symbol, fields = []) {
     return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
 }
 
-async function getYFStockSymbols(symbols) {
+function getYFStockSymbols(symbols) {
     const symbolString = symbols.join(',');
 
     const command = `python3 stock_data.py ${symbolString}`;
