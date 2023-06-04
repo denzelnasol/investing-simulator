@@ -30,7 +30,7 @@ async function getRTStockDetails(symbol, fields = []) {
     return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
 }
 
-function getYFStockSymbols(symbols) {
+function getYFStockSymbols(symbols, callback) {
     const symbolString = symbols.join(',');
 
     const command = `python3 stock_data.py ${symbolString}`;
@@ -45,7 +45,7 @@ function getYFStockSymbols(symbols) {
     //     return res.status(500).json({ error: 'Internal Server Error' });
     //   }
       
-      return stdout;
+      callback(null, stdout);
     });
 }
 

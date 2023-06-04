@@ -22,9 +22,17 @@ router.get('/current', async (req, res, next) => {
 
   try {
     // const result = await yahooFinance.quoteSummary(symbol, queryOptions, moduleOptions);
-    const result = getYFStockSymbols(symbol);
-    console.log('RESULT: ', result)
-    res.send(result);
+    getYFStockSymbols(symbol, (error, result) => {
+      if (error) {
+        console.error('Failed to retrieve stock data:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+  
+      // Process the result as needed
+      console.log('RESULT: ', result)
+      return res.send(result);
+    });
+    // res.send(result);
   } catch (e) {
     console.log(e);
     res.status(404).json(e);
