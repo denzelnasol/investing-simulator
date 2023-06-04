@@ -47,27 +47,32 @@ async function getYFStockSymbols(symbols) {
         });
     });
 
-    console.log('DATATAAAA: ', data);
+    // console.log('DATATAAAA: ', data);
 
-    const parsedData = JSON.parse(data);
-    const stocks = [];
-
-    // Iterate over the keys of the data object
-    for (const symbol of Object.keys(parsedData)) {
-        const stock = {};
-        stock['symbol'] = parsedData[symbol].symbol;
-        stock['averageAnalystRating'] = parsedData[symbol].recommendationMean;
-        stock['regularMarketPrice'] = parsedData[symbol].currentPrice;
-        stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
-        stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
-        stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
-
-      // Add the stock object to the stocks object using the symbol as the key
-      stocks.push(stock);
-    }
-
-
-    return stocks;
+    data.then(result => {
+        console.log('DATATAAAA:', result);
+        const parsedData = JSON.parse(result);
+        const stocks = [];
+    
+        // Iterate over the keys of the data object
+        for (const symbol of Object.keys(parsedData)) {
+            const stock = {};
+            stock['symbol'] = parsedData[symbol].symbol;
+            stock['averageAnalystRating'] = parsedData[symbol].recommendationMean;
+            stock['regularMarketPrice'] = parsedData[symbol].currentPrice;
+            stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
+            stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
+            stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
+    
+          // Add the stock object to the stocks object using the symbol as the key
+          stocks.push(stock);
+        }
+    
+    
+        return stocks;
+      }).catch(error => {
+        console.error('Error:', error);
+      });
 }
 
 module.exports = {
