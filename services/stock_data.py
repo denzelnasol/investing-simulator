@@ -2,6 +2,7 @@ import sys
 import yfinance as yf
 
 def get_stock_data(symbols):
+  symbols = symbols.replace(',', ' ')
   tickers = yf.Tickers(symbols)
 
   stock_data = {}  # Object to store ticker info

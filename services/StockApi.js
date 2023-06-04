@@ -31,9 +31,9 @@ async function getRTStockDetails(symbol, fields = []) {
 }
 
 async function getYFStockSymbols(symbols) {
-    const symbolString = symbols.join(' ');
+    const symbolString = symbols.join(',');
 
-    const command = `python3 yfinance.py ${symbolString}`;
+    const command = `python3 stock_data.py ${symbolString}`;
   
     exec(command, (error, stdout, stderr) => {
       if (error) {
