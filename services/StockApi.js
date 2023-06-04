@@ -63,14 +63,15 @@ async function getYFStockSymbols(symbols) {
                 resolve(stocks);
             }
         });
-    }).then((result) => {
-        return result;
-    }).catch(error => {
+    });
+
+    try {
+        const result = await data;
+        res.json(result);
+      } catch (error) {
         console.error('Error:', error);
-    });;
-
-    return data;
-
+        res.status(500).json({ error: 'An error occurred' });
+      }
 }
 
 module.exports = {
