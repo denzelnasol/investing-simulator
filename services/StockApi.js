@@ -31,7 +31,8 @@ async function getRTStockDetails(symbol, fields = []) {
 }
 
 async function getYFStockSymbols(symbols) {
-    const symbolString = symbols.join(',');
+    const symbolString = ['AAPL','MSFT','GOOG','AMZN','FB','TSLA','NVDA','JPM','JNJ','BAC','V','WMT','PG','UNH','HD','DIS','PYPL',].join(',');
+    // const symbolString = symbols.join(',');
     // const symbolString = "AMZN,GOOGL,MSFT";
 
     const command = `python3 stock_data.py ${symbolString}`;
