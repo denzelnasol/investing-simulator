@@ -35,8 +35,10 @@ async function getYFStockSymbols(symbols, callback) {
 
     const command = `python3 stock_data.py ${symbolString}`;
   
-    const { stdout } = await exec(command);
-    return stdout;
+    exec(command, async (error, stdout, stderr) => {
+        return stdout
+    });
+    // return stdout;
 }
 
 module.exports = {
