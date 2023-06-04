@@ -67,10 +67,9 @@ async function getYFStockSymbols(symbols) {
 
     try {
         const result = await data;
-        res.json(result);
+        return result
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'An error occurred' });
     }
 }
 
