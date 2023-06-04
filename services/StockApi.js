@@ -31,7 +31,7 @@ async function getRTStockDetails(symbol, fields = []) {
 }
 
 async function getYFStockSymbols(symbols) {
-    const symbolString = ['AAPL','MSFT','GOOG','AMZN','META','TSLA','NVDA','JPM','JNJ','BAC','V','WMT','PG','UNH','HD','DIS','PYPL',].join(',');
+    const symbolString = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'JNJ', 'BAC', 'V', 'WMT', 'PG', 'UNH', 'HD', 'DIS', 'PYPL',].join(',');
     // const symbolString = symbols.join(',');
     // const symbolString = "AMZN,GOOGL,MSFT";
 
@@ -43,39 +43,34 @@ async function getYFStockSymbols(symbols) {
                 console.error(`Error executing Python script: ${error}`);
                 reject(error);
             } else {
-                resolve(stdout);
+                const parsedData = JSON.parse(stdout);
+                const stocks = [];
+
+                // Iterate over the keys of the data object
+                for (const symbol of Object.keys(parsedData)) {
+                    const stock = {};
+                    stock['symbol'] = parsedData[symbol].symbol;
+                    stock['averageAnalystRating'] = parsedData[symbol].recommendationMean;
+                    stock['regularMarketPrice'] = parsedData[symbol].currentPrice;
+                    stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
+                    stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
+                    stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
+
+                    // Add the stock object to the stocks object using the symbol as the key
+                    stocks.push(stock);
+                }
+
+                resolve(stocks);
             }
         });
-    });
-
-    // console.log('DATATAAAA: ', data);
-
-    const result = data.then(result => {
-        console.log('DATATAAAA:', result);
-        const parsedData = JSON.parse(result);
-        const stocks = [];
-    
-        // Iterate over the keys of the data object
-        for (const symbol of Object.keys(parsedData)) {
-            const stock = {};
-            stock['symbol'] = parsedData[symbol].symbol;
-            stock['averageAnalystRating'] = parsedData[symbol].recommendationMean;
-            stock['regularMarketPrice'] = parsedData[symbol].currentPrice;
-            stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
-            stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
-            stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
-    
-          // Add the stock object to the stocks object using the symbol as the key
-          stocks.push(stock);
-        }
-    
-    
-        return stocks;
-      }).catch(error => {
+    }).then((result) => {
+        return result;
+    }).catch(error => {
         console.error('Error:', error);
-      });
+    });;
 
-      return result;
+    return data;
+
 }
 
 module.exports = {

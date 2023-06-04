@@ -13,7 +13,7 @@ def get_stock_data(symbols):
         try:
             stock_data[ticker_symbol] = ticker_obj.info
         except HTTPError as e:
-            print(f"Error retrieving data for symbol {ticker_symbol}: {e}")
+            # print(f"Error retrieving data for symbol {ticker_symbol}: {e}")
             continue
 
     print(stock_data)
