@@ -45,7 +45,7 @@ function getYFStockSymbols(symbols) {
     //     return res.status(500).json({ error: 'Internal Server Error' });
     //   }
       
-      return JSON.parse(stdout);
+      return stdout;
     });
 }
 
