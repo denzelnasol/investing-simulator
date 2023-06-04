@@ -31,7 +31,7 @@ async function getRTStockDetails(symbol, fields = []) {
 }
 
 async function getYFStockSymbols(symbols) {
-    const symbolString = ['AAPL','MSFT','GOOG','AMZN','FB','TSLA','NVDA','JPM','JNJ','BAC','V','WMT','PG','UNH','HD','DIS','PYPL',].join(',');
+    const symbolString = ['AAPL','MSFT','GOOG','AMZN','META','TSLA','NVDA','JPM','JNJ','BAC','V','WMT','PG','UNH','HD','DIS','PYPL',].join(',');
     // const symbolString = symbols.join(',');
     // const symbolString = "AMZN,GOOGL,MSFT";
 
