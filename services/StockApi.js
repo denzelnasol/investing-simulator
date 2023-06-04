@@ -1,4 +1,5 @@
 const yahooFinance = require('yahoo-finance2').default;
+const { exec } = require('child_process');
 
 // get a summary of all symbols
 async function getRTStockSummary(symbols) {
@@ -29,7 +30,27 @@ async function getRTStockDetails(symbol, fields = []) {
     return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
 }
 
+async function getYFStockSymbols(symbols) {
+    const symbolString = symbols.join(' ');
+
+    const command = `python3 yfinance.py ${symbolString}`;
+  
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing Python script: ${error}`);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      if (stderr) {
+        console.error(`Python script returned an error: ${stderr}`);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      
+      return res.json(stdout);
+    });
+}
+
 module.exports = {
     getRTStockSummary,
     getRTStockDetails,
+    getYFStockSymbols,
 };

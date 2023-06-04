@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 
 const { getProfileByEmail } = require('../services/Profile');
 const { getStockBySymbol, addStock, buyStock, getStockInfo, getAllAvailableStocks, sellStock } = require('../services/Stock');
-const { getRTStockDetails, getRTStockSummary } = require('../services/StockApi');
+const { getRTStockDetails, getRTStockSummary, getYFStockSymbols } = require('../services/StockApi');
 const { getMainPortfolio } = require('../services/Portfolio');
 const { requireAuth } = require('../services/Auth');
 
@@ -21,7 +21,9 @@ router.get('/current', async (req, res, next) => {
   console.log('SYMBOL: ', symbol);
 
   try {
-    const result = await yahooFinance.quoteSummary(symbol, queryOptions, moduleOptions);
+    // const result = await yahooFinance.quoteSummary(symbol, queryOptions, moduleOptions);
+    const result = await getYFStockSymbols(symbol);
+    console.log('RESULT: ', result)
     res.send(result);
   } catch (e) {
     console.log(e);
