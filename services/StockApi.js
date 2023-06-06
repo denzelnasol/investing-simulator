@@ -27,16 +27,17 @@ async function getRTStockSummary(symbols) {
 
 // get full info on the symbol
 async function getRTStockDetails(symbol, fields = []) {
-    return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
+    // return await yahooFinance.quote(symbol.toUpperCase(), { fields: fields });
+    return await getYFStockSymbols(symbol);
 }
 
 async function getYFStockSymbols(symbols) {
-    const symbolString = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'JNJ', 'BAC', 'V', 'WMT', 'PG', 'UNH', 'HD', 'DIS', 'PYPL',].join(',');
-    // const symbolString = symbols.join(',');
-    // const symbolString = "AMZN,GOOGL,MSFT";
 
-    const command = `python3 stock_data.py ${symbolString}`;
+    if (Array.isArray(symbols)) {
+        symbols = symbols.join(',');
+    }
 
+    const command = `python3 stock_data.py ${symbols}`;
     const data = new Promise((resolve, reject) => {
         exec(command, async (error, stdout, stderr) => {
             if (error) {
@@ -44,7 +45,7 @@ async function getYFStockSymbols(symbols) {
                 reject(error);
             } else {
                 const parsedData = JSON.parse(stdout);
-                const stocks = [];
+                let stocks = [];
 
                 // Iterate over the keys of the data object
                 for (const symbol of Object.keys(parsedData)) {
@@ -55,9 +56,19 @@ async function getYFStockSymbols(symbols) {
                     stock['regularMarketPreviousClose'] = parsedData[symbol].regularMarketPreviousClose;
                     stock['regularMarketOpen'] = parsedData[symbol].regularMarketOpen;
                     stock['regularMarketChange'] = parsedData[symbol].currentPrice - parsedData[symbol].regularMarketOpen;
+                    stock['longName'] = parsedData[symbol].longName;
+                    stock['ask'] = stock['regularMarketPrice'];
+                    stock['marketCap'] = parsedData[symbol].marketCap;
+                    stock['exchange'] = parsedData[symbol].exchange
+                    stock['fiftyTwoWeekHigh'] = parsedData[symbol].fiftyTwoWeekHigh;
+                    stock['fiftyTwoWeekLow'] = parsedData[symbol].fiftyTwoWeekLow;
 
                     // Add the stock object to the stocks object using the symbol as the key
                     stocks.push(stock);
+                }
+
+                if (stocks.length === 1) {
+                    stocks = stocks[0];
                 }
 
                 resolve(stocks);

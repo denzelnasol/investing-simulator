@@ -18,12 +18,9 @@ router.get('/current', async (req, res, next) => {
   const queryOptions = req.query.queryOptions;
   const moduleOptions = req.query.moduleOptions;
 
-  console.log('SYMBOL: ', symbol);
-
   try {
     // const result = await yahooFinance.quoteSummary(symbol, queryOptions, moduleOptions);
     const result = await getYFStockSymbols(symbol)
-    console.log('RESULT: ', result);
     res.send(result);
   } catch (e) {
     console.log(e);
@@ -45,8 +42,6 @@ router.get('/historical', async (req, res, next) => {
 // when user clicks on stock it should show stock info page
 router.get('/:symbol', async (req, res, next) => {
   try {
-
-
     // get portfolioId from cookie.token
     var portfolioId = req.body.portfolioId;
 
@@ -93,7 +88,6 @@ router.post('/buy-stock', requireAuth, async (req, res) => {
   const { symbol, asking, quantity } = req.body;
   let { portfolioId } = req.body
   const email = req.user.email;
-  console.log('ASKING: ', asking);
   try {
     const profile = await getProfileByEmail(email);
     const profileId = profile.profile_id;
