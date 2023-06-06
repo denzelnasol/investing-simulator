@@ -54,21 +54,24 @@ app.use((err, req, res, next) => {
 });
 
 // PRODUCTION
+/***********************************************************/
 // Load the SSL/TLS certificate and key
-// const options = {
-//   cert: fs.readFileSync('/etc/letsencrypt/live/investingsimulator.info/fullchain.pem'),
-//   key: fs.readFileSync('/etc/letsencrypt/live/investingsimulator.info/privkey.pem')
-// };
+const options = {
+  cert: fs.readFileSync('/etc/letsencrypt/live/investingsimulator.info/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/investingsimulator.info/privkey.pem')
+};
 
-// // Create an HTTPS server with the SSL/TLS certificate and key
-// https.createServer(options, app).listen(PORT, () => {
-//   console.log(`Server is listening on port ${PORT}`);
-// });
-/****************************************** */
-
-// DEVELOPMENT
-app.listen(PORT, () => {
+// Create an HTTPS server with the SSL/TLS certificate and key
+https.createServer(options, app).listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
+/***********************************************************/
+
+// DEVELOPMENT
+/***********************************************************/
+// app.listen(PORT, () => {
+//   console.log(`Server is listening on port ${PORT}`);
+// });
+/***********************************************************/
 
 module.exports = app;
