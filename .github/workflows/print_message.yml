@@ -11,4 +11,5 @@ jobs:
 
     steps:
       - name: Print a message
-        run: echo "Hello, GitHub Actions!"
+        run: |
+          echo "Hello, GitHub Actions!"
