@@ -1,0 +1,38 @@
+# name: Deploy to Production
+
+# on:
+#   push:
+#     branches:
+#       - production
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+
+#       - name: Set up Node.js environment
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: 14
+
+#       - name: SSH into VM
+#         uses: webfactory/ssh-agent@v0.5.0
+#         with:
+#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#           known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          
+#       - name: Pull changes
+#         run: |
+#           ssh user@your-vm-instance-ip 'cd /path/to/repository && git pull origin production'
+
+#       - name: Copy .env files
+#         run: |
+#           ssh user@your-vm-instance-ip 'cp /path/to/env-files/.env.production /path/to/repository/.env.production'
+
+#       - name: Restart Node.js server with PM2
+#         run: |
+#           ssh user@your-vm-instance-ip 'pm2 restart app'
+
