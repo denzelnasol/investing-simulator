@@ -22,6 +22,7 @@ jobs:
         run: |
           ssh denzelnasol@35.197.116.127 "cd investing-simulator; git pull origin production; pm2 restart app"
 
+          
     # steps:
     #   - name: Connect to VM
     #     run: ssh denzelnasol@35.197.116.127 "cd investing-simulator"
