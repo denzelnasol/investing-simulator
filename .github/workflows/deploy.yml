@@ -1,38 +1,37 @@
-# name: Deploy to Production
+name: Deploy to Production
 
-# on:
-#   push:
-#     branches:
-#       - production
+on:
+  push:
+    branches:
+      - production
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  deploy:
+    runs-on: self-hosted
 
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-#       - name: Set up Node.js environment
-#         uses: actions/setup-node@v2
-#         with:
-#           node-version: 14
-
-#       - name: SSH into VM
-#         uses: webfactory/ssh-agent@v0.5.0
-#         with:
-#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-#           known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           
-#       - name: Pull changes
-#         run: |
-#           ssh user@your-vm-instance-ip 'cd /path/to/repository && git pull origin production'
+      - name: Connect to VM and perform actions
+        run: |
+          ssh denzelnasol@35.197.116.127 "cd investing-simulator; git pull origin production; pm2 restart app"
 
-#       - name: Copy .env files
-#         run: |
-#           ssh user@your-vm-instance-ip 'cp /path/to/env-files/.env.production /path/to/repository/.env.production'
+    # steps:
+    #   - name: Connect to VM
+    #     run: ssh denzelnasol@35.197.116.127 "cd investing-simulator"
 
-#       - name: Restart Node.js server with PM2
-#         run: |
-#           ssh user@your-vm-instance-ip 'pm2 restart app'
+    #   - name: Pull changes
+    #     run: ssh denzelnasol@35.197.116.127 "git pull origin production"
 
+    #   # - name: Copy environment files
+    #   #   run: |
+    #   #     ssh denzelnasol@35.197.116.127 "cp /path/to/.env.production /path/to/your/node/app/.env"
+
+    #   - name: Restart Node app with PM2
+    #     run: ssh denzelnasol@35.197.116.127 "pm2 restart app"
