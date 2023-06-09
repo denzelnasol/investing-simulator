@@ -17,11 +17,12 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
+
       - name: Connect to VM and perform actions
         run: |
           ssh denzelnasol@35.197.116.127 "cd investing-simulator; git pull origin production; pm2 restart app"
 
+          
     # steps:
     #   - name: Connect to VM
     #     run: ssh denzelnasol@35.197.116.127 "cd investing-simulator"
