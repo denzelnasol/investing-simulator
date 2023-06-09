@@ -15,7 +15,7 @@ async function main() {
     const fields = [ "regularMarketPrice" ];
 
     // fetch stock data with batch request
-    var stocks = await pool.query('select symbol from stock');
+    var dbStocks = await pool.query('select symbol from stock');
     // var apiResults = [];
     // for (let s of stocks.rows) {
     //     let result = await yahooFinance.quoteCombine(s.symbol.toUpperCase(), { fields });
@@ -25,7 +25,7 @@ async function main() {
     // }
 
     let symbols = [];
-    for (let s of stocks.rows) {
+    for (let s of dbStocks.rows) {
         symbols.push(s.symbol)
     }
 
@@ -38,7 +38,7 @@ async function main() {
     // }
 
     const command = `python3 stock_data.py ${symbols}`;
-    const stocks = new Promise((resolve, reject) => {
+    const apiStocks = new Promise((resolve, reject) => {
         exec(command, async (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing Python script: ${error}`);
@@ -66,9 +66,9 @@ async function main() {
         });
     });
 
-    const apiStocks = await data;
+    const stocks = await apiStocks;
 
-    for (let s of apiStocks) {
+    for (let s of stocks) {
         await pool.query('call update_stock_values($1, $2)', [ s.symbol, s.regularMarketPrice ]);
     }
 
