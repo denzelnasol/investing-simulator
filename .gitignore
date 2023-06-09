@@ -2,4 +2,4 @@
 .DS_Store
 cloud-sql-proxy
 .env
-**/.env
+prisma/.env
