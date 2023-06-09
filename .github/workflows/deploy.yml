@@ -20,18 +20,12 @@ jobs:
 
       - name: Connect to VM and perform actions
         run: |
-          ssh denzelnasol@35.197.116.127 "export PATH=$PATH:/home/denzelnasol/.nvm/versions/node/v20.0.0/bin; cd investing-simulator; git pull origin production; pm2 restart app"
-
-    # steps:
-    #   - name: Connect to VM
-    #     run: ssh denzelnasol@35.197.116.127 "cd investing-simulator"
-
-    #   - name: Pull changes
-    #     run: ssh denzelnasol@35.197.116.127 "git pull origin production"
-
-    #   # - name: Copy environment files
-    #   #   run: |
-    #   #     ssh denzelnasol@35.197.116.127 "cp /path/to/.env.production /path/to/your/node/app/.env"
-
-    #   - name: Restart Node app with PM2
-    #     run: ssh denzelnasol@35.197.116.127 "pm2 restart app"
+          ssh denzelnasol@35.197.116.127 "\
+            export PATH=$PATH:/home/denzelnasol/.nvm/versions/node/v20.0.0/bin; \
+            cd investing-simulator; \
+            git pull origin production; \
+            echo '${{ secrets.PROD_NODE_ENV }}' > .env; \
+            cd prisma; \
+            echo '${{ secrets.PROD_PRISMA_ENV }}' > .env; \
+            pm2 restart app \
+          "
