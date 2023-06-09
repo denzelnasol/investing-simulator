@@ -27,5 +27,11 @@ jobs:
             echo '${{ secrets.PROD_NODE_ENV }}' > .env; \
             cd prisma; \
             echo '${{ secrets.PROD_PRISMA_ENV }}' > .env; \
+            cd ../client; \
+            echo '${{ secrets.PROD_REACT_ENV }}' > .env; \
+            npm install; \
+            npm run build; \
+            cd ..; \
+            sudo cp -R build/* /var/www/html; \
             pm2 restart app \
           "
