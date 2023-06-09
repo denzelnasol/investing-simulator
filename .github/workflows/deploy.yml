@@ -21,7 +21,7 @@ jobs:
       - name: Connect to VM and perform actions
         run: |
           ssh denzelnasol@35.197.116.127 "export PATH=$PATH:/home/denzelnasol/.nvm/versions/node/v20.0.0/bin; cd investing-simulator; git pull origin production; pm2 restart app"
-    
+
     # steps:
     #   - name: Connect to VM
     #     run: ssh denzelnasol@35.197.116.127 "cd investing-simulator"
